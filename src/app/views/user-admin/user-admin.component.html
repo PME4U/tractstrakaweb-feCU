@@ -1,0 +1,676 @@
+<div class="animated fadeIn">
+  <!-- <div class="row">
+    <div class="col-lg-12"> -->
+  <div class="card">
+    <div class="card-header">
+      <i class="cil-lock-unlocked"></i> User Access
+      <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+      <!-- <div class="row mb-3"> -->
+      <!-- </div> -->
+    </div>
+    <div class="card-body">
+      <div *ngIf="isFetching">
+        <div class="sk-fading-circle">
+          <div class="sk-circle1 sk-circle"></div>
+          <div class="sk-circle2 sk-circle"></div>
+          <div class="sk-circle3 sk-circle"></div>
+          <div class="sk-circle4 sk-circle"></div>
+          <div class="sk-circle5 sk-circle"></div>
+          <div class="sk-circle6 sk-circle"></div>
+          <div class="sk-circle7 sk-circle"></div>
+          <div class="sk-circle6 sk-circle"></div>
+          <div class="sk-circle9 sk-circle"></div>
+          <div class="sk-circle10 sk-circle"></div>
+          <div class="sk-circle11 sk-circle"></div>
+          <div class="sk-circle12 sk-circle"></div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="form-group col-sm-2">
+          <select
+            class="form-control"
+            id="searchField"
+            (change)="fieldChange($event)"
+          >
+            <option value="Select Field">Select Field</option>
+            <option value="email">Username</option>
+            <option value="user_type">User Type</option>
+            <option value="companies">Companies</option>
+            <option value="forward_plans">Forward Plans</option>
+            <option value="processes">Processes</option>
+            <option value="contracts">Contracts</option>
+            <option value="purchase_orders">Purchase Orders</option>
+            <option value="tasks">Tasks</option>
+            <option value="people">People</option>
+            <option value="system_params">System Admin</option>
+            <option value="user_admin">User Admin</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"
+                ><i class="fa fa-search"></i>
+              </span>
+            </div>
+            <input
+              type="text"
+              #search
+              class="form-control"
+              [(ngModel)]="filterQuery"
+              [placeholder]="searchMessage"
+              [disabled]="disableSearch"
+              autofocus
+            />
+          </div>
+        </div>
+      </div>
+      <!-- <table
+            *ngIf="tableData.length > 0 && !isFetching"
+            class="table table-sm table-hover"
+          > -->
+      <table
+        *ngIf="!isFetching"
+        class="table table-striped table-hover table-responsive"
+        [mfData]="data | dataFilter: filterQuery:searchField"
+        #mf="mfDataTable"
+        [mfRowsOnPage]="10"
+      >
+        <thead>
+          <tr>
+            <th style="width: 10%;">
+              <mfDefaultSorter by="email" #sortEmail>
+                Username
+                <span
+                  *ngIf="sortEmail.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortEmail.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="is_active" #sortIsActive>
+                Is Active
+                <span
+                  *ngIf="sortIsActive.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortIsActive.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="user_type" #sortUserType>
+                User Type
+                <span
+                  *ngIf="sortUserType.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortUserType.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="companies" #sortCompanies>
+                Companies
+                <span
+                  *ngIf="sortCompanies.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortCompanies.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="forward_plans" #sortForwardPlans>
+                Forward Plans
+                <span
+                  *ngIf="sortForwardPlans.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortForwardPlans.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="processes" #sortProcesses>
+                Processes
+                <span
+                  *ngIf="sortProcesses.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortProcesses.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="contracts" #sortContracts>
+                Contracts
+                <span
+                  *ngIf="sortContracts.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortContracts.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="purchase_orders" #sortPurchaseOrders>
+                Purchase Orders
+                <span
+                  *ngIf="sortPurchaseOrders.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortPurchaseOrders.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="tasks" #sortTasks>
+                Tasks
+                <span
+                  *ngIf="sortTasks.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortTasks.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="people" #sortPeople>
+                People
+                <span
+                  *ngIf="sortPeople.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortPeople.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="system_params" #sortSystemAdmin>
+                System Admin
+                <span
+                  *ngIf="sortSystemAdmin.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortSystemAdmin.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%;" class="text-center">
+              <mfDefaultSorter by="user_admin" #sortUserAdmin>
+                User Admin
+                <span
+                  *ngIf="sortUserAdmin.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortUserAdmin.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 10%;" class="text-center">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of mf.data">
+            <td class="clickable" (click)="editRecord(item)">
+              {{ item.email }}
+            </td>
+            <td class="text-center">
+              <span *ngIf="item.is_active" class="cil-check table-check"></span>
+            </td>
+            <!-- <td>{{ item.is_active }}</td> -->
+            <td class="text-center">{{ item.user_type }}</td>
+            <td class="text-center">{{ item.companies }}</td>
+            <td class="text-center">{{ item.forward_plans }}</td>
+            <td class="text-center">{{ item.processes }}</td>
+            <td class="text-center">{{ item.contracts }}</td>
+            <td class="text-center">{{ item.purchase_orders }}</td>
+            <td class="text-center">{{ item.tasks }}</td>
+            <td class="text-center">{{ item.people }}</td>
+            <td class="text-center">{{ item.system_params }}</td>
+            <td class="text-center">{{ item.user_admin }}</td>
+            <td class="text-center">
+              <i
+                class="cil-pen edit-record"
+                (click)="editRecord(item)"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Edit Record"
+              ></i>
+              <i
+                class="cil-delete delete-record"
+                (click)="confirmDelete(item)"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Delete Record"
+              ></i>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">
+              <mfBootstrapPaginator
+                [rowsOnPageSet]="[5, 10, 15]"
+              ></mfBootstrapPaginator>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  <!--/.col-->
+  <!-- </div>
+  </div> -->
+
+  <!-- #maintModal="bs-modal" -->
+  <!-- modal -->
+  <div
+    bsModal
+    #maintModal="bs-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="maintModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="maintModalLabel">
+            User Access Maintenance
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            (click)="closeModal()"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form
+            [formGroup]="maintForm"
+            (ngSubmit)="saveRecord()"
+            novalidate
+            autocomplete="off"
+          >
+            <div class="form-group">
+              <div>
+                <label for="contract_type" class="col-form-label"
+                  >Username (email):</label
+                >
+              </div>
+              <div>
+                <small class="text-muted"
+                  >Set the user type and grant access to each function for the
+                  new user.</small
+                >
+              </div>
+              <div>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="email"
+                  formControlName="email"
+                />
+              </div>
+            </div>
+
+            <div class="form-group" col-sm-12>
+              <div class="col-sm-12">
+                <label class="col-form-label">Active</label>
+              </div>
+              <div class="col-sm-12">
+                <small class="text-muted"
+                  >Setting a user to inactive will prevent them from loggin in
+                  to TractsTraka.</small
+                >
+              </div>
+              <div class="col-sm-12">
+                <label class="switch switch-3d switch-success">
+                  <input
+                    type="checkbox"
+                    class="switch-input form-control"
+                    formControlName="is_active"
+                  />
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <small class="text-muted"
+                  >Select an access level for each function group. The levels
+                  range from no access to delete, each access right inlcudes the
+                  right above it, so someone with Delete access can read,
+                  modify, create and delete records.</small
+                >
+              </div>
+              <label class="col-md-3 col-form-label" for="select3"
+                >User Type</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="user_type"
+                  name="user_type"
+                  class="form-control form-control-sm"
+                  formControlName="user_type"
+                >
+                  <option value="0">Please select</option>
+                  <option value="Not Defined">Not Defined</option>
+                  <option value="Buyer">Buyer</option>
+                  <option value="Supplier">Supplier</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >Companies</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="companies"
+                  name="companies"
+                  class="form-control form-control-sm"
+                  formControlName="companies"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >Forward Plans</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="forward_plans"
+                  name="forward_plans"
+                  class="form-control form-control-sm"
+                  formControlName="forward_plans"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >Processes</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="processes"
+                  name="processes"
+                  class="form-control form-control-sm"
+                  formControlName="processes"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >Contracts</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="contracts"
+                  name="contracts"
+                  class="form-control form-control-sm"
+                  formControlName="contracts"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >Purchase Orders</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="purchase_orders"
+                  name="purchase_orders"
+                  class="form-control form-control-sm"
+                  formControlName="purchase_orders"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3">Tasks</label>
+              <div class="col-md-9">
+                <select
+                  id="tasks"
+                  name="tasks"
+                  class="form-control form-control-sm"
+                  formControlName="tasks"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >People</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="people"
+                  name="people"
+                  class="form-control form-control-sm"
+                  formControlName="people"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >System Admin</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="system_params"
+                  name="system_params"
+                  class="form-control form-control-sm"
+                  formControlName="system_params"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="select3"
+                >User Admin</label
+              >
+              <div class="col-md-9">
+                <select
+                  id="user_admin"
+                  name="user_admin"
+                  class="form-control form-control-sm"
+                  formControlName="user_admin"
+                >
+                  <option value="0">Please select</option>
+                  <option value="No Access">No Access</option>
+                  <option value="Read Only">Read Only</option>
+                  <option value="Modify">Modify</option>
+                  <option value="Create">Create</option>
+                  <option value="Delete">Delete</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal"
+            (click)="closeModal()"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" (click)="saveRecord()">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    bsModal
+    #deleteModal="bs-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="myModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-danger" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Confirm Delete</h4>
+          <button
+            type="button"
+            class="close"
+            (click)="deleteModal.hide()"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete the {{ recordTitle }} Contract Type?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="deleteModal.hide()"
+            cdkFocusInitial
+          >
+            Cancel
+          </button>
+          <button type="button" class="btn btn-danger" (click)="deleteRecord()">
+            Delete
+          </button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+</div>

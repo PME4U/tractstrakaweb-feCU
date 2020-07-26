@@ -1,0 +1,125 @@
+<div class="app-body">
+  <main class="main d-flex align-items-center">
+    <div class="container">
+      <div class="row">
+        <div class="login-logo">
+          <img
+            src="./assets/img/site/TTRoo_blue.svg"
+            width="70%"
+            height="auto"
+            class="center"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <div class="card-group">
+            <div class="card p-4">
+              <div class="card-body">
+                <form
+                  [formGroup]="authForm"
+                  (ngSubmit)="saveForm()"
+                  novalidate
+                  autocomplete="off"
+                >
+                  <h1>Login</h1>
+                  <p class="text-muted">Sign In to your account</p>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"
+                        ><i class="icon-user"></i
+                      ></span>
+                    </div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="email"
+                      placeholder="Email"
+                      formControlName="email"
+                      email
+                      required
+                    />
+                  </div>
+                  <div
+                    *ngIf="email.invalid && (email.dirty || email.touched)"
+                    class="login-error-message"
+                  >
+                    Please enter a valid email
+                  </div>
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"
+                        ><i class="icon-lock"></i
+                      ></span>
+                    </div>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      placeholder="Password"
+                      formControlName="password"
+                      required
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      password.invalid && (password.dirty || password.touched)
+                    "
+                    class="login-error-message"
+                  >
+                    Please enter a password
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <button
+                        type="submit"
+                        class="btn btn-primary px-4"
+                        [disabled]="email.invalid && password.invalid"
+                      >
+                        Let's hit the Tracts
+                      </button>
+                    </div>
+                    <div *ngIf="loginFail" class="login-error-message">
+                      Could not authenticate with the email and password
+                      provided.
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <!-- <div class="col-6 text-right"> -->
+                      <button type="button" class="btn btn-link px-0">
+                        Forgot password?
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div
+              class="card text-white bg-primary py-5 d-md-down-none"
+              style="width: 44%;"
+            >
+              <div class="card-body text-center">
+                <div>
+                  <h2>Sign up</h2>
+                  <p>
+                    Please enter your details to register with TractsTraka Web,
+                    once registered, the owner of the mob will provide the
+                    access to the functionality you need.
+                  </p>
+                  <button
+                    type="button"
+                    class="btn btn-primary active mt-3"
+                    routerLink="/register"
+                  >
+                    Register Now!
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

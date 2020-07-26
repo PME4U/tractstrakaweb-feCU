@@ -1,0 +1,67 @@
+// Here you can add other styles
+
+// login formatting
+.login-logo {
+  margin-top: 0px;
+  margin-bottom: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 70%;
+  text-align: center;
+  // display: block;
+  // margin-left: auto;
+  // margin-right: auto;
+  // margin-bottom: 50px;
+  // width: 50%;
+}
+
+// Table formatting
+.clickable {
+  cursor: pointer;
+  color: $primary;
+}
+.clickable:hover {
+  text-decoration: underline;
+}
+.add-record {
+  cursor: pointer;
+  opacity: 0.8;
+  font-size: 20px;
+}
+
+.delete-record {
+  cursor: pointer;
+  opacity: 0.8;
+  font-size: 20px;
+  color: $danger;
+  padding-left: 10px;
+}
+
+.edit-record {
+  cursor: pointer;
+  opacity: 0.8;
+  font-size: 20px;
+  color: $primary;
+  padding-left: 10px;
+}
+
+td .center {
+  text-align: center;
+}
+
+.table-check {
+  color: $success;
+}
+
+// Form Formatting
+// .form-group .switch {
+//   padding: 5px;
+// }
+.col-form-label {
+  padding-bottom: 0px;
+}
+
+// Spinner
+.sk-fading-circle {
+  color: $primary;
+}

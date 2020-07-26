@@ -1,0 +1,218 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Contractor Role Types
+          <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+        </div>
+        <div class="card-body">
+          <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
+          <div *ngIf="isFetching">
+            <div class="sk-fading-circle">
+              <div class="sk-circle1 sk-circle"></div>
+              <div class="sk-circle2 sk-circle"></div>
+              <div class="sk-circle3 sk-circle"></div>
+              <div class="sk-circle4 sk-circle"></div>
+              <div class="sk-circle5 sk-circle"></div>
+              <div class="sk-circle6 sk-circle"></div>
+              <div class="sk-circle7 sk-circle"></div>
+              <div class="sk-circle8 sk-circle"></div>
+              <div class="sk-circle9 sk-circle"></div>
+              <div class="sk-circle10 sk-circle"></div>
+              <div class="sk-circle11 sk-circle"></div>
+              <div class="sk-circle12 sk-circle"></div>
+            </div>
+          </div>
+          <!-- <table
+            *ngIf="tableData.length > 0 && !isFetching"
+            class="table table-sm table-hover"
+          > -->
+          <div class="table-responsive">
+            <table *ngIf="!isFetching" class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>Contractor Role Type</th>
+                  <th class="text-center">Active</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of tableData; let i = index">
+                  <td>{{ row.contractor_role_type }}</td>
+                  <td class="text-center">
+                    <span
+                      *ngIf="row.is_active"
+                      class="cil-check table-check"
+                    ></span>
+                  </td>
+                  <td class="text-center">
+                    <i
+                      class="cil-pen edit-record"
+                      (click)="editRecord(row)"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Edit Record"
+                    ></i>
+                    <i
+                      class="cil-delete delete-record"
+                      (click)="confirmDelete(row)"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Delete Record"
+                    ></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<!-- #maintModal="bs-modal" -->
+<!-- modal -->
+<div
+  bsModal
+  #maintModal="bs-modal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="maintModalLabel">
+          Contractor Role Types Maintenance
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          [formGroup]="maintForm"
+          (ngSubmit)="saveRecord()"
+          novalidate
+          autocomplete="off"
+        >
+          <div class="form-group">
+            <div>
+              <label for="contractor_role_type" class="col-form-label"
+                >Contractor Role Type:</label
+              >
+            </div>
+            <div>
+              <small class="text-muted"
+                >Identify the contractor role type.</small
+              >
+            </div>
+            <div>
+              <input
+                type="text"
+                class="form-control"
+                id="contractor_role_type"
+                formControlName="contractor_role_type"
+              />
+            </div>
+          </div>
+
+          <div class="form-group" col-sm-12>
+            <div class="col-sm-12">
+              <label class="col-form-label">Active</label>
+            </div>
+            <div class="col-sm-12">
+              <small class="text-muted"
+                >Contractor Role Types should not be deleted if there are
+                records associated with them, but setting it to inactive will
+                stop the status from being added to new records</small
+              >
+            </div>
+            <div class="col-sm-12">
+              <label class="switch switch-3d switch-success">
+                <input
+                  type="checkbox"
+                  class="switch-input form-control"
+                  formControlName="is_active"
+                />
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          (click)="closeModal()"
+        >
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveRecord()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  bsModal
+  #deleteModal="bs-modal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm Delete</h4>
+        <button
+          type="button"
+          class="close"
+          (click)="deleteModal.hide()"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure you want to delete the {{ recordTitle }} Contractor Role
+          Type?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="deleteModal.hide()"
+          cdkFocusInitial
+        >
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger" (click)="deleteRecord()">
+          Delete
+        </button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
