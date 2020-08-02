@@ -3,7 +3,14 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { ContractStatusService } from '../../services/contract-status.service';
+import {
+  ContractStatus,
+  sortStatusBySeqNo,
+} from '../../models/contract-status.model';
 
 @Component({
   selector: 'app-contract-status',
@@ -11,7 +18,7 @@ import { ContractStatusService } from '../../services/contract-status.service';
   styleUrls: ['./contract-status.component.css'],
 })
 export class ContractStatusComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<ContractStatus[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -31,18 +38,14 @@ export class ContractStatusComponent implements OnInit {
   inProgress: boolean;
   isActive: boolean;
 
-  // url = new URL(this.baseUrl);
-
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;
   @ViewChild('deleteModal', { static: false })
   public deleteModal: ModalDirective;
-  // confirmDialogService: any;
 
   constructor(
     private fb: FormBuilder,
     private contractStatusService: ContractStatusService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -51,58 +54,15 @@ export class ContractStatusComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    // let splitUrl: any = [];
-
     this.isFetching = true;
 
-    this.contractStatusService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
+    const contractStatus$ = this.contractStatusService
+      .getAll(apiUrl)
+      .pipe(map((contractStatus) => contractStatus.sort(sortStatusBySeqNo)));
 
-        // this.pages = Math.ceil(this.totalRecords / this.limit);
-
-        // console.log('pages:' + this.pages);
-
-        // if (response.next) {
-        //   splitUrl = response.next.split('4200');
-        //   this.next = splitUrl[1];
-        //   })
-        // } else {
-        //   this.next = undefined;
-        // }
-
-        // if (response.previous) {
-        //   splitUrl = response.previous.split('4200');
-        //   this.previous = splitUrl[1];
-        // } else {
-        //   this.previous = undefined;
-        // }
-
-        // if (this.totalRecords > 5) {
-        //   this.usePagination = true;
-        // }
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = contractStatus$;
   }
-
-  // fecthNext() {
-  //   // console.log(this.next);
-  //   this.getTableData(this.next);
-  // }
-
-  // fecthPrevious() {
-  //   this.getTableData(this.previous);
-  // }
 
   createForm() {
     this.maintForm = this.fb.group({

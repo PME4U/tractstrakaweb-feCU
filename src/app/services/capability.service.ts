@@ -4,6 +4,8 @@ import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
+import { Capability } from '../models/capability.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,15 +24,15 @@ export class CapabilityService {
     });
   }
 
-  getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
+  getAll(apiUrl: string): Observable<Capability[]> {
+    return this.http.get<Capability[]>(apiUrl, {
       headers: this.getAuthHeaders(),
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<any> {
+  getOne(apiUrl: string, id: Number): Observable<Capability> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
+    return this.http.get<Capability>(apiUrl + id, {
       headers: this.getAuthHeaders(),
     });
   }

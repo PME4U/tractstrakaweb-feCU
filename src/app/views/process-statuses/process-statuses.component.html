@@ -1,6 +1,6 @@
 <div class="animated fadeIn">
   <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-6">
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Process Statuses
@@ -35,7 +35,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tableData">
+                <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.process_status }}</td>
                   <td class="text-center">{{ row.process_sequence }}</td>
                   <td class="text-center">

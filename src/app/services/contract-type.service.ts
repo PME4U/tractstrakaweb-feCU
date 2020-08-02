@@ -4,6 +4,8 @@ import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
+import { ContractType } from '../models/contract-type.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,15 +24,15 @@ export class ContractTypeService {
     });
   }
 
-  getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
+  getAll(apiUrl: string): Observable<ContractType> {
+    return this.http.get<ContractType>(apiUrl, {
       headers: this.getAuthHeaders(),
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<any> {
+  getOne(apiUrl: string, id: Number): Observable<ContractType> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
+    return this.http.get<ContractType>(apiUrl + id, {
       headers: this.getAuthHeaders(),
     });
   }

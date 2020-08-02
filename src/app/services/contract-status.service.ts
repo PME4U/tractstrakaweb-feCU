@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 
-import { map } from 'rxjs/operators';
-
-import { ContractStatusModel } from '../models/contract-status.model';
 import { Observable } from 'rxjs';
+
+import { ContractStatus } from '../models/contract-status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,15 +24,15 @@ export class ContractStatusService {
     });
   }
 
-  getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
+  getAll(apiUrl: string): Observable<ContractStatus[]> {
+    return this.http.get<ContractStatus[]>(apiUrl, {
       headers: this.getAuthHeaders(),
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<any> {
+  getOne(apiUrl: string, id: Number): Observable<ContractStatus> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
+    return this.http.get<ContractStatus>(apiUrl + id, {
       headers: this.getAuthHeaders(),
     });
   }

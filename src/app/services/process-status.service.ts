@@ -4,6 +4,8 @@ import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
+import { ProcessStatus } from '../models/process-status.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,8 +24,8 @@ export class ProcessStatusService {
     });
   }
 
-  getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
+  getAll(apiUrl: string): Observable<ProcessStatus[]> {
+    return this.http.get<ProcessStatus[]>(apiUrl, {
       headers: this.getAuthHeaders(),
     });
   }

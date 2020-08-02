@@ -4,9 +4,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ContractTypeService } from '../../services/contract-type.service';
-import { ContractTypeModel } from '../../models/contract-type.model';
+import { ContractType, sortAlpha } from '../../models/contract-type.model';
 
 @Component({
   selector: 'app-contract-type',
@@ -14,7 +15,7 @@ import { ContractTypeModel } from '../../models/contract-type.model';
   styleUrls: ['./contract-types.component.css'],
 })
 export class ContractTypesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<ContractType[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -32,7 +33,6 @@ export class ContractTypesComponent implements OnInit {
     private fb: FormBuilder,
     private contractTypeService: ContractTypeService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -43,21 +43,12 @@ export class ContractTypesComponent implements OnInit {
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    this.contractTypeService.getAll(apiUrl).subscribe(
-      (response: ContractTypeModel[]) => {
-        this.isFetching = false;
-        this.tableData = response;
+    const contractType$ = this.contractTypeService
+      .getAll(apiUrl)
+      .pipe(map((contractType) => contractType.sort(sortAlpha)));
 
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = contractType$;
   }
 
   createForm() {

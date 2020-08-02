@@ -3,7 +3,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { CapabilityService } from '../../services/capability.service';
+import { Capability, sortAlpha } from '../../models/capability.model';
 
 @Component({
   selector: 'app-capabilities',
@@ -11,7 +15,7 @@ import { CapabilityService } from '../../services/capability.service';
   styleUrls: ['./capabilities.component.css'],
 })
 export class CapabilitiesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<Capability[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -42,7 +46,7 @@ export class CapabilitiesComponent implements OnInit {
     private fb: FormBuilder,
     private capabilityService: CapabilityService
   ) {
-    this.tableData = new Array<any>();
+    // this.tableData$ = new Array<any>();
     this.createForm();
   }
 
@@ -55,22 +59,12 @@ export class CapabilitiesComponent implements OnInit {
 
     this.isFetching = true;
 
-    this.capabilityService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
+    const capalities$ = this.capabilityService
+      .getAll(apiUrl)
+      .pipe(map((capability) => capability.sort(sortAlpha)));
 
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = capalities$;
   }
 
   createForm() {

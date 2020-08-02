@@ -4,9 +4,13 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ProcessStatusService } from '../../services/process-status.service';
-import { ProcessStatusModel } from '../../models/process-status.model';
+import {
+  ProcessStatus,
+  sortStatusBySeqNo,
+} from '../../models/process-status.model';
 
 @Component({
   selector: 'app-process-statuses',
@@ -14,7 +18,7 @@ import { ProcessStatusModel } from '../../models/process-status.model';
   styleUrls: ['./process-statuses.component.css'],
 })
 export class ProcessStatusesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<ProcessStatus[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -33,7 +37,6 @@ export class ProcessStatusesComponent implements OnInit {
     private fb: FormBuilder,
     private processStatusService: ProcessStatusService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -44,22 +47,31 @@ export class ProcessStatusesComponent implements OnInit {
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    this.processStatusService.getAll(apiUrl).subscribe(
-      (response: ProcessStatusModel[]) => {
-        this.isFetching = false;
-        this.tableData = response;
+    // const processStatus$ = this.processStatusService.getAll(apiUrl)
+    const processStatus$ = this.processStatusService
+      .getAll(apiUrl)
+      .pipe(map((processStatus) => processStatus.sort(sortStatusBySeqNo)));
 
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = processStatus$;
   }
+
+  //   this.processStatusService.getAll(apiUrl).subscribe(
+  //     (response: ProcessStatusModel[]) => {
+  //       this.isFetching = false;
+  //       this.tableData = response;
+
+  //       // console.log(response);
+  //       // console.log(this.tableData);
+  //       // console.log('Total records:' + this.totalRecords);
+  //       // console.log(this.next);
+  //       // console.log(this.previous);
+  //     },
+  //     (error) => {
+  //       alert(error.message);
+  //     }
+  //   );
+  // }
 
   createForm() {
     this.maintForm = this.fb.group({

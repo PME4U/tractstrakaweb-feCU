@@ -38,7 +38,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tableData; let i = index">
+                <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.contract_type }}</td>
                   <td class="text-center">
                     <span
