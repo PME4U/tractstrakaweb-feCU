@@ -19,6 +19,10 @@ import {
 })
 export class ContractStatusComponent implements OnInit {
   tableData$: Observable<ContractStatus[]>;
+  allData$: Observable<ContractStatus[]>;
+  activeData$: Observable<ContractStatus[]>;
+  inactiveData$: Observable<ContractStatus[]>;
+
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -33,6 +37,8 @@ export class ContractStatusComponent implements OnInit {
   offset: number;
   pages: any = [];
   page: number = 1;
+
+  activeOnly: string = 'All';
 
   isCurrent: boolean;
   inProgress: boolean;
@@ -61,8 +67,57 @@ export class ContractStatusComponent implements OnInit {
       .pipe(map((contractStatus) => contractStatus.sort(sortStatusBySeqNo)));
 
     this.isFetching = false;
-    this.tableData$ = contractStatus$;
+    // this.tableData$ = contractStatus$;
+
+    this.allData$ = contractStatus$;
+    this.activeData$ = contractStatus$.pipe(
+      map((contractStatuses) =>
+        contractStatuses.filter(
+          (contractStatus) => contractStatus.is_active === true
+        )
+      )
+    );
+    this.inactiveData$ = contractStatus$.pipe(
+      map((contractStatuses) =>
+        contractStatuses.filter(
+          (contractStatus) => contractStatus.is_active === false
+        )
+      )
+    );
+    // this.tableData$ = this.allData$;
+    this.filterOnActive();
   }
+
+  activeFilterToggle() {
+    switch (this.activeOnly) {
+      case 'All': {
+        this.activeOnly = 'Active';
+        break;
+      }
+      case 'Active': {
+        this.activeOnly = 'Inactive';
+        break;
+      }
+      case 'Inactive': {
+        this.activeOnly = 'All';
+        break;
+      }
+    }
+    this.filterOnActive();
+  }
+
+  filterOnActive() {
+    console.log(this.activeOnly);
+    if (this.activeOnly === 'All') {
+      this.tableData$ = this.allData$;
+    } else if (this.activeOnly === 'Active') {
+      this.tableData$ = this.activeData$;
+    } else {
+      this.tableData$ = this.inactiveData$;
+    }
+  }
+
+  filterOnCurrent() {}
 
   createForm() {
     this.maintForm = this.fb.group({

@@ -3,7 +3,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { ComplexityService } from '../../services/complexity.service';
+import { Complexity, sortAlpha } from '../../models/complexity.model';
 
 @Component({
   selector: 'app-complexities',
@@ -11,7 +15,7 @@ import { ComplexityService } from '../../services/complexity.service';
   styleUrls: ['./complexities.component.css'],
 })
 export class ComplexitiesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<Complexity[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -42,7 +46,6 @@ export class ComplexitiesComponent implements OnInit {
     private fb: FormBuilder,
     private complexityService: ComplexityService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -51,26 +54,14 @@ export class ComplexitiesComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    // let splitUrl: any = [];
-
     this.isFetching = true;
 
-    this.complexityService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
+    const complexity$ = this.complexityService
+      .getAll(apiUrl)
+      .pipe(map((complexity) => complexity.sort(sortAlpha)));
 
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = complexity$;
   }
 
   createForm() {

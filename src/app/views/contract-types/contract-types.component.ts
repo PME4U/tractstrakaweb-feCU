@@ -23,6 +23,7 @@ export class ContractTypesComponent implements OnInit {
   isFetching: boolean = false;
   baseUrl: string = 'api/system-parameter/contract-type-list/';
   totalRecords: number;
+
   isActive: boolean;
 
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;

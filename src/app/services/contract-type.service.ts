@@ -24,8 +24,8 @@ export class ContractTypeService {
     });
   }
 
-  getAll(apiUrl: string): Observable<ContractType> {
-    return this.http.get<ContractType>(apiUrl, {
+  getAll(apiUrl: string): Observable<ContractType[]> {
+    return this.http.get<ContractType[]>(apiUrl, {
       headers: this.getAuthHeaders(),
     });
   }

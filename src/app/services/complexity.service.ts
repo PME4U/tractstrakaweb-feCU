@@ -4,6 +4,8 @@ import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
+import { Complexity } from '../models/complexity.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,15 +24,15 @@ export class ComplexityService {
     });
   }
 
-  getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
+  getAll(apiUrl: string): Observable<Complexity[]> {
+    return this.http.get<Complexity[]>(apiUrl, {
       headers: this.getAuthHeaders(),
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<any> {
+  getOne(apiUrl: string, id: Number): Observable<Complexity> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
+    return this.http.get<Complexity>(apiUrl + id, {
       headers: this.getAuthHeaders(),
     });
   }

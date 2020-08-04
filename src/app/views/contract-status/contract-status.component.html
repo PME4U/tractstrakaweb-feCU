@@ -6,6 +6,9 @@
           <i class="fa fa-align-justify"></i> Contract Statuses
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
+        <div>
+          <small class="text-muted">Click headings to toggle filters.</small>
+        </div>
         <div class="card-body">
           <div *ngIf="isFetching">
             <div class="sk-fading-circle">
@@ -29,9 +32,14 @@
                 <tr>
                   <th>Contract Status</th>
                   <th class="text-center">Status Sequence</th>
-                  <th class="text-center">In Progress</th>
-                  <th class="text-center">Contract Current</th>
-                  <th class="text-center">Active</th>
+                  <th class="text-center clickable">In Progress</th>
+                  <th class="text-center clickable">Contract Current</th>
+                  <th
+                    class="text-center clickable"
+                    (click)="activeFilterToggle()"
+                  >
+                    Active
+                  </th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
