@@ -107,7 +107,6 @@ export class ContractStatusComponent implements OnInit {
   }
 
   filterOnActive() {
-    console.log(this.activeOnly);
     if (this.activeOnly === 'All') {
       this.tableData$ = this.allData$;
     } else if (this.activeOnly === 'Active') {
@@ -161,7 +160,7 @@ export class ContractStatusComponent implements OnInit {
           is_current: response.is_current,
           is_active: response.is_active,
         });
-        console.log(response);
+        // console.log(response);
         // console.log(this.tableData);
         // console.log('Total records:' + this.totalRecords);
         // console.log(this.next);
