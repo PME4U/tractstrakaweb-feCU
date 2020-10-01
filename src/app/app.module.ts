@@ -52,6 +52,9 @@ import { ContractStatusService } from './services/contract-status.service';
 import { ContractTypeService } from './services/contract-type.service';
 import { ProcessStatusService } from './services/process-status.service';
 
+// Import Interceptors
+import { httpInterceptorProviders } from './http-interceptors';
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -88,6 +91,7 @@ import { ProcessStatusService } from './services/process-status.service';
     ContractStatusService,
     ContractTypeService,
     ProcessStatusService,
+    httpInterceptorProviders,
   ],
   bootstrap: [AppComponent],
 })

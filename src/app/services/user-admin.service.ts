@@ -4,11 +4,9 @@ import {
   HttpHeaders,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 
-import { Observable, from, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { retry } from 'rxjs-compat/operator/retry';
 
 import { UserAccessModel } from '../models/user-access.model';
 
@@ -18,29 +16,13 @@ export interface TableData extends Array<UserAccessModel> {}
   providedIn: 'root',
 })
 export class UserAccessService {
-  headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
-
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string) {
-    return this.http
-      .get<TableData>(apiUrl, {
-        headers: this.getAuthHeaders(),
-      })
-      .pipe(
-        // retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
+    return this.http.get<TableData>(apiUrl).pipe(
+      // retry(3), // retry a failed request up to 3 times
+      catchError(this.handleError) // then handle the error
+    );
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -66,36 +48,23 @@ export class UserAccessService {
 
   getOne(apiUrl: string, id: Number): Observable<any> {
     console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<any>(apiUrl + id);
   }
 
   create(data) {
     const body = JSON.stringify(data);
     console.log(body);
-    return this.http.post(
-      'api/account/account-access-list/',
-
-      body,
-      {
-        headers: this.headers,
-      }
-    );
+    return this.http.post('api/account/account-access-list/', body);
   }
 
   update(id, data) {
     const body = JSON.stringify(data);
     const url = 'api/account/account-access-list/' + id + '/';
-    return this.http.put(url, body, {
-      headers: this.headers,
-    });
+    return this.http.put(url, body);
   }
 
   delete(id: Number) {
     const url = 'api/account/account-access-list/' + id + '/';
-    return this.http.delete(url, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete(url);
   }
 }

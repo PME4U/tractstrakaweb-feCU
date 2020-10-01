@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
@@ -10,31 +9,15 @@ import { ContractType } from '../models/contract-type.model';
   providedIn: 'root',
 })
 export class ContractTypeService {
-  headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
-
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<ContractType[]> {
-    return this.http.get<ContractType[]>(apiUrl, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<ContractType[]>(apiUrl);
   }
 
   getOne(apiUrl: string, id: Number): Observable<ContractType> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<ContractType>(apiUrl + id, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<ContractType>(apiUrl + id);
   }
 
   create(data) {
@@ -42,11 +25,7 @@ export class ContractTypeService {
     return this.http.post(
       // `${this.baseUrl}api/account/my-account/`,
       'api/system-parameter/contract-type-create/',
-
-      body,
-      {
-        headers: this.headers,
-      }
+      body
     );
   }
 
@@ -57,17 +36,12 @@ export class ContractTypeService {
     return this.http.put(
       // `${this.baseUrl}api/account/my-account/`,
       url,
-      body,
-      {
-        headers: this.headers,
-      }
+      body
     );
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/contract-type-delete/' + id + '/';
-    return this.http.delete(url, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete(url);
   }
 }

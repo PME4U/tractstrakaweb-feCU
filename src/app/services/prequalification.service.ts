@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
@@ -8,31 +7,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PrequalificationService {
-  headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
-
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<any>(apiUrl);
   }
 
   getOne(apiUrl: string, id: Number): Observable<any> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<any>(apiUrl + id);
   }
 
   create(data) {
@@ -40,10 +23,7 @@ export class PrequalificationService {
     return this.http.post(
       'api/system-parameter/prequalification-create/',
 
-      body,
-      {
-        headers: this.headers,
-      }
+      body
     );
   }
 
@@ -51,15 +31,11 @@ export class PrequalificationService {
     const body = JSON.stringify(data);
     const url = 'api/system-parameter/prequalification-update/' + id + '/';
     // console.log('URL:' + url);
-    return this.http.put(url, body, {
-      headers: this.headers,
-    });
+    return this.http.put(url, body);
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/prequalification-delete/' + id + '/';
-    return this.http.delete(url, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete(url);
   }
 }

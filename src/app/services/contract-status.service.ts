@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+// import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
@@ -10,30 +10,31 @@ import { ContractStatus } from '../models/contract-status.model';
   providedIn: 'root',
 })
 export class ContractStatusService {
-  headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
+  // headers = new HttpHeaders({
+  //   'Content-Type': 'application/json',
+  // });
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  // constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(private http: HttpClient) {}
 
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  // getAuthHeaders() {
+  //   const token = this.cookieService.get('ttw-token');
+  //   return new HttpHeaders({
+  //     'Content-Type': 'application/json',
+  //     Authorization: `Token ${token}`,
+  //   });
+  // }
 
   getAll(apiUrl: string): Observable<ContractStatus[]> {
     return this.http.get<ContractStatus[]>(apiUrl, {
-      headers: this.getAuthHeaders(),
+      // headers: this.getAuthHeaders(),
     });
   }
 
   getOne(apiUrl: string, id: Number): Observable<ContractStatus> {
     // console.log('URL:' + apiUrl + id);
     return this.http.get<ContractStatus>(apiUrl + id, {
-      headers: this.getAuthHeaders(),
+      // headers: this.getAuthHeaders(),
     });
   }
 
@@ -43,10 +44,10 @@ export class ContractStatusService {
       // `${this.baseUrl}api/account/my-account/`,
       'api/system-parameter/contract-status-create/',
 
-      body,
-      {
-        headers: this.headers,
-      }
+      body
+      // {
+      //   headers: this.headers,
+      // }
     );
   }
 
@@ -57,17 +58,17 @@ export class ContractStatusService {
     return this.http.put(
       // `${this.baseUrl}api/account/my-account/`,
       url,
-      body,
-      {
-        headers: this.headers,
-      }
+      body
+      // {
+      //   headers: this.headers,
+      // }
     );
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/contract-status-delete/' + id + '/';
     return this.http.delete(url, {
-      headers: this.getAuthHeaders(),
+      // headers: this.getAuthHeaders(),
     });
   }
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
@@ -10,31 +9,15 @@ import { Complexity } from '../models/complexity.model';
   providedIn: 'root',
 })
 export class ComplexityService {
-  headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
-
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<Complexity[]> {
-    return this.http.get<Complexity[]>(apiUrl, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<Complexity[]>(apiUrl);
   }
 
   getOne(apiUrl: string, id: Number): Observable<Complexity> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<Complexity>(apiUrl + id, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<Complexity>(apiUrl + id);
   }
 
   create(data) {
@@ -42,10 +25,7 @@ export class ComplexityService {
     return this.http.post(
       'api/system-parameter/complexity-classification-create/',
 
-      body,
-      {
-        headers: this.headers,
-      }
+      body
     );
   }
 
@@ -54,16 +34,12 @@ export class ComplexityService {
     const url =
       'api/system-parameter/complexity-classification-update/' + id + '/';
     // console.log('URL:' + url);
-    return this.http.put(url, body, {
-      headers: this.headers,
-    });
+    return this.http.put(url, body);
   }
 
   delete(id: Number) {
     const url =
       'api/system-parameter/complexity-classification-delete/' + id + '/';
-    return this.http.delete(url, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete(url);
   }
 }

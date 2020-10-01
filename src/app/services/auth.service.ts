@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+// import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +12,9 @@ export class AuthService {
   });
 
   constructor(
-    private httpClient: HttpClient,
-    private cookieService: CookieService
-  ) {}
+    private httpClient: HttpClient
+  ) // private cookieService: CookieService
+  {}
 
   loginUser(authData) {
     const body = JSON.stringify(authData);
@@ -39,18 +39,18 @@ export class AuthService {
       // `${this.baseUrl}api/account/my-account/`,
       'api/account/my-account/',
 
-      body,
-      {
-        headers: this.headers,
-      }
+      body
+      // {
+      //   headers: this.headers,
+      // }
     );
   }
 
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  // getAuthHeaders() {
+  //   const token = this.cookieService.get('ttw-token');
+  //   return new HttpHeaders({
+  //     'Content-Type': 'application/json',
+  //     Authorization: `Token ${token}`,
+  //   });
+  // }
 }

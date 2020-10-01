@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
@@ -8,31 +7,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ContractorRoleTypeService {
-  headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-  });
-
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
-  getAuthHeaders() {
-    const token = this.cookieService.get('ttw-token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<any> {
-    return this.http.get<any>(apiUrl, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<any>(apiUrl);
   }
 
   getOne(apiUrl: string, id: Number): Observable<any> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<any>(apiUrl + id);
   }
 
   create(data) {
@@ -41,10 +24,7 @@ export class ContractorRoleTypeService {
       // `${this.baseUrl}api/account/my-account/`,
       'api/system-parameter/contractor-role-type-create/',
 
-      body,
-      {
-        headers: this.headers,
-      }
+      body
     );
   }
 
@@ -55,17 +35,12 @@ export class ContractorRoleTypeService {
     return this.http.put(
       // `${this.baseUrl}api/account/my-account/`,
       url,
-      body,
-      {
-        headers: this.headers,
-      }
+      body
     );
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/contractor-role-type-delete/' + id + '/';
-    return this.http.delete(url, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete(url);
   }
 }
