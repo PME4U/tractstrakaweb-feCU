@@ -118,6 +118,34 @@ export const routes: Routes = [
           ).then((m) => m.ProcurementFrameworksModule),
       },
       {
+        path: 'procurement-methods',
+        loadChildren: () =>
+          import(
+            './views/procurement-methods/procurement-methods.module'
+          ).then((m) => m.ProcurementMethodsModule),
+      },
+      {
+        path: 'procurement-strategies',
+        loadChildren: () =>
+          import(
+            './views/procurement-strategies/procurement-strategies.module'
+          ).then((m) => m.ProcurementStrategiesModule),
+      },
+      {
+        path: 'product-groups',
+        loadChildren: () =>
+          import('./views/product-groups/product-groups.module').then(
+            (m) => m.ProductGroupsModule
+          ),
+      },
+      {
+        path: 'product-types',
+        loadChildren: () =>
+          import('./views/product-types/product-types.module').then(
+            (m) => m.ProductTypesModule
+          ),
+      },
+      {
         path: 'risk-classifications',
         loadChildren: () =>
           import(
@@ -130,6 +158,11 @@ export const routes: Routes = [
           import('./views/role-types/role-types.module').then(
             (m) => m.RoleTypesModule
           ),
+      },
+      {
+        path: 'teams',
+        loadChildren: () =>
+          import('./views/teams/teams.module').then((m) => m.TeamsModule),
       },
       {
         path: 'user-access',

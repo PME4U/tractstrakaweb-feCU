@@ -7,7 +7,7 @@
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
-          <div *ngIf="tableData.length < 1 && isFetching">
+          <div *ngIf="isFetching">
             <div class="sk-fading-circle">
               <div class="sk-circle1 sk-circle"></div>
               <div class="sk-circle2 sk-circle"></div>
@@ -25,7 +25,7 @@
           </div>
           <div class="table-responsive">
             <table
-              *ngIf="tableData.length > 0 && !isFetching"
+              *ngIf="!isFetching"
               class="table table-sm table-hover"
             >
               <thead>
@@ -37,7 +37,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tableData">
+                <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.risk_classification }}</td>
                   <td>{{ row.risk_description }}</td>
                   <td class="text-center">

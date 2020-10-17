@@ -6,7 +6,11 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
 import { ContractorRoleTypeService } from '../../services/contractor-role-type.service';
-import { ContractorRoleTypeModel } from '../../models/contractor-role-type.model';
+import {
+  ContractorRoleType,
+  sortAlpha,
+} from '../../models/contractor-role-type.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contractor-type',
@@ -14,14 +18,21 @@ import { ContractorRoleTypeModel } from '../../models/contractor-role-type.model
   styleUrls: ['./contractor-role-types.component.css'],
 })
 export class ContractorRoleTypesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<ContractorRoleType[]>;
+  allData$: Observable<ContractorRoleType[]>;
+  activeData$: Observable<ContractorRoleType[]>;
+  inactiveData$: Observable<ContractorRoleType[]>;
+
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
   baseUrl: string = 'api/system-parameter/contractor-role-type-list/';
-  totalRecords: number;
+  // totalRecords: number;
+
+  activeOnly: string = 'All';
+
   isActive: boolean;
 
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;
@@ -32,7 +43,6 @@ export class ContractorRoleTypesComponent implements OnInit {
     private fb: FormBuilder,
     private contractorRoleTypeService: ContractorRoleTypeService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -43,22 +53,61 @@ export class ContractorRoleTypesComponent implements OnInit {
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    this.contractorRoleTypeService.getAll(apiUrl).subscribe(
-      (response: ContractorRoleTypeModel[]) => {
-        this.isFetching = false;
-        this.tableData = response;
+    const contractorRoleType$ = this.contractorRoleTypeService
+      .getAll(apiUrl)
+      .pipe(map((contractorRoleType) => contractorRoleType.sort(sortAlpha)));
 
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
+    this.isFetching = false;
+    // this.tableData$ = contractStatus$;
+
+    this.allData$ = contractorRoleType$;
+    this.activeData$ = contractorRoleType$.pipe(
+      map((contractorRoleType) =>
+        contractorRoleType.filter(
+          (contractorRoleType) => contractorRoleType.is_active === true
+        )
+      )
     );
+    this.inactiveData$ = contractorRoleType$.pipe(
+      map((contractorRoleType) =>
+        contractorRoleType.filter(
+          (contractorRoleType) => contractorRoleType.is_active === false
+        )
+      )
+    );
+    // this.tableData$ = this.allData$;
+    this.filterOnActive();
   }
+
+  activeFilterToggle() {
+    switch (this.activeOnly) {
+      case 'All': {
+        this.activeOnly = 'Active';
+        break;
+      }
+      case 'Active': {
+        this.activeOnly = 'Inactive';
+        break;
+      }
+      case 'Inactive': {
+        this.activeOnly = 'All';
+        break;
+      }
+    }
+    this.filterOnActive();
+  }
+
+  filterOnActive() {
+    if (this.activeOnly === 'All') {
+      this.tableData$ = this.allData$;
+    } else if (this.activeOnly === 'Active') {
+      this.tableData$ = this.activeData$;
+    } else {
+      this.tableData$ = this.inactiveData$;
+    }
+  }
+
+  filterOnCurrent() {}
 
   createForm() {
     this.maintForm = this.fb.group({

@@ -7,7 +7,6 @@
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
-          <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
           <div *ngIf="isFetching">
             <div class="sk-fading-circle">
               <div class="sk-circle1 sk-circle"></div>
@@ -24,10 +23,6 @@
               <div class="sk-circle12 sk-circle"></div>
             </div>
           </div>
-          <!-- <table
-            *ngIf="tableData.length > 0 && !isFetching"
-            class="table table-sm table-hover"
-          > -->
           <div class="table-responsive">
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
@@ -38,7 +33,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tableData; let i = index">
+                <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.contractor_role_type }}</td>
                   <td class="text-center">
                     <span

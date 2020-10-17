@@ -29,14 +29,14 @@ export class ContractStatusComponent implements OnInit {
   editing: boolean;
   isFetching: boolean = false;
   baseUrl: string = 'api/system-parameter/contract-status-list/';
-  totalRecords: number;
-  next: string;
-  previous: string;
-  usePagination: boolean = false;
-  limit: number;
-  offset: number;
-  pages: any = [];
-  page: number = 1;
+  // totalRecords: number;
+  // next: string;
+  // previous: string;
+  // usePagination: boolean = false;
+  // limit: number;
+  // offset: number;
+  // pages: any = [];
+  // page: number = 1;
 
   activeOnly: string = 'All';
 
@@ -118,6 +118,10 @@ export class ContractStatusComponent implements OnInit {
 
   filterOnCurrent() {}
 
+  applyFilter(filterValue: string) {
+    // this.tableData$.filter = filterValue.trim().toLocaleLowerCase();
+  }
+
   createForm() {
     this.maintForm = this.fb.group({
       contract_status: ['', [Validators.required]],
@@ -136,6 +140,7 @@ export class ContractStatusComponent implements OnInit {
     this.maintModal.show();
     this.maintForm.patchValue({
       in_progress: false,
+      is_current: false,
       is_active: true,
     });
   }

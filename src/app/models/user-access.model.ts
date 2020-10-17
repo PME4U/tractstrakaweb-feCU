@@ -4,7 +4,8 @@ export interface UserAccessModel {
   is_active: boolean;
   date_added: Date;
   last_logged_in: Date;
-  user_type: string;
+  user_type: any;
+  team: any;
   companies: string;
   forward_plans: string;
   processes: string;

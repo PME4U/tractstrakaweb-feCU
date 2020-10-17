@@ -39,7 +39,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of tableData; let i = index">
+                <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.contractor_type }}</td>
                   <td>{{ row.contractor_type_description }}</td>
                   <td class="text-center">

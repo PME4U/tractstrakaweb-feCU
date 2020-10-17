@@ -28,7 +28,7 @@ export const navItems: INavData[] = [
   {
     name: 'Purchase Orders',
     url: '/purchase-orders',
-    icon: 'icon-note',
+    icon: 'cil-dollar',
   },
   {
     title: true,
@@ -57,14 +57,30 @@ export const navItems: INavData[] = [
     icon: 'cil-factory',
     children: [
       {
-        name: 'Projects',
-        url: '/projectss',
-        icon: 'cil-store',
+        name: 'Business Unit Levels',
+        url: '/business-unit-levels',
+        icon: 'cil-chevron-right',
       },
       {
-        name: 'Supplier Contacts',
-        url: '/supplier-contacts',
-        icon: 'cil-user-female',
+        name: 'Business Units',
+        url: '/business-units',
+        icon: 'cil-chevron-right',
+      },{
+        name: 'Categories',
+        url: '/categories',
+        icon: 'cil-chevron-right',
+      },{
+        name: 'Sub-categories',
+        url: '/sub-categories',
+        icon: 'cil-chevron-right',
+      },{
+        name: 'Cost Centres',
+        url: '/cost-centres',
+        icon: 'cil-chevron-right',
+      },{
+        name: 'Projects',
+        url: '/projects',
+        icon: 'cil-chevron-right',
       },
     ],
   },
@@ -85,9 +101,9 @@ export const navItems: INavData[] = [
     name: 'Settings',
   },
   {
-    name: 'System Admin',
+    name: 'System Settings',
     url: '/system-admin',
-    icon: 'icon-settings',
+    icon: 'cil-applications-settings',
     children: [
       {
         name: 'Contract Settings',
@@ -95,24 +111,24 @@ export const navItems: INavData[] = [
         icon: 'icon-settings',
         children: [
           {
+            name: 'Contractor Role Types',
+            url: '/contractor-role-types',
+            icon: 'cil-chevron-right',
+          },
+          {
             name: 'Contract Status',
             url: '/contract-status',
-            icon: 'cil-graph',
+            icon: 'cil-chevron-right',
           },
           {
             name: 'Contract Types',
             url: '/contract-types',
-            icon: 'cil-signpost',
+            icon: 'cil-chevron-right',
           },
           {
             name: 'Contractor Types',
             url: '/contractor-types',
-            icon: 'cil-signpost',
-          },
-          {
-            name: 'Contractor Role Types',
-            url: '/contractor-role-types',
-            icon: 'cil-signpost',
+            icon: 'cil-chevron-right',
           },
         ],
       },
@@ -124,22 +140,22 @@ export const navItems: INavData[] = [
           {
             name: 'Capabilities',
             url: '/capabilities',
-            icon: 'cil-badge',
-          },
-          {
-            name: 'Prequalification',
-            url: '/prequalifications',
-            icon: 'cil-badge',
+            icon: 'cil-chevron-right',
           },
           {
             name: 'Cost Centres',
             url: '/cost-centres',
-            icon: 'cil-badge',
+            icon: 'cil-chevron-right',
+          },
+          {
+            name: 'Prequalification',
+            url: '/prequalifications',
+            icon: 'cil-chevron-right',
           },
           {
             name: 'Risk Classifications',
             url: '/risk-classifications',
-            icon: 'cil-badge',
+            icon: 'cil-chevron-right',
           },
         ],
       },
@@ -151,7 +167,7 @@ export const navItems: INavData[] = [
           {
             name: 'Role Type',
             url: '/role-types',
-            icon: 'cil-graph',
+            icon: 'cil-chevron-right',
           },
         ],
       },
@@ -161,24 +177,34 @@ export const navItems: INavData[] = [
         icon: 'icon-settings',
         children: [
           {
-            name: 'Process Statuses',
-            url: '/process-statuses',
-            icon: 'cil-graph',
-          },
-          {
-            name: 'Process Types',
-            url: '/process-types',
-            icon: 'cil-signpost',
+            name: 'Complexity',
+            url: '/complexities',
+            icon: 'cil-chevron-right',
           },
           {
             name: 'Frameworks',
             url: '/procurement-frameworks',
-            icon: 'cil-signpost',
+            icon: 'cil-chevron-right',
           },
           {
-            name: 'Complexity',
-            url: '/complexities',
-            icon: 'cil-signpost',
+            name: 'Process Statuses',
+            url: '/process-statuses',
+            icon: 'cil-chevron-right',
+          },
+          {
+            name: 'Process Types',
+            url: '/process-types',
+            icon: 'cil-chevron-right',
+          },
+          {
+            name: 'Strategies',
+            url: '/procurement-strategies',
+            icon: 'cil-chevron-right',
+          },
+          {
+            name: 'Methodologies',
+            url: '/procurement-methods',
+            icon: 'cil-chevron-right',
           },
         ],
       },
@@ -188,9 +214,19 @@ export const navItems: INavData[] = [
         icon: 'icon-settings',
         children: [
           {
+            name: 'Product Groups',
+            url: '/product-groups',
+            icon: 'cil-chevron-right',
+          },
+          {
+            name: 'Product Type',
+            url: '/product-types',
+            icon: 'cil-chevron-right',
+          },
+          {
             name: 'Units of Measure',
             url: '/unit-of-measure',
-            icon: 'cil-graph',
+            icon: 'cil-chevron-right',
           },
         ],
       },
@@ -202,21 +238,26 @@ export const navItems: INavData[] = [
           {
             name: 'Contract Status',
             url: '/contract-status',
-            icon: 'cil-graph',
+            icon: 'cil-chevron-right',
           },
         ],
       },
+    ],
+  },
+
+  {
+    title: true,
+    name: 'Monitoring',
+  },
+  {
+    name: 'System Monitoring',
+    url: '/system-settings',
+    icon: 'cis-search',
+    children: [
       {
-        name: 'System Monitoring',
-        url: '/system-settings',
-        icon: 'cis-search',
-        children: [
-          {
-            name: 'Audit Trail',
-            url: '/audit-trail',
-            icon: 'cis-magnifying-glass',
-          },
-        ],
+        name: 'Audit Trail',
+        url: '/audit-trail',
+        icon: 'cis-magnifying-glass',
       },
     ],
   },
@@ -231,13 +272,13 @@ export const navItems: INavData[] = [
     icon: 'cil-group',
     children: [
       {
-        name: 'User Accounts',
-        url: '/user-accounts',
-        icon: 'cil-user',
-      },
-      {
         name: 'User Access',
         url: '/user-access',
+        icon: 'cil-lock-unlocked',
+      },
+      {
+        name: 'User Teams',
+        url: '/teams',
         icon: 'cil-lock-unlocked',
       },
     ],

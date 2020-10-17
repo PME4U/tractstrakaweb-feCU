@@ -16,6 +16,10 @@ import { Capability, sortAlpha } from '../../models/capability.model';
 })
 export class CapabilitiesComponent implements OnInit {
   tableData$: Observable<Capability[]>;
+  allData$: Observable<Capability[]>;
+  activeData$: Observable<Capability[]>;
+  inactiveData$: Observable<Capability[]>;
+
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -31,22 +35,20 @@ export class CapabilitiesComponent implements OnInit {
   pages: any = [];
   page: number = 1;
 
+  activeOnly: string = 'All';
+
   isCurrent: boolean;
   inProgress: boolean;
   isActive: boolean;
 
-  // url = new URL(this.baseUrl);
-
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;
   @ViewChild('deleteModal', { static: false })
   public deleteModal: ModalDirective;
-  // confirmDialogService: any;
 
   constructor(
     private fb: FormBuilder,
     private capabilityService: CapabilityService
   ) {
-    // this.tableData$ = new Array<any>();
     this.createForm();
   }
 
@@ -55,16 +57,56 @@ export class CapabilitiesComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    // let splitUrl: any = [];
-
     this.isFetching = true;
 
-    const capalities$ = this.capabilityService
+    const capabilities$ = this.capabilityService
       .getAll(apiUrl)
       .pipe(map((capability) => capability.sort(sortAlpha)));
 
     this.isFetching = false;
-    this.tableData$ = capalities$;
+    // this.tableData$ = capalities$;
+
+    this.allData$ = capabilities$;
+    this.activeData$ = capabilities$.pipe(
+      map((capabilities) =>
+        capabilities.filter((capability) => capability.is_active === true)
+      )
+    );
+    this.inactiveData$ = capabilities$.pipe(
+      map((capabilities) =>
+        capabilities.filter((capability) => capability.is_active === false)
+      )
+    );
+    // this.tableData$ = this.allData$;
+    this.filterOnActive();
+  }
+
+  activeFilterToggle() {
+    switch (this.activeOnly) {
+      case 'All': {
+        this.activeOnly = 'Active';
+        break;
+      }
+      case 'Active': {
+        this.activeOnly = 'Inactive';
+        break;
+      }
+      case 'Inactive': {
+        this.activeOnly = 'All';
+        break;
+      }
+    }
+    this.filterOnActive();
+  }
+
+  filterOnActive() {
+    if (this.activeOnly === 'All') {
+      this.tableData$ = this.allData$;
+    } else if (this.activeOnly === 'Active') {
+      this.tableData$ = this.activeData$;
+    } else {
+      this.tableData$ = this.inactiveData$;
+    }
   }
 
   createForm() {

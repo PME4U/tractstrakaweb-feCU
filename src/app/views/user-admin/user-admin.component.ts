@@ -3,12 +3,17 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+
 import {
   UserAccessService,
   TableData,
 } from '../../services/user-admin.service';
+import { TeamService } from '../../services/team.service';
+
 import { UserAccessModel } from '../../models/user-access.model';
-import { ɵEmptyOutletComponent } from '@angular/router';
+import { Team, sortAlpha } from '../../models/team.model';
 
 @Component({
   selector: 'app-contract-type',
@@ -17,9 +22,11 @@ import { ɵEmptyOutletComponent } from '@angular/router';
 })
 export class UserAdminComponent implements OnInit {
   userAccessModels: UserAccessModel[];
+
   error: any;
   maintForm: FormGroup;
   recordTitle: string;
+
   id = null;
   editing: boolean;
   isFetching: boolean = false;
@@ -27,6 +34,9 @@ export class UserAdminComponent implements OnInit {
   totalRecords: number;
   isActive: boolean;
   searchField: string;
+
+  public team$: Observable<Team[]>;
+
   public disableSearch = true;
   public searchMessage = 'Select field to search';
   public data: TableData;
@@ -38,7 +48,8 @@ export class UserAdminComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private userAccessService: UserAccessService
+    private userAccessService: UserAccessService,
+    private teamService: TeamService
   ) {
     this.data = new Array<any>();
     this.createForm();
@@ -47,14 +58,6 @@ export class UserAdminComponent implements OnInit {
   ngOnInit(): void {
     this.getTableData(this.baseUrl);
   }
-
-  // public toInt(num: string) {
-  //   return +num;
-  // }
-
-  // public sortByWordLength = (a: any) => {
-  //   return a.email.length;
-  // };
 
   getTableData(apiUrl: string) {
     this.isFetching = true;
@@ -73,6 +76,7 @@ export class UserAdminComponent implements OnInit {
   createForm() {
     this.maintForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      team: ['', [Validators.required, Validators.min(1)]],
       is_active: [true, [Validators.required]],
       user_type: ['No Access', [Validators.required]],
       companies: ['No Access', [Validators.required]],
@@ -98,6 +102,7 @@ export class UserAdminComponent implements OnInit {
 
   editRecord(record) {
     this.isFetching = true;
+    this.getTeams();
     this.editing = true;
     this.maintForm.get('email').disable();
     this.userAccessService.getOne(this.baseUrl, record.id).subscribe(
@@ -109,6 +114,7 @@ export class UserAdminComponent implements OnInit {
 
         this.maintForm.patchValue({
           email: response.email,
+          team: response.team.id,
           is_active: response.is_active,
           user_type: response.user_type,
           companies: response.companies,
@@ -164,6 +170,12 @@ export class UserAdminComponent implements OnInit {
     this.id = undefined;
     this.maintForm.reset();
     this.maintModal.hide();
+  }
+
+  getTeams() {
+    this.team$ = this.teamService
+      .getAll('api/system-parameter/team-list/')
+      .pipe(map((team) => team.sort(sortAlpha)));
   }
 
   closeModal() {

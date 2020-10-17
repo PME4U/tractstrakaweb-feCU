@@ -2,8 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { RoleTypeService } from '../../services/role-type.service';
+import { RoleType, sortAlpha } from '../../models/role-type.model';
 
 @Component({
   selector: 'app-role-types',
@@ -11,7 +14,7 @@ import { RoleTypeService } from '../../services/role-type.service';
   styleUrls: ['./role-types.component.css'],
 })
 export class RoleTypesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<RoleType[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -19,13 +22,6 @@ export class RoleTypesComponent implements OnInit {
   isFetching: boolean = false;
   baseUrl: string = 'api/system-parameter/role-type-list/';
   totalRecords: number;
-  next: string;
-  previous: string;
-  usePagination: boolean = false;
-  limit: number;
-  offset: number;
-  pages: any = [];
-  page: number = 1;
 
   isCurrent: boolean;
   inProgress: boolean;
@@ -42,7 +38,6 @@ export class RoleTypesComponent implements OnInit {
     private fb: FormBuilder,
     private roleTypeService: RoleTypeService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -51,26 +46,15 @@ export class RoleTypesComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    // let splitUrl: any = [];
-
     this.isFetching = true;
 
-    this.roleTypeService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
+    // const processStatus$ = this.processStatusService.getAll(apiUrl)
+    const roleType$ = this.roleTypeService
+      .getAll(apiUrl)
+      .pipe(map((roleType) => roleType.sort(sortAlpha)));
 
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = roleType$;
   }
 
   createForm() {

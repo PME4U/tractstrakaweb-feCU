@@ -2,9 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 
 import { ProcessTypeService } from '../../services/process-type.service';
-import { ProcessTypeModel } from '../../models/process-type.model';
+import { ProcessType, sortAlpha } from '../../models/process-type.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-process-types',
@@ -12,7 +14,7 @@ import { ProcessTypeModel } from '../../models/process-type.model';
   styleUrls: ['./process-types.component.css'],
 })
 export class ProcessTypesComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<ProcessType[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -31,7 +33,6 @@ export class ProcessTypesComponent implements OnInit {
     private fb: FormBuilder,
     private processTypeService: ProcessTypeService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -42,21 +43,13 @@ export class ProcessTypesComponent implements OnInit {
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    this.processTypeService.getAll(apiUrl).subscribe(
-      (response: ProcessTypeModel[]) => {
-        this.isFetching = false;
-        this.tableData = response;
+    // const processStatus$ = this.processStatusService.getAll(apiUrl)
+    const processTypeService$ = this.processTypeService
+      .getAll(apiUrl)
+      .pipe(map((processTypeService) => processTypeService.sort(sortAlpha)));
 
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = processTypeService$;
   }
 
   createForm() {

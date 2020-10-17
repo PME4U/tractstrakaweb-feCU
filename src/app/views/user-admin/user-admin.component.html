@@ -34,6 +34,7 @@
           >
             <option value="Select Field">Select Field</option>
             <option value="email">Username</option>
+            <option value="email">Team</option>
             <option value="user_type">User Type</option>
             <option value="companies">Companies</option>
             <option value="forward_plans">Forward Plans</option>
@@ -78,7 +79,7 @@
       >
         <thead>
           <tr>
-            <th style="width: 10%;">
+            <th style="width: 10%">
               <mfDefaultSorter by="email" #sortEmail>
                 Username
                 <span
@@ -93,7 +94,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="is_active" #sortIsActive>
                 Is Active
                 <span
@@ -108,7 +109,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%">
               <mfDefaultSorter by="user_type" #sortUserType>
                 User Type
                 <span
@@ -123,7 +124,22 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 10%">
+              <mfDefaultSorter by="team" #sortTeam>
+                Team
+                <span
+                  *ngIf="sortTeam.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortTeam.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="companies" #sortCompanies>
                 Companies
                 <span
@@ -139,7 +155,7 @@
               </mfDefaultSorter>
             </th>
 
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="forward_plans" #sortForwardPlans>
                 Forward Plans
                 <span
@@ -154,7 +170,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="processes" #sortProcesses>
                 Processes
                 <span
@@ -169,7 +185,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="contracts" #sortContracts>
                 Contracts
                 <span
@@ -184,7 +200,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="purchase_orders" #sortPurchaseOrders>
                 Purchase Orders
                 <span
@@ -199,7 +215,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="tasks" #sortTasks>
                 Tasks
                 <span
@@ -214,7 +230,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="people" #sortPeople>
                 People
                 <span
@@ -229,7 +245,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="system_params" #sortSystemAdmin>
                 System Admin
                 <span
@@ -244,7 +260,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 6%;" class="text-center">
+            <th style="width: 6%" class="text-center">
               <mfDefaultSorter by="user_admin" #sortUserAdmin>
                 User Admin
                 <span
@@ -259,9 +275,7 @@
                 ></span>
               </mfDefaultSorter>
             </th>
-            <th style="width: 10%;" class="text-center">
-              Actions
-            </th>
+            <th style="width: 10%" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -273,7 +287,8 @@
               <span *ngIf="item.is_active" class="cil-check table-check"></span>
             </td>
             <!-- <td>{{ item.is_active }}</td> -->
-            <td class="text-center">{{ item.user_type }}</td>
+            <td>{{ item.user_type }}</td>
+            <td>{{ item.team?.team }}</td>
             <td class="text-center">{{ item.companies }}</td>
             <td class="text-center">{{ item.forward_plans }}</td>
             <td class="text-center">{{ item.processes }}</td>
@@ -396,14 +411,14 @@
             </div>
 
             <div class="form-group row">
-              <div class="col-sm-12">
+              <!-- <div class="col-sm-12">
                 <small class="text-muted"
                   >Select an access level for each function group. The levels
                   range from no access to delete, each access right inlcudes the
                   right above it, so someone with Delete access can read,
                   modify, create and delete records.</small
                 >
-              </div>
+              </div> -->
               <label class="col-md-3 col-form-label" for="select3"
                 >User Type</label
               >
@@ -418,6 +433,23 @@
                   <option value="Not Defined">Not Defined</option>
                   <option value="Buyer">Buyer</option>
                   <option value="Supplier">Supplier</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-md-3 col-form-label" for="team">Team</label>
+              <div class="col-md-9">
+                <select
+                  id="team"
+                  name="team"
+                  class="form-control form-control-sm"
+                  formControlName="team"
+                >
+                  <option value="0">Please Select</option>
+                  <option *ngFor="let team of team$ | async" [value]="team.id">
+                    {{ team.team }}
+                  </option>
                 </select>
               </div>
             </div>

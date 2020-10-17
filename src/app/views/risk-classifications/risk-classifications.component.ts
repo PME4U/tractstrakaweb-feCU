@@ -2,8 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs/Rx';
+import { map } from 'rxjs/operators';
 
 import { RiskClassificationService } from '../../services/risk-classification.service';
+import { RiskClassification, sortAlpha } from '../../models/risk-classification.model';
 
 @Component({
   selector: 'app-prequalifications',
@@ -11,7 +14,7 @@ import { RiskClassificationService } from '../../services/risk-classification.se
   styleUrls: ['./risk-classifications.component.css'],
 })
 export class RiskClassificationsComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<RiskClassification[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -19,13 +22,6 @@ export class RiskClassificationsComponent implements OnInit {
   isFetching: boolean = false;
   baseUrl: string = 'api/system-parameter/risk-classification-list/';
   totalRecords: number;
-  next: string;
-  previous: string;
-  usePagination: boolean = false;
-  limit: number;
-  offset: number;
-  pages: any = [];
-  page: number = 1;
 
   isCurrent: boolean;
   inProgress: boolean;
@@ -42,7 +38,6 @@ export class RiskClassificationsComponent implements OnInit {
     private fb: FormBuilder,
     private riskClassificationService: RiskClassificationService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -51,26 +46,15 @@ export class RiskClassificationsComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    // let splitUrl: any = [];
-
     this.isFetching = true;
 
-    this.riskClassificationService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
+    // const processStatus$ = this.processStatusService.getAll(apiUrl)
+    const riskClassification$ = this.riskClassificationService
+      .getAll(apiUrl)
+      .pipe(map((riskClassification) => riskClassification.sort(sortAlpha)));
 
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = riskClassification$;
   }
 
   createForm() {

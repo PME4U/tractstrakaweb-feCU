@@ -6,6 +6,9 @@
           <i class="fa fa-align-justify"></i> Capabilities
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
+        <div>
+          <small class="text-muted">Click headings to toggle filters.</small>
+        </div>
         <div class="card-body">
           <div *ngIf="isFetching">
             <div class="sk-fading-circle">
@@ -28,15 +31,18 @@
               <thead>
                 <tr>
                   <th>Capability</th>
-                  <th>Description</th>
-                  <th class="text-center">Active</th>
+                  <th
+                    class="text-center clickable"
+                    (click)="activeFilterToggle()"
+                  >
+                    Active
+                  </th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.capability }}</td>
-                  <td>{{ row.description }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"
@@ -101,9 +107,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="maintModalLabel">
-          Capability Maintenance
-        </h5>
+        <h5 class="modal-title" id="maintModalLabel">Capability Maintenance</h5>
         <button
           type="button"
           class="close"

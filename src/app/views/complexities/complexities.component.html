@@ -28,7 +28,6 @@
               <thead>
                 <tr>
                   <th>Completxity</th>
-                  <th>Description</th>
                   <th class="text-center">Active</th>
                   <th class="text-center">Action</th>
                 </tr>
@@ -36,7 +35,6 @@
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
                   <td>{{ row.complexity_classification }}</td>
-                  <td>{{ row.complexity_description }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"

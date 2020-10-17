@@ -27,13 +27,30 @@
             </div>
           </div>
           <div class="table-responsive">
+            <div class="row mb-3">
+              <div class="col-md-4 offset-md-8">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"
+                      ><i class="fa fa-search"></i
+                    ></span>
+                  </div>
+                  <input
+                    (keyup)="applyFilter($event.target.value)"
+                    type="text"
+                    class="form-control"
+                    placeholder="Search"
+                  />
+                </div>
+              </div>
+            </div>
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
                   <th>Contract Status</th>
                   <th class="text-center">Status Sequence</th>
-                  <th class="text-center clickable">In Progress</th>
-                  <th class="text-center clickable">Contract Current</th>
+                  <th class="text-center">In Progress</th>
+                  <th class="text-center">Contract Current</th>
                   <th
                     class="text-center clickable"
                     (click)="activeFilterToggle()"

@@ -2,8 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 
 import { UnitsOfMeasureService } from '../../services/units-of-measure.service';
+import { UnitsOfMeasure, sortAlpha } from '../../models/uom.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-capabilities',
@@ -11,7 +14,7 @@ import { UnitsOfMeasureService } from '../../services/units-of-measure.service';
   styleUrls: ['./units-of-measure.component.css'],
 })
 export class UnitsOfMeasureComponent implements OnInit {
-  tableData: any = [];
+  tableData$: Observable<UnitsOfMeasure[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
@@ -19,13 +22,6 @@ export class UnitsOfMeasureComponent implements OnInit {
   isFetching: boolean = false;
   baseUrl: string = 'api/system-parameter/unit-of-measure-list/';
   totalRecords: number;
-  next: string;
-  previous: string;
-  usePagination: boolean = false;
-  limit: number;
-  offset: number;
-  pages: any = [];
-  page: number = 1;
 
   isCurrent: boolean;
   inProgress: boolean;
@@ -42,7 +38,6 @@ export class UnitsOfMeasureComponent implements OnInit {
     private fb: FormBuilder,
     private unitsOfMeasureService: UnitsOfMeasureService
   ) {
-    this.tableData = new Array<any>();
     this.createForm();
   }
 
@@ -51,26 +46,15 @@ export class UnitsOfMeasureComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    // let splitUrl: any = [];
-
     this.isFetching = true;
 
-    this.unitsOfMeasureService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
+    // const processStatus$ = this.processStatusService.getAll(apiUrl)
+    const unitsOfMeasure$ = this.unitsOfMeasureService
+      .getAll(apiUrl)
+      .pipe(map((unitsOfMeasure) => unitsOfMeasure.sort(sortAlpha)));
 
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.isFetching = false;
+    this.tableData$ = unitsOfMeasure$;
   }
 
   createForm() {

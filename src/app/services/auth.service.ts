@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 // import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
@@ -12,9 +12,11 @@ export class AuthService {
   });
 
   constructor(
-    private httpClient: HttpClient
-  ) // private cookieService: CookieService
-  {}
+    private httpClient: HttpClient,
+    handler: HttpBackend // private cookieService: CookieService
+  ) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   loginUser(authData) {
     const body = JSON.stringify(authData);
