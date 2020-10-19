@@ -6,22 +6,22 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ProductTypeService } from '../../services/product-type.service';
-import { ProductType, sortAlpha } from '../../models/product-type.model';
+import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
+import { BusinessUnitLevel, sortAlpha } from '../../models/business-unit-level.model';
 
-import { ProductGroupService } from '../../services/product-group.service';
-import { ProductGroup, sortAlphaPG } from '../../models/product-group.model';
+import { BusinessUnitService } from '../../services/business-unit.service';
+import { BusinessUnit, sortAlphaBU } from '../../models/business-unit.model';
 
 @Component({
-  selector: 'app-teams',
-  templateUrl: './product-types.component.html',
-  styleUrls: ['./product-types.component.css'],
+  selector: 'app-business-unit',
+  templateUrl: './business-units.component.html',
+  styleUrls: ['./business-units.component.css'],
 })
-export class ProductTypesComponent implements OnInit {
-  tableData$: Observable<ProductType[]>;
-  allData$: Observable<ProductType[]>;
-  activeData$: Observable<ProductType[]>;
-  inactiveData$: Observable<ProductType[]>;
+export class BusinessUnitsComponent implements OnInit {
+  tableData$: Observable<BusinessUnit[]>;
+  allData$: Observable<BusinessUnit[]>;
+  activeData$: Observable<BusinessUnit[]>;
+  inactiveData$: Observable<BusinessUnit[]>;
 
   maintForm: FormGroup;
   recordTitle: string;
@@ -29,7 +29,7 @@ export class ProductTypesComponent implements OnInit {
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/product-type-list/';
+  baseUrl: string = 'api/system-parameter/business-unit-list/';
 
   activeOnly: string = 'All';
 
@@ -37,7 +37,8 @@ export class ProductTypesComponent implements OnInit {
   inProgress: boolean;
   isActive: boolean;
 
-  public productGroups$: Observable<ProductGroup[]>;
+  public businessUnitLevels$: Observable<BusinessUnitLevel[]>;
+  public parentBusinessUnits$: Observable<BusinessUnit[]>;
 
   // url = new URL(this.baseUrl);
 
@@ -48,8 +49,8 @@ export class ProductTypesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private productTypeService: ProductTypeService,
-    private productGroupService: ProductGroupService
+    private businessUnitService: BusinessUnitService,
+    private businessUnitLevelService: BusinessUnitLevelService
   ) {
     this.createForm();
   }
@@ -61,25 +62,25 @@ export class ProductTypesComponent implements OnInit {
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    const productType$ = this.productTypeService
+    const businessUnits$ = this.businessUnitService
       .getAll(apiUrl)
-      .pipe(map((productType) => productType.sort(sortAlpha)));
+      .pipe(map((businessUnit) => businessUnit.sort(sortAlphaBU)));
 
     this.isFetching = false;
     // this.tableData$ = contractStatus$;
 
-    this.allData$ = productType$;
-    this.activeData$ = productType$.pipe(
-      map((product_types) =>
-      product_types.filter(
-          (product_type) => product_type.is_active === true
+    this.allData$ = businessUnits$;
+    this.activeData$ = businessUnits$.pipe(
+      map((business_units) =>
+      business_units.filter(
+          (business_unit) => business_unit.is_active === true
         )
       )
     );
-    this.inactiveData$ = productType$.pipe(
-      map((product_types) =>
-      product_types.filter(
-          (product_type) => product_type.is_active === false
+    this.inactiveData$ = businessUnits$.pipe(
+      map((business_units) =>
+      business_units.filter(
+          (business_unit) => business_unit.is_active === false
         )
       )
     );
@@ -123,16 +124,18 @@ export class ProductTypesComponent implements OnInit {
 
   createForm() {
     this.maintForm = this.fb.group({
-      product_group: ['', [Validators.required]],
-      product_type: ['', [Validators.required]],
-      product_type_description: ['', []],
+      business_unit_name: ['', [Validators.required]],
+      business_unit_level: ['', [Validators.required]],
+      parent_business_unit: ['', []],
+      business_unit_description: ['', []],
       is_active: [true, [Validators.required]],
     });
   }
 
   addRecord() {
     this.maintModal.show();
-    this.getProductGroups();
+    this.getBusinessUnitLevels();
+    this.getParentBusinessUnits();
     this.maintForm.patchValue({
       is_active: true,
     });
@@ -141,18 +144,18 @@ export class ProductTypesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.getProductGroups();
-    this.productTypeService.getOne(this.baseUrl, record.id).subscribe(
+    this.getBusinessUnitLevels();
+    this.getParentBusinessUnits();
+    this.businessUnitService.getOne(this.baseUrl, record.id).subscribe(
       (response) => {
         this.isFetching = false;
-
         this.id = response.id;
         this.isActive = response.is_active;
-        console.log(response.product_group);
         this.maintForm.patchValue({
-          product_group: response.product_group.id,
-          product_type: response.product_type,
-          product_type_description: response.product_type_description,
+          business_unit_name: response.business_unit_name,
+          business_unit_level: response.business_unit_level?.id,
+          parent_business_unit: response.parent_business_unit?.id,
+          business_unit_description: response.business_unit_description,
           is_active: response.is_active,
         });
         // console.log(response);
@@ -173,7 +176,7 @@ export class ProductTypesComponent implements OnInit {
     this.deleteModal.show();
   }
   deleteRecord() {
-    this.productTypeService.delete(this.id).subscribe((result) => {
+    this.businessUnitService.delete(this.id).subscribe((result) => {
       this.getTableData(this.baseUrl);
     });
     this.deleteModal.hide();
@@ -181,14 +184,14 @@ export class ProductTypesComponent implements OnInit {
 
   saveRecord() {
     if (this.editing) {
-      this.productTypeService
+      this.businessUnitService
         .update(this.id, this.maintForm.value)
         .subscribe((result) => {
           this.getTableData(this.baseUrl);
         });
       this.editing = false;
     } else {
-      this.productTypeService
+      this.businessUnitService
         .create(this.maintForm.value)
         .subscribe((result) => {
           this.getTableData(this.baseUrl);
@@ -199,10 +202,16 @@ export class ProductTypesComponent implements OnInit {
     this.maintModal.hide();
   }
 
-  getProductGroups() {
-    this.productGroups$ = this.productGroupService
-      .getAll('api/system-parameter/product-group-list/')
-      .pipe(map((productGroup) => productGroup.sort(sortAlphaPG)));
+  getBusinessUnitLevels() {
+    this.businessUnitLevels$ = this.businessUnitLevelService
+      .getAll('api/system-parameter/business-unit-level-list/')
+      .pipe(map((businessUnitLevel) => businessUnitLevel.sort(sortAlpha)));
+  }
+
+  getParentBusinessUnits() {
+    this.parentBusinessUnits$ = this.businessUnitService
+      .getAll('api/system-parameter/business-unit-list/')
+      .pipe(map((businessUnit) => businessUnit.sort(sortAlphaBU)));
   }
 
   closeModal() {

@@ -114,7 +114,7 @@ export class UserAdminComponent implements OnInit {
 
         this.maintForm.patchValue({
           email: response.email,
-          team: response.team.id,
+          team: response?.team?.id,
           is_active: response.is_active,
           user_type: response.user_type,
           companies: response.companies,

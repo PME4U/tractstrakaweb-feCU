@@ -41,6 +41,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'business-units',
+        loadChildren: () =>
+          import('./views/business-units/business-units.module').then(
+            (m) => m.BusinessUnitsModule
+          ),
+      },{
+        path: 'business-unit-levels',
+        loadChildren: () =>
+          import('./views/business-unit-levels/business-unit-levels.module').then(
+            (m) => m.BusinessUnitLevelsModule
+          ),
+      },{
         path: 'capabilities',
         loadChildren: () =>
           import('./views/capabilities/capabilities.module').then(

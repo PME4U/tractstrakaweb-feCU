@@ -57,29 +57,8 @@ export const navItems: INavData[] = [
     icon: 'cil-factory',
     children: [
       {
-        name: 'Business Unit Levels',
-        url: '/business-unit-levels',
-        icon: 'cil-chevron-right',
-      },
-      {
         name: 'Business Units',
         url: '/business-units',
-        icon: 'cil-chevron-right',
-      },{
-        name: 'Categories',
-        url: '/categories',
-        icon: 'cil-chevron-right',
-      },{
-        name: 'Sub-categories',
-        url: '/sub-categories',
-        icon: 'cil-chevron-right',
-      },{
-        name: 'Cost Centres',
-        url: '/cost-centres',
-        icon: 'cil-chevron-right',
-      },{
-        name: 'Projects',
-        url: '/projects',
         icon: 'cil-chevron-right',
       },
     ],
@@ -90,9 +69,19 @@ export const navItems: INavData[] = [
     icon: 'cil-group',
     children: [
       {
-        name: 'Person',
-        url: '/Person',
-        icon: 'cil-user',
+        name: 'All People',
+        url: '/all-people',
+        icon: 'cil-chevron-right',
+      },
+      {
+        name: 'All Buyers',
+        url: '/all-buyers',
+        icon: 'cil-chevron-right',
+      },
+      {
+        name: 'All Suppliers',
+        url: '/all-suppliers',
+        icon: 'cil-chevron-right',
       },
     ],
   },
@@ -111,11 +100,6 @@ export const navItems: INavData[] = [
         icon: 'icon-settings',
         children: [
           {
-            name: 'Contractor Role Types',
-            url: '/contractor-role-types',
-            icon: 'cil-chevron-right',
-          },
-          {
             name: 'Contract Status',
             url: '/contract-status',
             icon: 'cil-chevron-right',
@@ -125,31 +109,37 @@ export const navItems: INavData[] = [
             url: '/contract-types',
             icon: 'cil-chevron-right',
           },
-          {
-            name: 'Contractor Types',
-            url: '/contractor-types',
-            icon: 'cil-chevron-right',
-          },
         ],
       },
       {
-        name: 'Meta Data Settings',
-        url: '/meta-data-settings',
+        name: 'Business Settings',
+        url: '/business-settings',
         icon: 'icon-settings',
         children: [
           {
-            name: 'Capabilities',
-            url: '/capabilities',
+            name: 'Business Unit Levels',
+            url: '/business-unit-levels',
             icon: 'cil-chevron-right',
           },
           {
+            name: 'Business Units',
+            url: '/business-units',
+            icon: 'cil-chevron-right',
+          },{
+            name: 'Categories',
+            url: '/categories',
+            icon: 'cil-chevron-right',
+          },{
+            name: 'Sub-categories',
+            url: '/sub-categories',
+            icon: 'cil-chevron-right',
+          },{
             name: 'Cost Centres',
             url: '/cost-centres',
             icon: 'cil-chevron-right',
-          },
-          {
-            name: 'Prequalification',
-            url: '/prequalifications',
+          },{
+            name: 'Projects',
+            url: '/projects',
             icon: 'cil-chevron-right',
           },
           {
@@ -165,6 +155,14 @@ export const navItems: INavData[] = [
         icon: 'icon-settings',
         children: [
           {
+            name: 'Contractor Role Types',
+            url: '/contractor-role-types',
+            icon: 'cil-chevron-right',
+          },{
+            name: 'Contractor Types',
+            url: '/contractor-types',
+            icon: 'cil-chevron-right',
+          },{
             name: 'Role Type',
             url: '/role-types',
             icon: 'cil-chevron-right',
@@ -231,13 +229,29 @@ export const navItems: INavData[] = [
         ],
       },
       {
+        name: 'Supplier Settings',
+        url: '/Supplier-settings',
+        icon: 'icon-settings',
+        children: [
+          {
+            name: 'Capabilities',
+            url: '/capabilities',
+            icon: 'cil-chevron-right',
+          },
+          {
+            name: 'Prequalification',
+            url: '/prequalifications',
+            icon: 'cil-chevron-right',
+          },
+        ],
+      },{
         name: 'System Settings',
         url: '/system-settings',
         icon: 'icon-settings',
         children: [
           {
-            name: 'Contract Status',
-            url: '/contract-status',
+            name: 'Registers',
+            url: '/registers',
             icon: 'cil-chevron-right',
           },
         ],
