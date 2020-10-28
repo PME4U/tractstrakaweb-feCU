@@ -34,7 +34,7 @@
           >
             <option value="Select Field">Select Field</option>
             <option value="email">Username</option>
-            <option value="email">Team</option>
+            <option value="team">Team</option>
             <option value="user_type">User Type</option>
             <option value="companies">Companies</option>
             <option value="forward_plans">Forward Plans</option>
@@ -104,6 +104,21 @@
                 ></span>
                 <span
                   *ngIf="sortIsActive.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
+            <th style="width: 6%" class="text-center">
+              <mfDefaultSorter by="is_verified" #sortIsVerifed>
+                Is Verified
+                <span
+                  *ngIf="sortIsVerifed.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortIsVerifed.isSortedByMeDesc"
                   class="cui-arrow-bottom"
                   aria-hidden="true"
                 ></span>
@@ -286,6 +301,9 @@
             <td class="text-center">
               <span *ngIf="item.is_active" class="cil-check table-check"></span>
             </td>
+            <td class="text-center">
+              <span *ngIf="item.is_verified" class="cil-check table-check"></span>
+            </td>
             <!-- <td>{{ item.is_active }}</td> -->
             <td>{{ item.user_type }}</td>
             <td>{{ item.team?.team }}</td>
@@ -404,6 +422,27 @@
                     type="checkbox"
                     class="switch-input form-control"
                     formControlName="is_active"
+                  />
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" col-sm-12>
+              <div class="col-sm-12">
+                <label class="col-form-label">Verified</label>
+              </div>
+              <div class="col-sm-12">
+                <small class="text-muted"
+                  >The user should verify their own email address, however, if they are having difficulties, you can manually verify here.</small
+                >
+              </div>
+              <div class="col-sm-12">
+                <label class="switch switch-3d switch-success">
+                  <input
+                    type="checkbox"
+                    class="switch-input form-control"
+                    formControlName="is_verified"
                   />
                   <span class="switch-slider"></span>
                 </label>

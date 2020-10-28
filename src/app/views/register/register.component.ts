@@ -34,6 +34,10 @@ export class RegisterComponent implements OnInit {
         Validators.required,
         Validators.minLength(3),
       ]),
+      password2: new FormControl('', [
+        Validators.required,
+        Validators.minLength(3),
+      ]),
     });
   }
 
@@ -43,14 +47,21 @@ export class RegisterComponent implements OnInit {
   get password() {
     return this.authForm.get('password');
   }
+  get password2() {
+    return this.authForm.get('password2');
+  }
 
   saveForm() {
     this.authService.registerUser(this.authForm.value).subscribe(
       (result: TokenObj) => {
-        this.cookieService.set('ttw-token', result.token);
-        this.router.navigate(['/dashboard']);
+        window.alert('Registration successful, please verfiy your email address.');
+        if (result.token) {
+        // this.cookieService.set('ttw-token', result.token);
+        }
+        // this.router.navigate(['/dashboard']);
       },
       (error) => {
+        window.alert(error.message);
         console.log(error);
         this.loginFail = true;
         // console.log(loginFail);

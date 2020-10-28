@@ -35,7 +35,6 @@
                   <th>Business Unit</th>
                   <th>Business Unit Level</th>
                   <th>Parent Business Unit</th>
-                  <th>Description</th>
                   <th class="text-center">Active</th>
                   <th class="text-center">Action</th>
                 </tr>
@@ -45,7 +44,6 @@
                   <td>{{ row.business_unit_name }}</td>
                   <td>{{ row.business_unit_level?.business_unit_level }}</td>
                   <td>{{ row.parent_business_unit?.business_unit_name }}</td>
-                  <td>{{ row.business_unit_description }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"

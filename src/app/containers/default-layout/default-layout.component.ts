@@ -27,5 +27,6 @@ export class DefaultLayoutComponent implements OnInit {
 
   logout() {
     this.cookieService.delete('ttw-token');
+    this.cookieService.delete('ttw-refresh');
   }
 }

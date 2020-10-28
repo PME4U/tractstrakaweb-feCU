@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -54,6 +54,8 @@ import { ProcessStatusService } from './services/process-status.service';
 
 // Import Interceptors
 import { httpInterceptorProviders } from './http-interceptors';
+import { HttpErrorInterceptor } from './http-interceptors/http-error-interceptor.service';
+import { ErrorDialogComponent } from './http-interceptors/error-dialog.component';
 
 @NgModule({
   imports: [
@@ -81,6 +83,9 @@ import { httpInterceptorProviders } from './http-interceptors';
     LoginComponent,
     RegisterComponent,
   ],
+  entryComponents: [
+    // ErrorDialogComponent,
+  ],
   providers: [
     HttpClient,
     {
@@ -92,6 +97,11 @@ import { httpInterceptorProviders } from './http-interceptors';
     ContractTypeService,
     ProcessStatusService,
     httpInterceptorProviders,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
 })
