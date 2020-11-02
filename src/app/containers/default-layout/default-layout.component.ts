@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { navItems } from '../../_nav';
 
+import { AuthService } from '../../services/auth.service';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './default-layout.component.html',
@@ -12,7 +14,11 @@ export class DefaultLayoutComponent implements OnInit {
   public sidebarMinimized = false;
   public navItems = navItems;
 
-  constructor(private cookieService: CookieService, private router: Router) {}
+  constructor(
+    private cookieService: CookieService,
+    private router: Router,
+    private authService: AuthService
+    ) {}
 
   ngOnInit() {
     const ttwToken = this.cookieService.get('ttw-token');
@@ -25,8 +31,7 @@ export class DefaultLayoutComponent implements OnInit {
     this.sidebarMinimized = e;
   }
 
-  logout() {
-    this.cookieService.delete('ttw-token');
-    this.cookieService.delete('ttw-refresh');
+  logoutUser() {
+    this.authService.logout();
   }
 }

@@ -3,8 +3,12 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Import Containers
 import { DefaultLayoutComponent } from './containers';
+
+// Import Components
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
+import { ResetPasswordEmailComponent } from './views/reset-password-email/reset-password-email.component';
+import { ResetPasswordComponent } from './views/reset-password/reset-password.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +28,20 @@ export const routes: Routes = [
     component: RegisterComponent,
     data: {
       title: 'Login Page',
+    },
+  },
+  {
+    path: 'reset-password-email',
+    component: ResetPasswordEmailComponent,
+    data: {
+      title: 'Reset Password Email',
+    },
+  },
+  {
+    path: 'password-reset/:uidb64/:token',
+    component: ResetPasswordComponent,
+    data: {
+      title: 'Reset Password',
     },
   },
   {

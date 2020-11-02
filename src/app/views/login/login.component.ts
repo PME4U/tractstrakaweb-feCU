@@ -67,8 +67,8 @@ export class LoginComponent implements OnInit {
   saveForm() {
     this.authService.loginUser(this.authForm.value).subscribe(
       (result: LoginResponse) => {
-        console.log(result);
-        console.log(result.tokens.access);
+        // console.log(result);
+        // console.log(result.tokens.access);
         this.cookieService.set('ttw-token', result.tokens.access);
         this.cookieService.set('ttw-refresh', result.tokens.refresh);
         this.router.navigate(['/dashboard']);

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -43,10 +43,14 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
 
 // Import app components
+import { AppConfig } from '../config/app-config';
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
+import { ResetPasswordEmailComponent } from './views/reset-password-email/reset-password-email.component';
+import { ResetPasswordComponent } from './views/reset-password/reset-password.component';
 
 // Import Services
+import { JsonAppConfigService } from '../config/json-app-config.service';
 import { AuthService } from './services/auth.service';
 import { ContractStatusService } from './services/contract-status.service';
 import { ContractTypeService } from './services/contract-type.service';
@@ -56,6 +60,13 @@ import { ProcessStatusService } from './services/process-status.service';
 import { httpInterceptorProviders } from './http-interceptors';
 import { HttpErrorInterceptor } from './http-interceptors/http-error-interceptor.service';
 import { ErrorDialogComponent } from './http-interceptors/error-dialog.component';
+import { RefreshTokenInterceptor } from './http-interceptors/refresh-token.interceptor';
+
+export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
+  return () => {
+    return jsonAppConfigService.load();
+  }
+}
 
 @NgModule({
   imports: [
@@ -82,12 +93,25 @@ import { ErrorDialogComponent } from './http-interceptors/error-dialog.component
     ...APP_CONTAINERS,
     LoginComponent,
     RegisterComponent,
+    ResetPasswordEmailComponent,
+    ResetPasswordComponent,
   ],
   entryComponents: [
     // ErrorDialogComponent,
   ],
   providers: [
     HttpClient,
+    {
+      provide: AppConfig,
+      deps: [HttpClient],
+      useExisting: JsonAppConfigService
+    },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [JsonAppConfigService],
+      useFactory: initializerFn
+    },
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy,
@@ -101,7 +125,8 @@ import { ErrorDialogComponent } from './http-interceptors/error-dialog.component
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true
-    }
+    },
+    RefreshTokenInterceptor
   ],
   bootstrap: [AppComponent],
 })

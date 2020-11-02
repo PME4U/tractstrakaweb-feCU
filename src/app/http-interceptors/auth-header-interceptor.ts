@@ -15,9 +15,10 @@ import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthHeaderInterceptor implements HttpInterceptor {
-  
+
   constructor(
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    public auth: AuthService
     ) {}
 
   handleError(error: HttpErrorResponse) {
@@ -30,7 +31,7 @@ export class AuthHeaderInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
 
-    const token = this.cookieService.get('ttw-token');
+    const token = this.auth.getAccessToken();
 
     if (token) {
       request = request.clone({
