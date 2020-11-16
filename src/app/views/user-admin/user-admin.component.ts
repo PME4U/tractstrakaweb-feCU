@@ -12,7 +12,7 @@ import {
 } from '../../services/user-admin.service';
 import { TeamService } from '../../services/team.service';
 
-import { UserAccessModel } from '../../models/user-access.model';
+import { User } from '../../models/user.model';
 import { Team, sortAlpha } from '../../models/team.model';
 
 @Component({
@@ -21,7 +21,7 @@ import { Team, sortAlpha } from '../../models/team.model';
   styleUrls: ['./user-admin.component.scss'],
 })
 export class UserAdminComponent implements OnInit {
-  userAccessModels: UserAccessModel[];
+  user: User[];
 
   error: any;
   maintForm: FormGroup;

@@ -122,22 +122,21 @@ export const navItems: INavData[] = [
             icon: 'cil-chevron-right',
           },
           {
-            name: 'Business Units',
-            url: '/business-units',
-            icon: 'cil-chevron-right',
-          },{
             name: 'Categories',
             url: '/categories',
             icon: 'cil-chevron-right',
-          },{
+          },
+          {
             name: 'Sub-categories',
             url: '/sub-categories',
             icon: 'cil-chevron-right',
-          },{
+          },
+          {
             name: 'Cost Centres',
             url: '/cost-centres',
             icon: 'cil-chevron-right',
-          },{
+          },
+          {
             name: 'Projects',
             url: '/projects',
             icon: 'cil-chevron-right',
@@ -158,11 +157,13 @@ export const navItems: INavData[] = [
             name: 'Contractor Role Types',
             url: '/contractor-role-types',
             icon: 'cil-chevron-right',
-          },{
+          },
+          {
             name: 'Contractor Types',
             url: '/contractor-types',
             icon: 'cil-chevron-right',
-          },{
+          },
+          {
             name: 'Role Type',
             url: '/role-types',
             icon: 'cil-chevron-right',
@@ -244,7 +245,8 @@ export const navItems: INavData[] = [
             icon: 'cil-chevron-right',
           },
         ],
-      },{
+      },
+      {
         name: 'System Settings',
         url: '/system-settings',
         icon: 'icon-settings',

@@ -60,7 +60,7 @@ import { ProcessStatusService } from './services/process-status.service';
 import { httpInterceptorProviders } from './http-interceptors';
 import { HttpErrorInterceptor } from './http-interceptors/http-error-interceptor.service';
 import { ErrorDialogComponent } from './http-interceptors/error-dialog.component';
-import { RefreshTokenInterceptor } from './http-interceptors/refresh-token.interceptor';
+// import { RefreshTokenInterceptor } from './http-interceptors/refresh-token.interceptor';
 
 export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
   return () => {
@@ -126,7 +126,7 @@ export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
       useClass: HttpErrorInterceptor,
       multi: true
     },
-    RefreshTokenInterceptor
+    // RefreshTokenInterceptor
   ],
   bootstrap: [AppComponent],
 })

@@ -22,22 +22,20 @@ export class ResetPasswordComponent implements OnInit {
     private authService: AuthService,
     private cookieService: CookieService,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     const ttwToken = this.cookieService.get('ttw-token');
 
-    this.route.params.subscribe(params => {
-        this.uidb64 = params.uidb64;
-        this.token = params.token;
+    this.route.params.subscribe((params) => {
+      this.uidb64 = params.uidb64;
+      this.token = params.token;
     });
-
 
     if (ttwToken) {
       this.router.navigate(['/dashboard']);
     }
-
 
     this.authForm = new FormGroup({
       password: new FormControl('', [
@@ -58,9 +56,13 @@ export class ResetPasswordComponent implements OnInit {
     return this.authForm.get('password2');
   }
 
-  saveForm() {
-    const data = JSON.stringify({'password': this.authForm.value.password, 'token': this.token, 'uidb64': this.uidb64})
-    console.log(data);
+  onSubmit() {
+    const data = JSON.stringify({
+      password: this.authForm.value.password,
+      token: this.token,
+      uidb64: this.uidb64,
+    });
+
     this.authService.passwordReset(data).subscribe(
       (result: PasswordResetResponse) => {
         if (result.success) {
@@ -82,6 +84,5 @@ export class ResetPasswordComponent implements OnInit {
         // });
       }
     );
-    
   }
 }

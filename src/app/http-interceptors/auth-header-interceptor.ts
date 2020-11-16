@@ -15,11 +15,7 @@ import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthHeaderInterceptor implements HttpInterceptor {
-
-  constructor(
-    private cookieService: CookieService,
-    public auth: AuthService
-    ) {}
+  constructor(private cookieService: CookieService, public auth: AuthService) {}
 
   handleError(error: HttpErrorResponse) {
     console.log('Error occured');
@@ -30,16 +26,19 @@ export class AuthHeaderInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-
     const token = this.auth.getAccessToken();
 
+    console.log('Access Token: ' + token);
+
     if (token) {
+      console.log('Header Token');
       request = request.clone({
         headers: request.headers.set('Authorization', 'Bearer ' + token),
       });
     }
 
     if (!request.headers.has('Content-Type')) {
+      console.log('Header Content Type');
       request = request.clone({
         headers: request.headers.set('Content-Type', 'application/json'),
       });
@@ -48,6 +47,7 @@ export class AuthHeaderInterceptor implements HttpInterceptor {
     request = request.clone({
       headers: request.headers.set('Accept', 'application/json'),
     });
+    console.log('Header Interceptor Returns: ' + JSON.stringify(request));
 
     return next.handle(request).pipe(
       map((event: HttpEvent<any>) => {

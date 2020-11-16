@@ -6,7 +6,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
 import { UserAccessService } from '../../services/user-admin.service';
-import { UserAccessModel } from '../../models/user-access.model';
+import { UserAccessModel } from '../../models/user.model';
 
 @Component({
   selector: 'app-contract-type',

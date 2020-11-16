@@ -8,9 +8,9 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { UserAccessModel } from '../models/user-access.model';
+import { User } from '../models/user.model';
 
-export interface TableData extends Array<UserAccessModel> {}
+export interface TableData extends Array<User> {}
 
 @Injectable({
   providedIn: 'root',

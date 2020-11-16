@@ -48,7 +48,7 @@ export class ResetPasswordEmailComponent implements OnInit {
     return this.authForm.get('email');
   }
 
-  saveForm() {
+  onSubmit() {
     this.authService.requestPasswordReset(this.authForm.value).subscribe(
       (result: EmailRequestResponse) => {
         if (result.success) {
@@ -58,7 +58,7 @@ export class ResetPasswordEmailComponent implements OnInit {
       },
       (error) => {
         window.alert(error.message);
-        console.log(error);
+        // console.log(error);
         // console.log(loginFail);
         // this.msgs = [];
         // this.msgs.push({

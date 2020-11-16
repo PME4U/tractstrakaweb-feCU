@@ -1,32 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 
+import { CookieService } from 'ngx-cookie-service';
+
+
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
 
 // interface TokenObj {
 //   tokens: string;
 // }
 
-interface LoginResponse {
-  email: string;
-  user_type: string;
-  team: string;
-  companies: string;
-  forward_plans: string;
-  processes: string;
-  contracts: string;
-  purchase_orders: string;
-  tasks: string;
-  people: string;
-  system_params: string;
-  user_admin: string;
-  tokens: {
-    access: string;
-    refresh: string;
-  };
-}
+
 
 @Component({
   selector: 'app-dashboard',
@@ -66,7 +52,7 @@ export class LoginComponent implements OnInit {
 
   saveForm() {
     this.authService.loginUser(this.authForm.value).subscribe(
-      (result: LoginResponse) => {
+      (result: User) => {
         // console.log(result);
         // console.log(result.tokens.access);
         this.cookieService.set('ttw-token', result.tokens.access);
@@ -85,6 +71,12 @@ export class LoginComponent implements OnInit {
         // });
       }
     );
+  }
+}
+
+
+
+
 
     // saveForm() {
     //   this.authService.loginUser(this.authForm.value).subscribe(
@@ -128,5 +120,5 @@ export class LoginComponent implements OnInit {
     //       // });
     //     }
     //   );
-  }
-}
+  // }
+// }
