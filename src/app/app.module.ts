@@ -2,7 +2,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  HttpClientModule,
+  HttpClient,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -58,14 +62,14 @@ import { ProcessStatusService } from './services/process-status.service';
 
 // Import Interceptors
 import { httpInterceptorProviders } from './http-interceptors';
-import { HttpErrorInterceptor } from './http-interceptors/http-error-interceptor.service';
-import { ErrorDialogComponent } from './http-interceptors/error-dialog.component';
+// import { HttpErrorInterceptor } from './http-interceptors/http-error-interceptor.service';
+// import { ErrorDialogComponent } from './http-interceptors/error-dialog.component';
 // import { RefreshTokenInterceptor } from './http-interceptors/refresh-token.interceptor';
 
 export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
   return () => {
     return jsonAppConfigService.load();
-  }
+  };
 }
 
 @NgModule({
@@ -104,13 +108,13 @@ export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
     {
       provide: AppConfig,
       deps: [HttpClient],
-      useExisting: JsonAppConfigService
+      useExisting: JsonAppConfigService,
     },
     {
       provide: APP_INITIALIZER,
       multi: true,
       deps: [JsonAppConfigService],
-      useFactory: initializerFn
+      useFactory: initializerFn,
     },
     {
       provide: LocationStrategy,
@@ -121,11 +125,11 @@ export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
     ContractTypeService,
     ProcessStatusService,
     httpInterceptorProviders,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: HttpErrorInterceptor,
+    //   multi: true
+    // },
     // RefreshTokenInterceptor
   ],
   bootstrap: [AppComponent],

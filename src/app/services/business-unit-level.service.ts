@@ -33,7 +33,6 @@ export class BusinessUnitLevelService {
     console.log(body);
     return this.http.post(
       'api/system-parameter/business-unit-level-create/',
-
       body
     );
   }

@@ -14,6 +14,7 @@ import { CookieService } from 'ngx-cookie-service';
 // import { Console } from 'console';
 
 import { User } from '../models/user.model';
+import { AuthContextService } from './business-unit-level.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +22,10 @@ import { User } from '../models/user.model';
 export class AuthService {
   private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
+  private authToken = JSON.stringify(this.getAccessToken());
 
   constructor(
+    private authContextService: AuthContextService,
     private httpClient: HttpClient,
     handler: HttpBackend,
     private cookieService: CookieService,
@@ -80,11 +83,18 @@ export class AuthService {
   }
 
   getAccessToken() {
+    // console.log('Cookie: ' + this.cookieService.get('ttw-token'));
     return this.cookieService.get('ttw-token');
   }
 
   getRefreshToken() {
     return this.cookieService.get('ttw-refresh');
+  }
+
+  updateSavedToken(token) {
+    // const accessToken = JSON.stringify(token);
+    // console.log('Set: ' + accessToken);
+    this.cookieService.set('ttw-token', token.access);
   }
 
   requestPasswordReset(authData) {
@@ -134,7 +144,9 @@ export class AuthService {
     const body = JSON.stringify(refreshToken);
 
     this.httpClient
-      .post('api/account/logout/', body, { headers: this.taggedHeaders })
+      .post('api/account/logout/', body, {
+        headers: this.taggedHeaders,
+      })
       .subscribe();
   }
 
