@@ -1,6 +1,6 @@
 // https://github.com/bartosz-io/jwt-auth-angular/blob/master/src/app/auth/token.interceptor.ts
 
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -13,7 +13,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
 
 import { AuthService } from '../services/auth.service';
-// import { AuthContextService } from '../services/auth-context.service';
+import { AuthContextService } from '../services/auth-context.service';
 
 @Injectable()
 export class RefreshTokenInterceptor implements HttpInterceptor {
@@ -23,16 +23,18 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
   );
 
   constructor(
-    public authService: AuthService
-  ) // private authContextService: AuthContextService
-  {}
+    private injector: Injector // public authService: AuthService // private authContextService: AuthContextService
+  ) {}
 
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (this.authService.getAccessToken()) {
-      request = this.addToken(request, this.authService.getAccessToken());
+    const authService = this.injector.get(AuthService);
+    const authContextService = this.injector.get(AuthContextService);
+
+    if (authContextService.getAccessToken()) {
+      request = this.addToken(request, authContextService.getAccessToken());
     }
 
     return next.handle(request).pipe(
@@ -55,14 +57,16 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+    const authService = this.injector.get(AuthService);
+    const authContextService = this.injector.get(AuthContextService);
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
 
-      return this.authService.refreshToken().pipe(
+      return authService.refreshToken().pipe(
         switchMap((token: any) => {
           this.isRefreshing = false;
-          this.authService.updateSavedToken(token);
+          authContextService.updateSavedToken(token);
           this.refreshTokenSubject.next(token.access);
           return next.handle(this.addToken(request, token.access));
         })

@@ -70,7 +70,7 @@ export class ProcessTypesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.processTypeService.getOne(this.baseUrl, record.id).subscribe(
+    this.processTypeService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

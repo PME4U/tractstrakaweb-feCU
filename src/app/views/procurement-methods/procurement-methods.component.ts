@@ -7,10 +7,16 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProcurementStrategyService } from '../../services/procurement-strategy.service';
-import { ProcurementStrategy, sortAlphaPS } from '../../models/procurement-strategy.model';
+import {
+  ProcurementStrategy,
+  sortAlphaPS,
+} from '../../models/procurement-strategy.model';
 
 import { ProcurementMethodService } from '../../services/procurement-method.service';
-import { ProcurementMethod, sortAlpha } from '../../models/procurement-method.model';
+import {
+  ProcurementMethod,
+  sortAlpha,
+} from '../../models/procurement-method.model';
 
 @Component({
   selector: 'app-teams',
@@ -71,14 +77,14 @@ export class ProcurementMethodsComponent implements OnInit {
     this.allData$ = procurementMethod$;
     this.activeData$ = procurementMethod$.pipe(
       map((procurementMethods) =>
-      procurementMethods.filter(
+        procurementMethods.filter(
           (procurementMethod) => procurementMethod.is_active === true
         )
       )
     );
     this.inactiveData$ = procurementMethod$.pipe(
       map((procurementMethods) =>
-      procurementMethods.filter(
+        procurementMethods.filter(
           (procurementMethod) => procurementMethod.is_active === false
         )
       )
@@ -142,7 +148,7 @@ export class ProcurementMethodsComponent implements OnInit {
     this.editing = true;
     this.isFetching = true;
     this.getProcurementStrategy();
-    this.procurementMethodService.getOne(this.baseUrl, record.id).subscribe(
+    this.procurementMethodService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 
@@ -202,7 +208,9 @@ export class ProcurementMethodsComponent implements OnInit {
   getProcurementStrategy() {
     this.procurementStrategies$ = this.procurementStrategyService
       .getAll('api/system-parameter/procurement-strategy-list/')
-      .pipe(map((procurementStrategy) => procurementStrategy.sort(sortAlphaPS)));
+      .pipe(
+        map((procurementStrategy) => procurementStrategy.sort(sortAlphaPS))
+      );
   }
 
   closeModal() {

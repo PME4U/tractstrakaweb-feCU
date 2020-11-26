@@ -1,17 +1,7 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpBackend,
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
-import { Router } from '@angular/router';
 
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, shareReplay } from 'rxjs/operators';
-
-// import { CookieService } from 'ngx-cookie-service';
-// import { Console } from 'console';
+import { Observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 import { User } from '../models/user.model';
 
@@ -19,40 +9,28 @@ import { User } from '../models/user.model';
   providedIn: 'root',
 })
 export class AuthContextService {
-  private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
 
-  constructor(private router: Router) {}
+  constructor(private cookieService: CookieService) {}
 
   getAccessToken() {
-    // return this.cookieService.get('ttw-token');
-    let currentUser: User;
+    // console.log('Cookie: ' + this.cookieService.get('ttw-token'));
+    // const userData: User = JSON.parse(this.cookieService.get('currentUser'));
 
-    if (localStorage.getItem('currentUser') !== null) {
-      currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    }
-    return currentUser.tokens.access;
+    return this.cookieService.get('ttw-token');
   }
 
   getRefreshToken() {
-    // return this.cookieService.get('ttw-refresh');
-    let currentUser: User;
-
-    if (localStorage.getItem('currentUser') !== null) {
-      currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    }
-
-    return currentUser.tokens.refresh;
+    return this.cookieService.get('ttw-refresh');
   }
 
   updateSavedToken(token) {
-    // Get the existing data
-    const existing: User = JSON.parse(localStorage.getItem('currentUser'));
+    // const accessToken = JSON.stringify(token);
+    // console.log('Set: ' + accessToken);
+    this.cookieService.set('ttw-token', token.access);
+  }
 
-    // Add new data to localStorage Array
-    existing.tokens.access = token;
-
-    // Save back to localStorage
-    localStorage.setItem('currentUser', JSON.stringify(existing));
+  setUser(userData) {
+    this.cookieService.set('currentUser', JSON.stringify(userData));
   }
 }

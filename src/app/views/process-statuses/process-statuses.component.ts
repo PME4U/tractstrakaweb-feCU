@@ -94,7 +94,7 @@ export class ProcessStatusesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.processStatusService.getOne(this.baseUrl, record.id).subscribe(
+    this.processStatusService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

@@ -7,7 +7,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
-import { BusinessUnitLevel, sortAlpha } from '../../models/business-unit-level.model';
+import {
+  BusinessUnitLevel,
+  sortAlpha,
+} from '../../models/business-unit-level.model';
 
 @Component({
   selector: 'app-business-unit-levels',
@@ -40,7 +43,10 @@ export class BusinessUnitLevelsComponent implements OnInit {
   public deleteModal: ModalDirective;
   // confirmDialogService: any;
 
-  constructor(private fb: FormBuilder, private businessUnitLevelService: BusinessUnitLevelService) {
+  constructor(
+    private fb: FormBuilder,
+    private businessUnitLevelService: BusinessUnitLevelService
+  ) {
     this.createForm();
   }
 
@@ -60,10 +66,18 @@ export class BusinessUnitLevelsComponent implements OnInit {
 
     this.allData$ = team$;
     this.activeData$ = team$.pipe(
-      map((businessUnitLevels) => businessUnitLevels.filter((businessUnitLevel) => businessUnitLevel.is_active === true))
+      map((businessUnitLevels) =>
+        businessUnitLevels.filter(
+          (businessUnitLevel) => businessUnitLevel.is_active === true
+        )
+      )
     );
     this.inactiveData$ = team$.pipe(
-      map((businessUnitLevels) => businessUnitLevels.filter((businessUnitLevel) => businessUnitLevel.is_active === false))
+      map((businessUnitLevels) =>
+        businessUnitLevels.filter(
+          (businessUnitLevel) => businessUnitLevel.is_active === false
+        )
+      )
     );
     // this.tableData$ = this.allData$;
     this.filterOnActive();
@@ -120,7 +134,7 @@ export class BusinessUnitLevelsComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.businessUnitLevelService.getOne(this.baseUrl, record.id).subscribe(
+    this.businessUnitLevelService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 
@@ -164,9 +178,11 @@ export class BusinessUnitLevelsComponent implements OnInit {
         });
       this.editing = false;
     } else {
-      this.businessUnitLevelService.create(this.maintForm.value).subscribe((result) => {
-        this.getTableData(this.baseUrl);
-      });
+      this.businessUnitLevelService
+        .create(this.maintForm.value)
+        .subscribe((result) => {
+          this.getTableData(this.baseUrl);
+        });
     }
     this.id = undefined;
     this.maintForm.reset();

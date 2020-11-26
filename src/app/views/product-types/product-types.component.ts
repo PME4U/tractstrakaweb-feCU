@@ -71,16 +71,12 @@ export class ProductTypesComponent implements OnInit {
     this.allData$ = productType$;
     this.activeData$ = productType$.pipe(
       map((product_types) =>
-      product_types.filter(
-          (product_type) => product_type.is_active === true
-        )
+        product_types.filter((product_type) => product_type.is_active === true)
       )
     );
     this.inactiveData$ = productType$.pipe(
       map((product_types) =>
-      product_types.filter(
-          (product_type) => product_type.is_active === false
-        )
+        product_types.filter((product_type) => product_type.is_active === false)
       )
     );
     // this.tableData$ = this.allData$;
@@ -142,7 +138,7 @@ export class ProductTypesComponent implements OnInit {
     this.editing = true;
     this.isFetching = true;
     this.getProductGroups();
-    this.productTypeService.getOne(this.baseUrl, record.id).subscribe(
+    this.productTypeService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

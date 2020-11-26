@@ -5,7 +5,10 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
 import { ProcurementStrategyService } from '../../services/procurement-strategy.service';
-import { ProcurementStrategy, sortAlphaPS } from '../../models/procurement-strategy.model';
+import {
+  ProcurementStrategy,
+  sortAlphaPS,
+} from '../../models/procurement-strategy.model';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -46,7 +49,9 @@ export class ProcurementStrategiesComponent implements OnInit {
     // const processStatus$ = this.processStatusService.getAll(apiUrl)
     const procurementStrategy$ = this.procurementStrategyService
       .getAll(apiUrl)
-      .pipe(map((procurementStrategy) => procurementStrategy.sort(sortAlphaPS)));
+      .pipe(
+        map((procurementStrategy) => procurementStrategy.sort(sortAlphaPS))
+      );
 
     this.isFetching = false;
     this.tableData$ = procurementStrategy$;
@@ -70,7 +75,7 @@ export class ProcurementStrategiesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.procurementStrategyService.getOne(this.baseUrl, record.id).subscribe(
+    this.procurementStrategyService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

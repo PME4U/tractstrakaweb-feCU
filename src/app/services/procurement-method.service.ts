@@ -9,23 +9,27 @@ import { ProcurementMethod } from '../models/procurement-method.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class ProcurementMethodService {
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-
   getAll(apiUrl: string): Observable<ProcurementMethod[]> {
     return this.http.get<ProcurementMethod[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<ProcurementMethod> {
+  getOne(id: Number): Observable<ProcurementMethod> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<ProcurementMethod>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
-    });
+    return this.http.get<ProcurementMethod>(
+      'api/system-parameter/procurement-method-detail/' + id,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   create(data) {
@@ -34,7 +38,10 @@ export class ProcurementMethodService {
     return this.http.post(
       'api/system-parameter/procurement-method-create/',
 
-      body
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -43,12 +50,14 @@ export class ProcurementMethodService {
     const url = 'api/system-parameter/procurement-method-update/' + id + '/';
     // console.log('URL:' + url);
     return this.http.put(url, body, {
+      headers: this.headers,
     });
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/procurement-method-delete/' + id + '/';
     return this.http.delete(url, {
+      headers: this.headers,
     });
   }
 }

@@ -10,9 +10,9 @@ import { Capability } from '../models/capability.model';
   providedIn: 'root',
 })
 export class CapabilityService {
-  // headers = new HttpHeaders({
-  //   'Content-Type': 'application/json',
-  // });
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
@@ -26,15 +26,18 @@ export class CapabilityService {
 
   getAll(apiUrl: string): Observable<Capability[]> {
     return this.http.get<Capability[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<Capability> {
+  getOne(id: Number): Observable<Capability> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<Capability>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
-    });
+    return this.http.get<Capability>(
+      'api/system-parameter/capability-detail/' + id,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   create(data) {
@@ -42,10 +45,10 @@ export class CapabilityService {
     return this.http.post(
       'api/system-parameter/capability-create/',
 
-      body
-      // {
-      //   headers: this.headers,
-      // }
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -54,14 +57,14 @@ export class CapabilityService {
     const url = 'api/system-parameter/capability-update/' + id + '/';
     // console.log('URL:' + url);
     return this.http.put(url, body, {
-      // headers: this.headers,
+      headers: this.headers,
     });
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/capability-delete/' + id + '/';
     return this.http.delete(url, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 }

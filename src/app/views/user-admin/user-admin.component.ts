@@ -106,7 +106,7 @@ export class UserAdminComponent implements OnInit {
     this.getTeams();
     this.editing = true;
     this.maintForm.get('email').disable();
-    this.userAccessService.getOne(this.baseUrl, record.id).subscribe(
+    this.userAccessService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

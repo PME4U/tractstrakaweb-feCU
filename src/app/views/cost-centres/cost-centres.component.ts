@@ -92,7 +92,7 @@ export class CostCentresComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.costCentreService.getOne(this.baseUrl, record.id).subscribe(
+    this.costCentreService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

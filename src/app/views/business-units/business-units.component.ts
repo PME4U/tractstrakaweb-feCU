@@ -7,7 +7,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
-import { BusinessUnitLevel, sortAlpha } from '../../models/business-unit-level.model';
+import {
+  BusinessUnitLevel,
+  sortAlpha,
+} from '../../models/business-unit-level.model';
 
 import { BusinessUnitService } from '../../services/business-unit.service';
 import { BusinessUnit, sortAlphaBU } from '../../models/business-unit.model';
@@ -72,14 +75,14 @@ export class BusinessUnitsComponent implements OnInit {
     this.allData$ = businessUnits$;
     this.activeData$ = businessUnits$.pipe(
       map((business_units) =>
-      business_units.filter(
+        business_units.filter(
           (business_unit) => business_unit.is_active === true
         )
       )
     );
     this.inactiveData$ = businessUnits$.pipe(
       map((business_units) =>
-      business_units.filter(
+        business_units.filter(
           (business_unit) => business_unit.is_active === false
         )
       )
@@ -146,7 +149,7 @@ export class BusinessUnitsComponent implements OnInit {
     this.isFetching = true;
     this.getBusinessUnitLevels();
     this.getParentBusinessUnits();
-    this.businessUnitService.getOne(this.baseUrl, record.id).subscribe(
+    this.businessUnitService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
         this.id = response.id;

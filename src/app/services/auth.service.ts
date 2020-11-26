@@ -14,7 +14,7 @@ import { CookieService } from 'ngx-cookie-service';
 // import { Console } from 'console';
 
 import { User } from '../models/user.model';
-import { AuthContextService } from './business-unit-level.service';
+import { AuthContextService } from './auth-context.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ import { AuthContextService } from './business-unit-level.service';
 export class AuthService {
   private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
-  private authToken = JSON.stringify(this.getAccessToken());
+  // private authToken = JSON.stringify(this.authContextService.getAccessToken());
 
   constructor(
     private authContextService: AuthContextService,
@@ -46,7 +46,7 @@ export class AuthService {
   });
   taggedHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + this.getAccessToken(),
+    Authorization: 'Bearer ' + this.authContextService.getAccessToken(),
   });
 
   loginUser(authData) {
@@ -71,7 +71,7 @@ export class AuthService {
 
   refreshToken() {
     const refreshToken = {
-      refresh: this.getRefreshToken(),
+      refresh: this.authContextService.getRefreshToken(),
     };
     const body = JSON.stringify(refreshToken);
     // return this.httpClient.post('api/account/token-refresh/', '',  {headers: this.refeshHeaders}).pipe(catchError(this.handleError));
@@ -80,21 +80,6 @@ export class AuthService {
         headers: this.headers,
       })
       .pipe(catchError(this.handleError));
-  }
-
-  getAccessToken() {
-    // console.log('Cookie: ' + this.cookieService.get('ttw-token'));
-    return this.cookieService.get('ttw-token');
-  }
-
-  getRefreshToken() {
-    return this.cookieService.get('ttw-refresh');
-  }
-
-  updateSavedToken(token) {
-    // const accessToken = JSON.stringify(token);
-    // console.log('Set: ' + accessToken);
-    this.cookieService.set('ttw-token', token.access);
   }
 
   requestPasswordReset(authData) {
@@ -139,7 +124,7 @@ export class AuthService {
 
   logoutToken() {
     const refreshToken = {
-      refresh: this.getRefreshToken(),
+      refresh: this.authContextService.getRefreshToken(),
     };
     const body = JSON.stringify(refreshToken);
 

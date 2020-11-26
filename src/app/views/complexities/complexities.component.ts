@@ -82,7 +82,7 @@ export class ComplexitiesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.complexityService.getOne(this.baseUrl, record.id).subscribe(
+    this.complexityService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

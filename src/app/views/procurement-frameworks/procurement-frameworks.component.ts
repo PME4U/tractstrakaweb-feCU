@@ -6,7 +6,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProcurementFrameworksService } from '../../services/procurement-framework.service';
-import { ProcurementFramework, sortAlpha } from '../../models/process-framework.model';
+import {
+  ProcurementFramework,
+  sortAlpha,
+} from '../../models/process-framework.model';
 
 @Component({
   selector: 'app-procurement-frameworks',
@@ -51,7 +54,9 @@ export class ProcurementFrameworksComponent implements OnInit {
     // const processStatus$ = this.processStatusService.getAll(apiUrl)
     const procurementFrameworks$ = this.procurementFrameworksService
       .getAll(apiUrl)
-      .pipe(map((procurementFrameworks) => procurementFrameworks.sort(sortAlpha)));
+      .pipe(
+        map((procurementFrameworks) => procurementFrameworks.sort(sortAlpha))
+      );
 
     this.isFetching = false;
     this.tableData$ = procurementFrameworks$;
@@ -75,7 +80,7 @@ export class ProcurementFrameworksComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.procurementFrameworksService.getOne(this.baseUrl, record.id).subscribe(
+    this.procurementFrameworksService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
@@ -9,23 +9,27 @@ import { ProcurementStrategy } from '../models/procurement-strategy.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class ProcurementStrategyService {
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-
   getAll(apiUrl: string): Observable<ProcurementStrategy[]> {
     return this.http.get<ProcurementStrategy[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<ProcurementStrategy> {
+  getOne(id: Number): Observable<ProcurementStrategy> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<ProcurementStrategy>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
-    });
+    return this.http.get<ProcurementStrategy>(
+      'api/system-parameter/procurement-strategy-detail/' + id,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   create(data) {
@@ -34,7 +38,10 @@ export class ProcurementStrategyService {
     return this.http.post(
       'api/system-parameter/procurement-strategy-create/',
 
-      body
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -43,12 +50,14 @@ export class ProcurementStrategyService {
     const url = 'api/system-parameter/procurement-strategy-update/' + id + '/';
     // console.log('URL:' + url);
     return this.http.put(url, body, {
+      headers: this.headers,
     });
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/procurement-strategy-delete/' + id + '/';
     return this.http.delete(url, {
+      headers: this.headers,
     });
   }
 }

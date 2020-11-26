@@ -10,9 +10,9 @@ import { ContractStatus } from '../models/contract-status.model';
   providedIn: 'root',
 })
 export class ContractStatusService {
-  // headers = new HttpHeaders({
-  //   'Content-Type': 'application/json',
-  // });
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
 
   // constructor(private http: HttpClient, private cookieService: CookieService) {}
   constructor(private http: HttpClient) {}
@@ -27,15 +27,18 @@ export class ContractStatusService {
 
   getAll(apiUrl: string): Observable<ContractStatus[]> {
     return this.http.get<ContractStatus[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<ContractStatus> {
+  getOne(id: Number): Observable<ContractStatus> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<ContractStatus>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
-    });
+    return this.http.get<ContractStatus>(
+      'api/system-parameter/contract-status-detail/' + id + '/',
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   create(data) {
@@ -44,10 +47,10 @@ export class ContractStatusService {
       // `${this.baseUrl}api/account/my-account/`,
       'api/system-parameter/contract-status-create/',
 
-      body
-      // {
-      //   headers: this.headers,
-      // }
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -58,17 +61,17 @@ export class ContractStatusService {
     return this.http.put(
       // `${this.baseUrl}api/account/my-account/`,
       url,
-      body
-      // {
-      //   headers: this.headers,
-      // }
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/contract-status-delete/' + id + '/';
     return this.http.delete(url, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 }

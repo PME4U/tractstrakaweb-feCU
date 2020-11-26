@@ -126,7 +126,7 @@ export class ContractorRoleTypesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.contractorRoleTypeService.getOne(this.baseUrl, record.id).subscribe(
+    this.contractorRoleTypeService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

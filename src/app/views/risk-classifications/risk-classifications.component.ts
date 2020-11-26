@@ -6,7 +6,10 @@ import { Observable } from 'rxjs/Rx';
 import { map } from 'rxjs/operators';
 
 import { RiskClassificationService } from '../../services/risk-classification.service';
-import { RiskClassification, sortAlpha } from '../../models/risk-classification.model';
+import {
+  RiskClassification,
+  sortAlpha,
+} from '../../models/risk-classification.model';
 
 @Component({
   selector: 'app-prequalifications',
@@ -75,7 +78,7 @@ export class RiskClassificationsComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.riskClassificationService.getOne(this.baseUrl, record.id).subscribe(
+    this.riskClassificationService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

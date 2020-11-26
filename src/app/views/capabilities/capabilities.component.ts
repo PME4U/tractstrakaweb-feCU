@@ -127,7 +127,7 @@ export class CapabilitiesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.capabilityService.getOne(this.baseUrl, record.id).subscribe(
+    this.capabilityService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

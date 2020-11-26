@@ -70,7 +70,7 @@ export class ContractTypesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.contractTypeService.getOne(this.baseUrl, record.id).subscribe(
+    this.contractTypeService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

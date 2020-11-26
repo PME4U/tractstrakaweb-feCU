@@ -80,7 +80,7 @@ export class RoleTypesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.roleTypeService.getOne(this.baseUrl, record.id).subscribe(
+    this.roleTypeService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

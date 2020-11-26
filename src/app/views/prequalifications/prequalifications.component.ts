@@ -61,7 +61,7 @@ export class PrequalificationsComponent implements OnInit {
         this.tableData = response;
         this.totalRecords = response.count;
 
-        console.log(response);
+        // console.log(response);
         // console.log(this.tableData);
         // console.log('Total records:' + this.totalRecords);
         // console.log(this.next);
@@ -92,7 +92,7 @@ export class PrequalificationsComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.prequalificationService.getOne(this.baseUrl, record.id).subscribe(
+    this.prequalificationService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 

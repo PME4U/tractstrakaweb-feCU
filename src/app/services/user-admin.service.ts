@@ -16,6 +16,10 @@ export interface TableData extends Array<User> {}
   providedIn: 'root',
 })
 export class UserAccessService {
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
+
   constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string) {
@@ -46,25 +50,33 @@ export class UserAccessService {
   //   });
   // }
 
-  getOne(apiUrl: string, id: Number): Observable<any> {
-    console.log('URL:' + apiUrl + id);
-    return this.http.get<any>(apiUrl + id);
+  getOne(id: Number): Observable<any> {
+    console.log('URL:' + id);
+    return this.http.get<any>('api/account/account-access-detail/' + id, {
+      headers: this.headers,
+    });
   }
 
   create(data) {
     const body = JSON.stringify(data);
     console.log(body);
-    return this.http.post('api/account/account-access-list/', body);
+    return this.http.post('api/account/account-access-list/', body, {
+      headers: this.headers,
+    });
   }
 
   update(id, data) {
     const body = JSON.stringify(data);
     const url = 'api/account/account-access-list/' + id + '/';
-    return this.http.put(url, body);
+    return this.http.put(url, body, {
+      headers: this.headers,
+    });
   }
 
   delete(id: Number) {
     const url = 'api/account/account-access-list/' + id + '/';
-    return this.http.delete(url);
+    return this.http.delete(url, {
+      headers: this.headers,
+    });
   }
 }

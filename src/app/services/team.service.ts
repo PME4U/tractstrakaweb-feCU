@@ -9,22 +9,23 @@ import { Team } from '../models/team.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class TeamService {
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-
   getAll(apiUrl: string): Observable<Team[]> {
     return this.http.get<Team[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<Team> {
+  getOne(id: Number): Observable<Team> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<Team>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
+    return this.http.get<Team>('api/system-parameter/team-detail/' + id, {
+      headers: this.headers,
     });
   }
 
@@ -34,7 +35,10 @@ export class TeamService {
     return this.http.post(
       'api/system-parameter/team-create/',
 
-      body
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -43,12 +47,14 @@ export class TeamService {
     const url = 'api/system-parameter/team-update/' + id + '/';
     // console.log('URL:' + url);
     return this.http.put(url, body, {
+      headers: this.headers,
     });
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/team-delete/' + id + '/';
     return this.http.delete(url, {
+      headers: this.headers,
     });
   }
 }

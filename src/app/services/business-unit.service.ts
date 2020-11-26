@@ -9,23 +9,27 @@ import { BusinessUnit } from '../models/business-unit.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class BusinessUnitService {
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
 
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-
   getAll(apiUrl: string): Observable<BusinessUnit[]> {
     return this.http.get<BusinessUnit[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<BusinessUnit> {
+  getOne(id: Number): Observable<BusinessUnit> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<BusinessUnit>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
-    });
+    return this.http.get<BusinessUnit>(
+      'api/system-parameter/business-unit-detail/' + id,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   create(data) {
@@ -34,7 +38,10 @@ export class BusinessUnitService {
     return this.http.post(
       'api/system-parameter/business-unit-create/',
 
-      body
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -43,12 +50,14 @@ export class BusinessUnitService {
     const url = 'api/system-parameter/business-unit-update/' + id + '/';
     // console.log('URL:' + url);
     return this.http.put(url, body, {
+      headers: this.headers,
     });
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/business-unit-delete/' + id + '/';
     return this.http.delete(url, {
+      headers: this.headers,
     });
   }
 }

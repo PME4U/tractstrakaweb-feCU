@@ -10,19 +10,26 @@ import { ProductGroup } from '../models/product-group.model';
   providedIn: 'root',
 })
 export class ProductGroupService {
+  headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+  });
+
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   getAll(apiUrl: string): Observable<ProductGroup[]> {
     return this.http.get<ProductGroup[]>(apiUrl, {
-      // headers: this.getAuthHeaders(),
+      headers: this.headers,
     });
   }
 
-  getOne(apiUrl: string, id: Number): Observable<ProductGroup> {
+  getOne(id: Number): Observable<ProductGroup> {
     // console.log('URL:' + apiUrl + id);
-    return this.http.get<ProductGroup>(apiUrl + id, {
-      // headers: this.getAuthHeaders(),
-    });
+    return this.http.get<ProductGroup>(
+      'api/system-parameter/product-group-detail/' + id,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   create(data) {
@@ -31,7 +38,10 @@ export class ProductGroupService {
     return this.http.post(
       'api/system-parameter/product-group-create/',
 
-      body
+      body,
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -39,11 +49,15 @@ export class ProductGroupService {
     const body = JSON.stringify(data);
     const url = 'api/system-parameter/product-group-update/' + id + '/';
     // console.log('URL:' + url);
-    return this.http.put(url, body, {});
+    return this.http.put(url, body, {
+      headers: this.headers,
+    });
   }
 
   delete(id: Number) {
     const url = 'api/system-parameter/product-group-delete/' + id + '/';
-    return this.http.delete(url, {});
+    return this.http.delete(url, {
+      headers: this.headers,
+    });
   }
 }

@@ -148,7 +148,7 @@ export class ContractStatusComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.contractStatusService.getOne(this.baseUrl, record.id).subscribe(
+    this.contractStatusService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 
@@ -191,6 +191,7 @@ export class ContractStatusComponent implements OnInit {
 
   saveRecord() {
     if (this.editing) {
+      console.log(JSON.stringify(this.maintForm.value));
       this.contractStatusService
         .update(this.id, this.maintForm.value)
         .subscribe((result) => {

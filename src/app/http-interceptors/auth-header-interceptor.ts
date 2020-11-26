@@ -12,10 +12,15 @@ import { Observable, throwError } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { AuthContextService } from '../services/auth-context.service';
 
 @Injectable()
 export class AuthHeaderInterceptor implements HttpInterceptor {
-  constructor(private cookieService: CookieService, public auth: AuthService) {}
+  constructor(
+    private cookieService: CookieService,
+    public auth: AuthService,
+    private authContextService: AuthContextService
+  ) {}
 
   handleError(error: HttpErrorResponse) {
     console.log('Error occured');
@@ -26,9 +31,9 @@ export class AuthHeaderInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = JSON.stringify(this.auth.getAccessToken());
+    const token = JSON.stringify(this.authContextService.getAccessToken());
 
-    console.log('Access Token: ' + token);
+    // console.log('Access Token: ' + token);
 
     if (token) {
       // console.log('Header Token');
