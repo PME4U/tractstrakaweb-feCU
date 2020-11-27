@@ -14,23 +14,47 @@ export class AuthContextService {
   constructor(private cookieService: CookieService) {}
 
   getAccessToken() {
-    // console.log('Cookie: ' + this.cookieService.get('ttw-token'));
-    // const userData: User = JSON.parse(this.cookieService.get('currentUser'));
+    let currentUser: User;
 
-    return this.cookieService.get('ttw-token');
+    if (localStorage.getItem('currentUser') !== null) {
+      currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      console.log('Got it');
+      return currentUser.tokens.access;
+    }
+    // return this.cookieService.get('ttw-token');
   }
 
   getRefreshToken() {
-    return this.cookieService.get('ttw-refresh');
+    let currentUser: User;
+
+    if (localStorage.getItem('currentUser') !== null) {
+      currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      return currentUser.tokens.refresh;
+    }
+    // return this.cookieService.get('ttw-refresh');
   }
 
   updateSavedToken(token) {
-    // const accessToken = JSON.stringify(token);
-    // console.log('Set: ' + accessToken);
-    this.cookieService.set('ttw-token', token.access);
+    // Get the existing data
+    const existing: User = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Add new data to localStorage Array
+    existing.tokens.access = token;
+
+    // Save back to localStorage
+    localStorage.setItem('currentUser', JSON.stringify(existing));
+    // this.cookieService.set('ttw-token', token.access);
   }
 
-  setUser(userData) {
-    this.cookieService.set('currentUser', JSON.stringify(userData));
+  setUser(result) {
+    this.cookieService.set('ttw-token', result.tokens.access);
+    this.cookieService.set('ttw-refresh', result.tokens.refresh);
+    localStorage.setItem('currentUser', JSON.stringify(result));
+  }
+
+  clearUser() {
+    localStorage.clear();
+    this.cookieService.delete('ttw-token');
+    this.cookieService.delete('ttw-refresh');
   }
 }

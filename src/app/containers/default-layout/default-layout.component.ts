@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { navItems } from '../../_nav';
 
 import { AuthService } from '../../services/auth.service';
+import { AuthContextService } from '../../services/auth-context.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,11 +18,12 @@ export class DefaultLayoutComponent implements OnInit {
   constructor(
     private cookieService: CookieService,
     private router: Router,
+    private authContextService: AuthContextService,
     private authService: AuthService
-    ) {}
+  ) {}
 
   ngOnInit() {
-    const ttwToken = this.cookieService.get('ttw-token');
+    const ttwToken = this.authContextService.getAccessToken();
     if (!ttwToken) {
       this.router.navigate(['/']);
     }

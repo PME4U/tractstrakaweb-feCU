@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
@@ -14,7 +13,7 @@ export class ProcurementStrategyService {
     'Content-Type': 'application/json',
   });
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<ProcurementStrategy[]> {
     return this.http.get<ProcurementStrategy[]>(apiUrl, {
@@ -37,7 +36,6 @@ export class ProcurementStrategyService {
     console.log(body);
     return this.http.post(
       'api/system-parameter/procurement-strategy-create/',
-
       body,
       {
         headers: this.headers,

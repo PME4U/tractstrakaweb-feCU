@@ -1,13 +1,12 @@
 <div class="animated fadeIn">
   <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-8">
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Teams
+          <i class="fa fa-align-justify"></i> Procurement Strategies
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
-          <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
           <div *ngIf="isFetching">
             <div class="sk-fading-circle">
               <div class="sk-circle1 sk-circle"></div>
@@ -24,22 +23,20 @@
               <div class="sk-circle12 sk-circle"></div>
             </div>
           </div>
-          <!-- <table
-            *ngIf="tableData.length > 0 && !isFetching"
-            class="table table-sm table-hover"
-          > -->
           <div class="table-responsive">
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Team</th>
+                  <th>Procurement Strategy</th>
+                  <th>Description</th>
                   <th class="text-center">Active</th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
-                  <td>{{ row.team }}</td>
+                  <td>{{ row.procurement_strategy }}</td>
+                  <td>{{ row.stratgey_description }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"
@@ -66,6 +63,23 @@
               </tbody>
             </table>
           </div>
+
+          <!-- <div *ngIf="usePagination">
+            <ul class="pagination">
+              <li class="page-item" *ngIf="previous">
+                <a class="page-link" (click)="fecthPrevious()">Previous</a>
+              </li>
+              <li class="page-item active">
+                <a class="page-link" href="#">1</a>
+              </li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">4</a></li>
+              <li class="page-item" *ngIf="next">
+                <a class="page-link" (click)="fecthNext()">Next</a>
+              </li>
+            </ul>
+          </div> -->
         </div>
       </div>
     </div>
@@ -87,7 +101,9 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="maintModalLabel">Teams Maintenance</h5>
+        <h5 class="modal-title" id="maintModalLabel">
+          Procurement Strategy Maintenance
+        </h5>
         <button
           type="button"
           class="close"
@@ -107,39 +123,40 @@
         >
           <div class="form-group">
             <div>
-              <label for="team" class="col-form-label">Team:</label>
+              <label for="procurement_strategy" class="col-form-label"
+                >Procurement Strategy:</label
+              >
             </div>
             <div>
               <small class="text-muted"
-                >Identify the team, teams are used to groups individuals based
-                and is used to control access to some records.</small
+                >Identify the different types of procurement strategy undertaken.</small
               >
             </div>
             <div>
               <input
                 type="text"
                 class="form-control"
-                id="team"
-                formControlName="team"
+                id="procurement_strategy"
+                formControlName="procurement_strategy"
               />
             </div>
           </div>
           <div class="form-group">
             <div>
-              <label for="description" class="col-form-label"
+              <label for="stratgey_description" class="col-form-label"
                 >Description:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Provide a more detailed description of the team.</small
+                >Provide a more detailed description of the procurement strategy.</small
               >
             </div>
             <div>
               <textarea
                 class="form-control"
-                id="description"
-                formControlName="description"
+                id="stratgey_description"
+                formControlName="stratgey_description"
               ></textarea>
             </div>
           </div>
@@ -150,9 +167,9 @@
             </div>
             <div class="col-sm-12">
               <small class="text-muted"
-                >Teams should not be deleted if there are records associated
-                with them, but setting it to inactive will stop the team from
-                being added to new records</small
+                >Procurement Strategy should not be deleted if there are records
+                associated with them, but setting it to inactive will stop the
+                strategy from being added to new records</small
               >
             </div>
             <div class="col-sm-12">
@@ -208,7 +225,9 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete the {{ recordTitle }} Team?</p>
+        <p>
+          Are you sure you want to delete the {{ recordTitle }} Contract Status?
+        </p>
       </div>
       <div class="modal-footer">
         <button

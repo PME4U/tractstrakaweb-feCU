@@ -3,7 +3,7 @@
     <div class="col-lg-6">
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Teams
+          <i class="fa fa-align-justify"></i> Projects
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
@@ -32,20 +32,15 @@
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Team</th>
-                  <th class="text-center">Active</th>
-                  <th class="text-center">Action</th>
+                  <th>Project</th>
+                  <th>Status</th>
+                  <th class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
-                  <td>{{ row.team }}</td>
-                  <td class="text-center">
-                    <span
-                      *ngIf="row.is_active"
-                      class="cil-check table-check"
-                    ></span>
-                  </td>
+                  <td>{{ row.project_title }}</td>
+                  <td>{{ row.project_status }}</td>
                   <td class="text-center">
                     <i
                       class="cil-pen edit-record"
@@ -87,7 +82,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="maintModalLabel">Teams Maintenance</h5>
+        <h5 class="modal-title" id="maintModalLabel">Project Maintenance</h5>
         <button
           type="button"
           class="close"
@@ -107,63 +102,103 @@
         >
           <div class="form-group">
             <div>
-              <label for="team" class="col-form-label">Team:</label>
+              <label for="project_title" class="col-form-label"
+                >Project Title:</label
+              >
+            </div>
+            <div>
+              <small class="text-muted">Identify the project title.</small>
+            </div>
+            <div>
+              <input
+                type="text"
+                class="form-control"
+                id="project_title"
+                formControlName="project_title"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div>
+              <label for="project_description" class="col-form-label"
+                >Description:</label
+              >
             </div>
             <div>
               <small class="text-muted"
-                >Identify the team, teams are used to groups individuals based
-                and is used to control access to some records.</small
+                >Provide a more detailed description of the project.</small
+              >
+            </div>
+            <div>
+              <textarea
+                class="form-control"
+                id="project_description"
+                formControlName="project_description"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-md-4 col-form-label" for="project_status"
+              >Project Status</label
+            >
+            <div class="col-md-9">
+              <select
+                id="project_status"
+                name="project_status"
+                class="form-control form-control-sm"
+                formControlName="project_status"
+              >
+                <option Value="Planned">Planned</option>
+                <option Value="Active">Active</option>
+                <option Value="On Hold">On Hold</option>
+                <option Value="Terminated">Terminated</option>
+                <option Value="Complete">Complete</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div>
+              <label for="project_website" class="col-form-label"
+                >Project Website:</label
+              >
+            </div>
+            <div>
+              <small class="text-muted"
+                >Provide a link to a website or intranet for the project if
+                there is one.</small
               >
             </div>
             <div>
               <input
                 type="text"
                 class="form-control"
-                id="team"
-                formControlName="team"
+                id="project_website"
+                formControlName="project_website"
               />
             </div>
           </div>
+
           <div class="form-group">
             <div>
-              <label for="description" class="col-form-label"
-                >Description:</label
+              <label for="project_notes" class="col-form-label"
+                >Project Notes:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Provide a more detailed description of the team.</small
+                >Provide a link to a website or intranet for the project if
+                there is one.</small
               >
             </div>
             <div>
               <textarea
                 class="form-control"
-                id="description"
-                formControlName="description"
+                id="project_notes"
+                formControlName="project_notes"
               ></textarea>
-            </div>
-          </div>
-
-          <div class="form-group" col-sm-12>
-            <div class="col-sm-12">
-              <label class="col-form-label">Active</label>
-            </div>
-            <div class="col-sm-12">
-              <small class="text-muted"
-                >Teams should not be deleted if there are records associated
-                with them, but setting it to inactive will stop the team from
-                being added to new records</small
-              >
-            </div>
-            <div class="col-sm-12">
-              <label class="switch switch-3d switch-success">
-                <input
-                  type="checkbox"
-                  class="switch-input form-control"
-                  formControlName="is_active"
-                />
-                <span class="switch-slider"></span>
-              </label>
             </div>
           </div>
         </form>
@@ -208,7 +243,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete the {{ recordTitle }} Team?</p>
+        <p>Are you sure you want to delete the {{ recordTitle }} Project?</p>
       </div>
       <div class="modal-footer">
         <button

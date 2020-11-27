@@ -8,10 +8,6 @@ import { AuthService } from '../../services/auth.service';
 import { AuthContextService } from '../../services/auth-context.service';
 import { User } from '../../models/user.model';
 
-// interface TokenObj {
-//   tokens: string;
-// }
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: 'login.component.html',
@@ -29,7 +25,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ttwToken = this.cookieService.get('ttw-token');
+    const ttwToken = this.authContextService.getAccessToken();
     if (ttwToken) {
       this.router.navigate(['/dashboard']);
     }
@@ -52,24 +48,12 @@ export class LoginComponent implements OnInit {
   saveForm() {
     this.authService.loginUser(this.authForm.value).subscribe(
       (result: User) => {
-        // console.log(result);
-        console.log(result.tokens.access);
-        this.cookieService.set('ttw-token', result.tokens.access);
-        this.cookieService.set('ttw-refresh', result.tokens.refresh);
-        // this.authService.setUserLocalStorage(result);
-        // this.authContextService.setUser(result);
+        this.authContextService.setUser(result);
         this.router.navigate(['/dashboard']);
       },
       (error) => {
         console.log(error);
         this.loginFail = true;
-        // console.log(loginFail);
-        // this.msgs = [];
-        // this.msgs.push({
-        //   severity: 'error',
-        //   summary: 'Validation failed',
-        //   detail: 'Please check your email and password',
-        // });
       }
     );
   }

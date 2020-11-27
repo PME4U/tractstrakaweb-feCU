@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
@@ -14,7 +13,7 @@ export class BusinessUnitService {
     'Content-Type': 'application/json',
   });
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<BusinessUnit[]> {
     return this.http.get<BusinessUnit[]>(apiUrl, {

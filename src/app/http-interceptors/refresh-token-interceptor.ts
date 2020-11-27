@@ -22,15 +22,12 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
     null
   );
 
-  constructor(
-    private injector: Injector // public authService: AuthService // private authContextService: AuthContextService
-  ) {}
+  constructor(private injector: Injector) {}
 
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const authService = this.injector.get(AuthService);
     const authContextService = this.injector.get(AuthContextService);
 
     if (authContextService.getAccessToken()) {

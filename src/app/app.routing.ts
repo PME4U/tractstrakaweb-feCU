@@ -64,13 +64,15 @@ export const routes: Routes = [
           import('./views/business-units/business-units.module').then(
             (m) => m.BusinessUnitsModule
           ),
-      },{
+      },
+      {
         path: 'business-unit-levels',
         loadChildren: () =>
-          import('./views/business-unit-levels/business-unit-levels.module').then(
-            (m) => m.BusinessUnitLevelsModule
-          ),
-      },{
+          import(
+            './views/business-unit-levels/business-unit-levels.module'
+          ).then((m) => m.BusinessUnitLevelsModule),
+      },
+      {
         path: 'capabilities',
         loadChildren: () =>
           import('./views/capabilities/capabilities.module').then(
@@ -150,9 +152,9 @@ export const routes: Routes = [
       {
         path: 'procurement-methods',
         loadChildren: () =>
-          import(
-            './views/procurement-methods/procurement-methods.module'
-          ).then((m) => m.ProcurementMethodsModule),
+          import('./views/procurement-methods/procurement-methods.module').then(
+            (m) => m.ProcurementMethodsModule
+          ),
       },
       {
         path: 'procurement-strategies',
@@ -173,6 +175,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./views/product-types/product-types.module').then(
             (m) => m.ProductTypesModule
+          ),
+      },
+      {
+        path: 'projects',
+        loadChildren: () =>
+          import('./views/projects/projects.module').then(
+            (m) => m.ProjectsModule
           ),
       },
       {

@@ -10,9 +10,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { CookieService } from 'ngx-cookie-service';
-// import { Console } from 'console';
-
 import { User } from '../models/user.model';
 import { AuthContextService } from './auth-context.service';
 
@@ -22,13 +19,11 @@ import { AuthContextService } from './auth-context.service';
 export class AuthService {
   private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
-  // private authToken = JSON.stringify(this.authContextService.getAccessToken());
 
   constructor(
     private authContextService: AuthContextService,
     private httpClient: HttpClient,
     handler: HttpBackend,
-    private cookieService: CookieService,
     private router: Router
   ) {
     this.httpClient = new HttpClient(handler);
@@ -44,10 +39,10 @@ export class AuthService {
   headers = new HttpHeaders({
     'Content-Type': 'application/json',
   });
-  taggedHeaders = new HttpHeaders({
-    'Content-Type': 'application/json',
-    Authorization: 'Bearer ' + this.authContextService.getAccessToken(),
-  });
+  // taggedHeaders = new HttpHeaders({
+  //   'Content-Type': 'application/json',
+  //   Authorization: 'Bearer ' + this.authContextService.getAccessToken(),
+  // });
 
   loginUser(authData) {
     const body = JSON.stringify(authData);
@@ -117,8 +112,7 @@ export class AuthService {
 
   logout() {
     this.logoutToken();
-    this.cookieService.delete('ttw-token');
-    this.cookieService.delete('ttw-refresh');
+    this.authContextService.clearUser();
     this.router.navigate(['/']);
   }
 
@@ -130,23 +124,10 @@ export class AuthService {
 
     this.httpClient
       .post('api/account/logout/', body, {
-        headers: this.taggedHeaders,
+        headers: this.headers,
       })
       .subscribe();
   }
-
-  // logoutToken() {
-  //   const refreshToken = {
-  //     refresh: this.getRefreshToken(),
-  //   };
-  //   const body = JSON.stringify(refreshToken);
-
-  //   // console.log(body);
-
-  //   return this.httpClient.post('api/account/logout/', body, {
-  //     headers: this.headers,
-  //   });
-  // }
 
   //  function to allow the logged in user to update their own account details
   updateOwnUser(authData) {
@@ -156,19 +137,11 @@ export class AuthService {
         // `${this.baseUrl}api/account/my-account/`,
         'api/account/my-account/',
 
-        body
-        // {
-        //   headers: this.headers,
-        // }
+        body,
+        {
+          headers: this.headers,
+        }
       )
       .pipe(catchError(this.handleError));
   }
-
-  // getAuthHeaders() {
-  //   const token = this.cookieService.get('ttw-token');
-  //   return new HttpHeaders({
-  //     'Content-Type': 'application/json',
-  //     Authorization: `Token ${token}`,
-  //   });
-  // }
 }

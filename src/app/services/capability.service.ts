@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 
 import { Observable } from 'rxjs';
 
@@ -14,15 +13,7 @@ export class CapabilityService {
     'Content-Type': 'application/json',
   });
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
-
-  // getAuthHeaders() {
-  //   const token = this.cookieService.get('ttw-token');
-  //   return new HttpHeaders({
-  //     'Content-Type': 'application/json',
-  //     Authorization: `Token ${token}`,
-  //   });
-  // }
+  constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<Capability[]> {
     return this.http.get<Capability[]>(apiUrl, {
@@ -42,14 +33,9 @@ export class CapabilityService {
 
   create(data) {
     const body = JSON.stringify(data);
-    return this.http.post(
-      'api/system-parameter/capability-create/',
-
-      body,
-      {
-        headers: this.headers,
-      }
-    );
+    return this.http.post('api/system-parameter/capability-create/', body, {
+      headers: this.headers,
+    });
   }
 
   update(id, data) {

@@ -61,6 +61,11 @@ export const navItems: INavData[] = [
         url: '/business-units',
         icon: 'cil-chevron-right',
       },
+      {
+        name: 'Projects',
+        url: '/projects',
+        icon: 'cil-chevron-right',
+      },
     ],
   },
   {
@@ -134,11 +139,6 @@ export const navItems: INavData[] = [
           {
             name: 'Cost Centres',
             url: '/cost-centres',
-            icon: 'cil-chevron-right',
-          },
-          {
-            name: 'Projects',
-            url: '/projects',
             icon: 'cil-chevron-right',
           },
           {
