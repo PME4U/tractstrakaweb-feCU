@@ -4,26 +4,26 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
-import { ProcurementStrategyService } from '../../services/procurement-strategy.service';
+import { ProcurementCategoryService } from '../../services/procurement-category.service';
 import {
-  ProcurementStrategy,
-  sortAlphaPS,
-} from '../../models/procurement-strategy.model';
+  ProcurementCategory,
+  sortAlpha,
+} from '../../models/procurement-category.model';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-procurement-strategies',
-  templateUrl: './procurement-strategies.component.html',
-  styleUrls: ['./procurement-strategies.component.css'],
+  selector: 'app-procurement-categories',
+  templateUrl: './procurement-categories.component.html',
+  styleUrls: ['./procurement-categories.component.css'],
 })
-export class ProcurementStrategiesComponent implements OnInit {
-  tableData$: Observable<ProcurementStrategy[]>;
+export class ProcurementCategoriesComponent implements OnInit {
+  tableData$: Observable<ProcurementCategory[]>;
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/procurement-strategy-list/';
+  baseUrl: string = 'api/system-parameter/procurement-category-list/';
   totalRecords: number;
   isActive: boolean;
   inProgress: boolean;
@@ -34,7 +34,7 @@ export class ProcurementStrategiesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private procurementStrategyService: ProcurementStrategyService
+    private procurementCategoryService: ProcurementCategoryService
   ) {
     this.createForm();
   }
@@ -47,11 +47,9 @@ export class ProcurementStrategiesComponent implements OnInit {
     this.isFetching = true;
 
     // const processStatus$ = this.processStatusService.getAll(apiUrl)
-    const procurementStrategy$ = this.procurementStrategyService
+    const procurementStrategy$ = this.procurementCategoryService
       .getAll(apiUrl)
-      .pipe(
-        map((procurementStrategy) => procurementStrategy.sort(sortAlphaPS))
-      );
+      .pipe(map((procurementCategory) => procurementCategory.sort(sortAlpha)));
 
     this.isFetching = false;
     this.tableData$ = procurementStrategy$;
@@ -59,8 +57,8 @@ export class ProcurementStrategiesComponent implements OnInit {
 
   createForm() {
     this.maintForm = this.fb.group({
-      procurement_strategy: ['', [Validators.required]],
-      stratgey_description: ['', [Validators.required]],
+      procurement_category: ['', [Validators.required]],
+      procurement_category_description: ['', []],
       is_active: [true, [Validators.required]],
     });
   }
@@ -75,7 +73,7 @@ export class ProcurementStrategiesComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.procurementStrategyService.getOne(record.id).subscribe(
+    this.procurementCategoryService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 
@@ -83,8 +81,9 @@ export class ProcurementStrategiesComponent implements OnInit {
         this.isActive = response.is_active;
 
         this.maintForm.patchValue({
-          procurement_strategy: response.procurement_strategy,
-          stratgey_description: response.stratgey_description,
+          procurement_category: response.procurement_category,
+          procurement_category_description:
+            response.procurement_category_description,
           is_active: response.is_active,
         });
         // console.log(response);
@@ -105,7 +104,7 @@ export class ProcurementStrategiesComponent implements OnInit {
     this.deleteModal.show();
   }
   deleteRecord() {
-    this.procurementStrategyService.delete(this.id).subscribe((result) => {
+    this.procurementCategoryService.delete(this.id).subscribe((result) => {
       this.getTableData(this.baseUrl);
     });
     this.deleteModal.hide();
@@ -113,7 +112,7 @@ export class ProcurementStrategiesComponent implements OnInit {
 
   saveRecord() {
     if (this.editing) {
-      this.procurementStrategyService
+      this.procurementCategoryService
         .update(this.id, this.maintForm.value)
         .subscribe((result) => {
           this.getTableData(this.baseUrl);
@@ -121,7 +120,7 @@ export class ProcurementStrategiesComponent implements OnInit {
       this.editing = false;
     } else {
       console.log(this.maintForm.value);
-      this.procurementStrategyService
+      this.procurementCategoryService
         .create(this.maintForm.value)
         .subscribe((result) => {
           this.getTableData(this.baseUrl);

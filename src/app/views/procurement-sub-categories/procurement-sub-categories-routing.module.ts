@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ProcurementStrategiesComponent } from './procurement-strategies.component';
+import { ProcurementSubCategoriesComponent } from './procurement-sub-categories.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ProcurementStrategiesComponent,
+    component: ProcurementSubCategoriesComponent,
     data: {
-      title: 'Procurement Strategies',
+      title: 'Procurement Sub-Categories',
     },
   },
 ];
@@ -17,4 +17,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ProcurementStrategiesRoutingModule {}
+export class ProcurementSubCategoriesRoutingModule {}

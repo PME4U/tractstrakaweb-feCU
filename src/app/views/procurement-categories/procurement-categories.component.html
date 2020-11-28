@@ -3,7 +3,7 @@
     <div class="col-lg-6">
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Procurement Frameworks
+          <i class="fa fa-align-justify"></i> Procurement Categories
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
@@ -27,14 +27,14 @@
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Procurement Framework</th>
-                  <th class="text-center">active</th>
+                  <th>Procurement Category</th>
+                  <th class="text-center">Active</th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
-                  <td>{{ row.procurement_framework }}</td>
+                  <td>{{ row.procurement_category }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"
@@ -100,7 +100,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="maintModalLabel">
-          Procurement Framework Maintenance
+          Procurement Category Maintenance
         </h5>
         <button
           type="button"
@@ -121,43 +121,44 @@
         >
           <div class="form-group">
             <div>
-              <label for="procurement_framework" class="col-form-label"
-                >Procurement Framework:</label
+              <label for="procurement_category" class="col-form-label"
+                >Procurement Category:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Identify the procurement framework.</small
+                >Identify the different types of procurement categories under
+                management.</small
               >
             </div>
             <div>
               <input
                 type="text"
                 class="form-control"
-                id="procurement_framework"
-                formControlName="procurement_framework"
+                id="procurement_category"
+                formControlName="procurement_category"
               />
             </div>
           </div>
-
           <div class="form-group">
             <div>
               <label
-                for="procurement_framework_description"
+                for="procurement_category_description"
                 class="col-form-label"
                 >Description:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Provide a description of the procurement framework.</small
+                >Provide a more detailed description of the procurement
+                strategy.</small
               >
             </div>
             <div>
               <textarea
                 class="form-control"
-                id="procurement_framework_description"
-                formControlName="procurement_framework_description"
+                id="procurement_category_description"
+                formControlName="procurement_category_description"
               ></textarea>
             </div>
           </div>
@@ -168,9 +169,9 @@
             </div>
             <div class="col-sm-12">
               <small class="text-muted"
-                >Procurement Frameworks should not be deleted if there are
-                records associated with them, but setting it to inactive will
-                stop the status from being added to new records</small
+                >Procurement Category should not be deleted if there are records
+                associated with them, but setting it to inactive will stop the
+                category from being added to new records</small
               >
             </div>
             <div class="col-sm-12">
@@ -227,8 +228,8 @@
       </div>
       <div class="modal-body">
         <p>
-          Are you sure you want to delete the
-          {{ recordTitle }} Procurement Framework?
+          Are you sure you want to delete the {{ recordTitle }} Procurement
+          Category?
         </p>
       </div>
       <div class="modal-footer">

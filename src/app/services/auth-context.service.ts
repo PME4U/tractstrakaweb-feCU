@@ -18,7 +18,6 @@ export class AuthContextService {
 
     if (localStorage.getItem('currentUser') !== null) {
       currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      console.log('Got it');
       return currentUser.tokens.access;
     }
     // return this.cookieService.get('ttw-token');

@@ -123,7 +123,9 @@
                 formControlName="procurement_strategy"
               >
                 <option
-                  *ngFor="let procurement_strategy of procurementStrategies$ | async"
+                  *ngFor="
+                    let procurement_strategy of procurementStrategies$ | async
+                  "
                   [value]="procurement_strategy.id"
                 >
                   {{ procurement_strategy.procurement_strategy }}
@@ -139,7 +141,8 @@
             </div>
             <div>
               <small class="text-muted"
-                >Identify the procurement method, procurement methods are the operational way in which you engage with suppliers.</small
+                >Identify the procurement method, procurement methods are the
+                operational way in which you engage with suppliers.</small
               >
             </div>
             <div>
@@ -159,7 +162,8 @@
             </div>
             <div>
               <small class="text-muted"
-                >Provide a more detailed description of the procurement method.</small
+                >Provide a more detailed description of the procurement
+                method.</small
               >
             </div>
             <div>
@@ -177,7 +181,7 @@
             </div>
             <div class="col-sm-12">
               <small class="text-muted"
-                >Procurement Medthods should not be deleted if there are records
+                >Procurement Methods should not be deleted if there are records
                 associated with them, but setting it to inactive will stop the
                 method from being added to new records</small
               >

@@ -3,10 +3,11 @@
     <div class="col-lg-8">
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Procurement Strategies
+          <i class="fa fa-align-justify"></i> Procurement Sub-category
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
+          <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
           <div *ngIf="isFetching">
             <div class="sk-fading-circle">
               <div class="sk-circle1 sk-circle"></div>
@@ -23,20 +24,24 @@
               <div class="sk-circle12 sk-circle"></div>
             </div>
           </div>
+          <!-- <table
+            *ngIf="tableData.length > 0 && !isFetching"
+            class="table table-sm table-hover"
+          > -->
           <div class="table-responsive">
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Procurement Strategy</th>
-                  <th>Description</th>
+                  <th>Procurement Sub-category</th>
+                  <th>Procurement Category</th>
                   <th class="text-center">Active</th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
-                  <td>{{ row.procurement_strategy }}</td>
-                  <td>{{ row.stratgey_description }}</td>
+                  <td>{{ row.procurement_sub_category }}</td>
+                  <td>{{ row.procurement_category?.procurement_category }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"
@@ -63,23 +68,6 @@
               </tbody>
             </table>
           </div>
-
-          <!-- <div *ngIf="usePagination">
-            <ul class="pagination">
-              <li class="page-item" *ngIf="previous">
-                <a class="page-link" (click)="fecthPrevious()">Previous</a>
-              </li>
-              <li class="page-item active">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">4</a></li>
-              <li class="page-item" *ngIf="next">
-                <a class="page-link" (click)="fecthNext()">Next</a>
-              </li>
-            </ul>
-          </div> -->
         </div>
       </div>
     </div>
@@ -102,7 +90,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="maintModalLabel">
-          Procurement Strategy Maintenance
+          Procurement Sub-category Maintenance
         </h5>
         <button
           type="button"
@@ -123,40 +111,68 @@
         >
           <div class="form-group">
             <div>
-              <label for="procurement_strategy" class="col-form-label"
-                >Procurement Strategy:</label
+              <label for="procurement_sub_category" class="col-form-label"
+                >Procurement Sub-category:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Identify the different types of procurement strategy undertaken.</small
+                >Identify the procurement sub-category, procurement sub-category
+                are the subdivision of categories.</small
               >
             </div>
             <div>
               <input
                 type="text"
                 class="form-control"
-                id="procurement_strategy"
-                formControlName="procurement_strategy"
+                id="procurement_sub_category"
+                formControlName="procurement_sub_category"
               />
             </div>
           </div>
+
+          <div class="form-group row">
+            <label class="col-md-4 col-form-label" for="procurement_category"
+              >Procurement Category</label
+            >
+            <div class="col-md-9">
+              <select
+                id="procurement_category"
+                name="procurement_category"
+                class="form-control form-control-sm"
+                formControlName="procurement_category"
+              >
+                <option
+                  *ngFor="
+                    let procurementCategory of procurementCategory$ | async
+                  "
+                  [value]="procurementCategory.id"
+                >
+                  {{ procurementCategory.procurement_category }}
+                </option>
+              </select>
+            </div>
+          </div>
+
           <div class="form-group">
             <div>
-              <label for="stratgey_description" class="col-form-label"
+              <label
+                for="procurement_sub_category_description"
+                class="col-form-label"
                 >Description:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Provide a more detailed description of the procurement strategy.</small
+                >Provide a more detailed description of the procurement
+                method.</small
               >
             </div>
             <div>
               <textarea
                 class="form-control"
-                id="stratgey_description"
-                formControlName="stratgey_description"
+                id="procurement_sub_category_description"
+                formControlName="procurement_sub_category_description"
               ></textarea>
             </div>
           </div>
@@ -167,9 +183,9 @@
             </div>
             <div class="col-sm-12">
               <small class="text-muted"
-                >Procurement Strategy should not be deleted if there are records
-                associated with them, but setting it to inactive will stop the
-                strategy from being added to new records</small
+                >Procurement Sub-categories should not be deleted if there are
+                records associated with them, but setting it to inactive will
+                stop the sub-category from being added to new records</small
               >
             </div>
             <div class="col-sm-12">
@@ -226,7 +242,7 @@
       </div>
       <div class="modal-body">
         <p>
-          Are you sure you want to delete the {{ recordTitle }} Contract Status?
+          Are you sure you want to delete the {{ recordTitle }} sub-category?
         </p>
       </div>
       <div class="modal-footer">

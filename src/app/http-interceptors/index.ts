@@ -1,5 +1,5 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthHeaderInterceptor } from './auth-header-interceptor';
+// import { AuthHeaderInterceptor } from './auth-header-interceptor';
 import { RefreshTokenInterceptor } from './refresh-token-interceptor';
 
 export const httpInterceptorProviders = [

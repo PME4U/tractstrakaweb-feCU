@@ -128,12 +128,12 @@ export const navItems: INavData[] = [
           },
           {
             name: 'Categories',
-            url: '/categories',
+            url: '/procurement-categories',
             icon: 'cil-chevron-right',
           },
           {
             name: 'Sub-categories',
-            url: '/sub-categories',
+            url: '/procurement-sub-categories',
             icon: 'cil-chevron-right',
           },
           {

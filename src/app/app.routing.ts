@@ -150,6 +150,20 @@ export const routes: Routes = [
           ).then((m) => m.ProcurementFrameworksModule),
       },
       {
+        path: 'procurement-categories',
+        loadChildren: () =>
+          import(
+            './views/procurement-categories/procurement-categories.module'
+          ).then((m) => m.ProcurementCategoriesModule),
+      },
+      {
+        path: 'procurement-sub-categories',
+        loadChildren: () =>
+          import(
+            './views/procurement-sub-categories/procurement-sub-categories.module'
+          ).then((m) => m.ProcurementSubCategoriesModule),
+      },
+      {
         path: 'procurement-methods',
         loadChildren: () =>
           import('./views/procurement-methods/procurement-methods.module').then(
