@@ -213,6 +213,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'tax-codes',
+        loadChildren: () =>
+          import('./views/tax-codes/tax-codes.module').then(
+            (m) => m.TaxCodesModule
+          ),
+      },
+      {
         path: 'teams',
         loadChildren: () =>
           import('./views/teams/teams.module').then((m) => m.TeamsModule),

@@ -45,6 +45,10 @@ import { AppRoutingModule } from './app.routing';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
+import {
+  ToasterModule,
+  ToasterService,
+} from 'angular2-toaster/angular2-toaster';
 
 // Import app components
 import { AppConfig } from '../config/app-config';
@@ -91,6 +95,7 @@ export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
     ModalModule.forRoot(),
     ChartsModule,
     NgxPaginationModule,
+    ToasterModule,
   ],
   declarations: [
     AppComponent,

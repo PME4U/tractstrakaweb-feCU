@@ -146,6 +146,11 @@ export const navItems: INavData[] = [
             url: '/risk-classifications',
             icon: 'cil-chevron-right',
           },
+          {
+            name: 'Tax Codes',
+            url: '/tax-codes',
+            icon: 'cil-chevron-right',
+          },
         ],
       },
       {

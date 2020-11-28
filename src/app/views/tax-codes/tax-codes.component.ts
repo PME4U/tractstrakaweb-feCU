@@ -6,26 +6,26 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { TeamService } from '../../services/team.service';
-import { Team, sortAlpha } from '../../models/team.model';
+import { TaxCodeService } from '../../services/tax-code.service';
+import { TaxCode, sortAlpha } from '../../models/tax-code.model';
 
 @Component({
   selector: 'app-teams',
-  templateUrl: './teams.component.html',
-  styleUrls: ['./teams.component.css'],
+  templateUrl: './tax-codes.component.html',
+  styleUrls: ['./tax-codes.component.css'],
 })
-export class TeamsComponent implements OnInit {
-  tableData$: Observable<Team[]>;
-  allData$: Observable<Team[]>;
-  activeData$: Observable<Team[]>;
-  inactiveData$: Observable<Team[]>;
+export class TaxCodesComponent implements OnInit {
+  tableData$: Observable<TaxCode[]>;
+  allData$: Observable<TaxCode[]>;
+  activeData$: Observable<TaxCode[]>;
+  inactiveData$: Observable<TaxCode[]>;
 
   maintForm: FormGroup;
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/team-list/';
+  baseUrl: string = 'api/system-parameter/tax-code-list/';
 
   activeOnly: string = 'All';
 
@@ -40,7 +40,7 @@ export class TeamsComponent implements OnInit {
   public deleteModal: ModalDirective;
   // confirmDialogService: any;
 
-  constructor(private fb: FormBuilder, private teamService: TeamService) {
+  constructor(private fb: FormBuilder, private taxCodeService: TaxCodeService) {
     this.createForm();
   }
 
@@ -51,19 +51,23 @@ export class TeamsComponent implements OnInit {
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    const team$ = this.teamService
+    const team$ = this.taxCodeService
       .getAll(apiUrl)
-      .pipe(map((team) => team.sort(sortAlpha)));
+      .pipe(map((taxCode) => taxCode.sort(sortAlpha)));
 
     this.isFetching = false;
     // this.tableData$ = contractStatus$;
 
     this.allData$ = team$;
     this.activeData$ = team$.pipe(
-      map((teams) => teams.filter((team) => team.is_active === true))
+      map((taxCodes) =>
+        taxCodes.filter((taxCode) => taxCode.is_active === true)
+      )
     );
     this.inactiveData$ = team$.pipe(
-      map((teams) => teams.filter((team) => team.is_active === false))
+      map((taxCodes) =>
+        taxCodes.filter((taxCode) => taxCode.is_active === false)
+      )
     );
     // this.tableData$ = this.allData$;
     this.filterOnActive();
@@ -105,8 +109,9 @@ export class TeamsComponent implements OnInit {
 
   createForm() {
     this.maintForm = this.fb.group({
-      team: ['', [Validators.required]],
-      description: ['', []],
+      tax_code: ['', [Validators.required]],
+      tax_code_description: ['', []],
+      tax_percentage: ['', [Validators.required]],
       is_active: [true, [Validators.required]],
     });
   }
@@ -121,7 +126,7 @@ export class TeamsComponent implements OnInit {
   editRecord(record) {
     this.editing = true;
     this.isFetching = true;
-    this.teamService.getOne(record.id).subscribe(
+    this.taxCodeService.getOne(record.id).subscribe(
       (response) => {
         this.isFetching = false;
 
@@ -129,8 +134,9 @@ export class TeamsComponent implements OnInit {
         this.isActive = response.is_active;
 
         this.maintForm.patchValue({
-          team: response.team,
-          description: response.description,
+          tax_code: response.tax_code,
+          tax_code_description: response.tax_code_description,
+          tax_percentage: response.tax_percentage,
           is_active: response.is_active,
         });
         // console.log(response);
@@ -151,7 +157,7 @@ export class TeamsComponent implements OnInit {
     this.deleteModal.show();
   }
   deleteRecord() {
-    this.teamService.delete(this.id).subscribe((result) => {
+    this.taxCodeService.delete(this.id).subscribe((result) => {
       this.getTableData(this.baseUrl);
     });
     this.deleteModal.hide();
@@ -159,14 +165,14 @@ export class TeamsComponent implements OnInit {
 
   saveRecord() {
     if (this.editing) {
-      this.teamService
+      this.taxCodeService
         .update(this.id, this.maintForm.value)
         .subscribe((result) => {
           this.getTableData(this.baseUrl);
         });
       this.editing = false;
     } else {
-      this.teamService.create(this.maintForm.value).subscribe((result) => {
+      this.taxCodeService.create(this.maintForm.value).subscribe((result) => {
         this.getTableData(this.baseUrl);
       });
     }

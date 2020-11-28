@@ -18,6 +18,9 @@ export class AuthContextService {
 
     if (localStorage.getItem('currentUser') !== null) {
       currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      // console.log(
+      //   'Returned Token: ' + JSON.stringify(currentUser.tokens.access)
+      // );
       return currentUser.tokens.access;
     }
     // return this.cookieService.get('ttw-token');
@@ -28,6 +31,9 @@ export class AuthContextService {
 
     if (localStorage.getItem('currentUser') !== null) {
       currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      // console.log(
+      //   'Returned Token: ' + JSON.stringify(currentUser.tokens.refresh)
+      // );
       return currentUser.tokens.refresh;
     }
     // return this.cookieService.get('ttw-refresh');
@@ -38,7 +44,7 @@ export class AuthContextService {
     const existing: User = JSON.parse(localStorage.getItem('currentUser'));
 
     // Add new data to localStorage Array
-    existing.tokens.access = token;
+    existing.tokens.access = token.access;
 
     // Save back to localStorage
     localStorage.setItem('currentUser', JSON.stringify(existing));

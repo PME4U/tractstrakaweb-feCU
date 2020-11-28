@@ -3,7 +3,7 @@
     <div class="col-lg-6">
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Teams
+          <i class="fa fa-align-justify"></i> Tax Codes
           <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
         </div>
         <div class="card-body">
@@ -32,14 +32,15 @@
             <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Team</th>
-                  <th class="text-center">Active</th>
+                  <th>Tax Codes</th>
+                  <th class="text-center">Percentage</th>
                   <th class="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of tableData$ | async">
-                  <td>{{ row.team }}</td>
+                  <td>{{ row.tax_code }}</td>
+                  <td class="text-center">{{ row.tax_percentage }}</td>
                   <td class="text-center">
                     <span
                       *ngIf="row.is_active"
@@ -87,7 +88,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="maintModalLabel">Teams Maintenance</h5>
+        <h5 class="modal-title" id="maintModalLabel">Tax Code Maintenance</h5>
         <button
           type="button"
           class="close"
@@ -107,41 +108,63 @@
         >
           <div class="form-group">
             <div>
-              <label for="team" class="col-form-label">Team:</label>
+              <label for="tax_code" class="col-form-label">Tax Code:</label>
             </div>
             <div>
               <small class="text-muted"
-                >Identify the team, teams are used to groups individuals based
-                and is used to control access to some records.</small
+                >Identify the tax code, teams are used in purchase orders and
+                other valuse fields to calcualte the including tax value.</small
               >
             </div>
             <div>
               <input
                 type="text"
                 class="form-control"
-                id="team"
-                formControlName="team"
+                id="tax_code"
+                formControlName="tax_code"
               />
             </div>
           </div>
 
           <div class="form-group">
             <div>
-              <label for="description" class="col-form-label"
+              <label for="tax_code_description" class="col-form-label"
                 >Description:</label
               >
             </div>
             <div>
               <small class="text-muted"
-                >Provide a more detailed description of the team.</small
+                >Provide a more detailed description of the tax code.</small
               >
             </div>
             <div>
               <textarea
                 class="form-control"
-                id="description"
-                formControlName="description"
+                id="tax_code_description"
+                formControlName="tax_code_description"
               ></textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div>
+              <label for="tax_percentage" class="col-form-label"
+                >Tax Percentage:</label
+              >
+            </div>
+            <div>
+              <small class="text-muted"
+                >enter the percentage tax to be applied, 10% should be entered
+                as 10.</small
+              >
+            </div>
+            <div>
+              <input
+                type="text"
+                class="form-control"
+                id="tax_percentage"
+                formControlName="tax_percentage"
+              />
             </div>
           </div>
 
@@ -151,9 +174,9 @@
             </div>
             <div class="col-sm-12">
               <small class="text-muted"
-                >Teams should not be deleted if there are records associated
-                with them, but setting it to inactive will stop the team from
-                being added to new records</small
+                >Tax Codes should not be deleted if there are records associated
+                with them, but setting it to inactive will stop the tax code
+                from being added to new records</small
               >
             </div>
             <div class="col-sm-12">
@@ -209,7 +232,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete the {{ recordTitle }} Team?</p>
+        <p>Are you sure you want to delete the {{ recordTitle }} Tax Code?</p>
       </div>
       <div class="modal-footer">
         <button
