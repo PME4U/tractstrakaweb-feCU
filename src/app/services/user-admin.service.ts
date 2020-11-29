@@ -52,7 +52,7 @@ export class UserAccessService {
 
   getOne(id: Number): Observable<any> {
     console.log('URL:' + id);
-    return this.http.get<any>('api/account/account-access-detail/' + id, {
+    return this.http.get<any>('api/account/account-access-list/' + id, {
       headers: this.headers,
     });
   }

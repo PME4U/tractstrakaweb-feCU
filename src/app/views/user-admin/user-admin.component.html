@@ -34,6 +34,7 @@
           >
             <option value="Select Field">Select Field</option>
             <option value="email">Username</option>
+            <option value="person">Person</option>
             <option value="team">Team</option>
             <option value="user_type">User Type</option>
             <option value="companies">Companies</option>
@@ -79,6 +80,21 @@
       >
         <thead>
           <tr>
+            <th style="width: 10%">
+              <mfDefaultSorter by="person" #sortPerson>
+                Person
+                <span
+                  *ngIf="sortPerson.isSortedByMeAsc"
+                  class="cui-arrow-top"
+                  aria-hidden="true"
+                ></span>
+                <span
+                  *ngIf="sortPerson.isSortedByMeDesc"
+                  class="cui-arrow-bottom"
+                  aria-hidden="true"
+                ></span>
+              </mfDefaultSorter>
+            </th>
             <th style="width: 10%">
               <mfDefaultSorter by="email" #sortEmail>
                 Username
@@ -295,6 +311,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of mf.data">
+            <td>{{ item.person?.full_name }}</td>
             <td class="clickable" (click)="editRecord(item)">
               {{ item.email }}
             </td>
@@ -302,7 +319,10 @@
               <span *ngIf="item.is_active" class="cil-check table-check"></span>
             </td>
             <td class="text-center">
-              <span *ngIf="item.is_verified" class="cil-check table-check"></span>
+              <span
+                *ngIf="item.is_verified"
+                class="cil-check table-check"
+              ></span>
             </td>
             <!-- <td>{{ item.is_active }}</td> -->
             <td>{{ item.user_type }}</td>
@@ -434,7 +454,9 @@
               </div>
               <div class="col-sm-12">
                 <small class="text-muted"
-                  >The user should verify their own email address, however, if they are having difficulties, you can manually verify here.</small
+                  >The user should verify their own email address, however, if
+                  they are having difficulties, you can manually verify
+                  here.</small
                 >
               </div>
               <div class="col-sm-12">
@@ -450,14 +472,26 @@
             </div>
 
             <div class="form-group row">
-              <!-- <div class="col-sm-12">
-                <small class="text-muted"
-                  >Select an access level for each function group. The levels
-                  range from no access to delete, each access right inlcudes the
-                  right above it, so someone with Delete access can read,
-                  modify, create and delete records.</small
+              <label class="col-md-3 col-form-label" for="person">Person</label>
+              <div class="col-md-9">
+                <select
+                  id="person"
+                  name="person"
+                  class="form-control form-control-sm"
+                  formControlName="person"
                 >
-              </div> -->
+                  <option value="0">Please Select</option>
+                  <option
+                    *ngFor="let person of people$ | async"
+                    [value]="person.id"
+                  >
+                    {{ person.full_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
               <label class="col-md-3 col-form-label" for="select3"
                 >User Type</label
               >
@@ -486,7 +520,7 @@
                   formControlName="team"
                 >
                   <option value="0">Please Select</option>
-                  <option *ngFor="let team of team$ | async" [value]="team.id">
+                  <option *ngFor="let team of teams$ | async" [value]="team.id">
                     {{ team.team }}
                   </option>
                 </select>

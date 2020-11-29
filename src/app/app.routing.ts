@@ -122,6 +122,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'people',
+        loadChildren: () =>
+          import('./views/people/people.module').then((m) => m.PeopleModule),
+      },
+      {
         path: 'prequalifications',
         loadChildren: () =>
           import('./views/prequalifications/prequalifications.module').then(

@@ -11,9 +11,11 @@ import {
   TableData,
 } from '../../services/user-admin.service';
 import { TeamService } from '../../services/team.service';
+import { PersonService } from '../../services/person.service';
 
 import { User } from '../../models/user.model';
 import { Team, sortAlpha } from '../../models/team.model';
+import { Person } from '../../models/person.model';
 
 @Component({
   selector: 'app-contract-type',
@@ -35,7 +37,8 @@ export class UserAdminComponent implements OnInit {
   isActive: boolean;
   searchField: string;
 
-  public team$: Observable<Team[]>;
+  public teams$: Observable<Team[]>;
+  public people$: Observable<Person[]>;
 
   public disableSearch = true;
   public searchMessage = 'Select field to search';
@@ -49,7 +52,8 @@ export class UserAdminComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userAccessService: UserAccessService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private personService: PersonService
   ) {
     this.data = new Array<any>();
     this.createForm();
@@ -76,6 +80,7 @@ export class UserAdminComponent implements OnInit {
   createForm() {
     this.maintForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      person: ['', []],
       team: ['', [Validators.required, Validators.min(1)]],
       is_active: [true, [Validators.required]],
       is_verified: [true, [Validators.required]],
@@ -103,8 +108,9 @@ export class UserAdminComponent implements OnInit {
 
   editRecord(record) {
     this.isFetching = true;
-    this.getTeams();
     this.editing = true;
+    this.getPeople();
+    this.getTeams();
     this.maintForm.get('email').disable();
     this.userAccessService.getOne(record.id).subscribe(
       (response) => {
@@ -115,6 +121,7 @@ export class UserAdminComponent implements OnInit {
 
         this.maintForm.patchValue({
           email: response.email,
+          person: response.person?.id,
           team: response?.team?.id,
           is_active: response.is_active,
           is_verified: response.is_verified,
@@ -175,9 +182,15 @@ export class UserAdminComponent implements OnInit {
   }
 
   getTeams() {
-    this.team$ = this.teamService
+    this.teams$ = this.teamService
       .getAll('api/system-parameter/team-list/')
       .pipe(map((team) => team.sort(sortAlpha)));
+  }
+
+  getPeople() {
+    this.people$ = this.personService
+      .getAll('api/people/people-list/')
+      .pipe(map((people) => people.results));
   }
 
   closeModal() {

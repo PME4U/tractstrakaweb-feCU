@@ -1,6 +1,7 @@
 export interface User {
   email: string;
   user_type: string;
+  person: any;
   team: string;
   companies: string;
   forward_plans: string;

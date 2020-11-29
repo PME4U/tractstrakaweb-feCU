@@ -75,7 +75,7 @@ export const navItems: INavData[] = [
     children: [
       {
         name: 'All People',
-        url: '/all-people',
+        url: '/people',
         icon: 'cil-chevron-right',
       },
       {
