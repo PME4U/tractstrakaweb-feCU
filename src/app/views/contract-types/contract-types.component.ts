@@ -20,6 +20,7 @@ export class ContractTypesComponent implements OnInit {
   tableData$: Observable<ContractType[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/contract-type-list/';
   scope = 'system_params';
 
   no_access: boolean = true;
@@ -32,7 +33,6 @@ export class ContractTypesComponent implements OnInit {
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/contract-type-list/';
   totalRecords: number;
 
   isActive: boolean;

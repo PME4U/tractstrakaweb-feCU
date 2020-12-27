@@ -4,13 +4,15 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ContractorRoleTypeService } from '../../services/contractor-role-type.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import {
   ContractorRoleType,
   sortAlpha,
 } from '../../models/contractor-role-type.model';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contractor-type',
@@ -24,11 +26,19 @@ export class ContractorRoleTypesComponent implements OnInit {
   inactiveData$: Observable<ContractorRoleType[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/contractor-role-type-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/contractor-role-type-list/';
   // totalRecords: number;
 
   activeOnly: string = 'All';
@@ -41,42 +51,50 @@ export class ContractorRoleTypesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private contractorRoleTypeService: ContractorRoleTypeService
-  ) {
+    private contractorRoleTypeService: ContractorRoleTypeService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const contractorRoleType$ = this.contractorRoleTypeService
-      .getAll(apiUrl)
-      .pipe(map((contractorRoleType) => contractorRoleType.sort(sortAlpha)));
+      const contractorRoleType$ = this.contractorRoleTypeService
+        .getAll(apiUrl)
+        .pipe(map((contractorRoleType) => contractorRoleType.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = contractorRoleType$;
-    this.activeData$ = contractorRoleType$.pipe(
-      map((contractorRoleType) =>
-        contractorRoleType.filter(
-          (contractorRoleType) => contractorRoleType.is_active === true
+      this.allData$ = contractorRoleType$;
+      this.activeData$ = contractorRoleType$.pipe(
+        map((contractorRoleType) =>
+          contractorRoleType.filter(
+            (contractorRoleType) => contractorRoleType.is_active === true
+          )
         )
-      )
-    );
-    this.inactiveData$ = contractorRoleType$.pipe(
-      map((contractorRoleType) =>
-        contractorRoleType.filter(
-          (contractorRoleType) => contractorRoleType.is_active === false
+      );
+      this.inactiveData$ = contractorRoleType$.pipe(
+        map((contractorRoleType) =>
+          contractorRoleType.filter(
+            (contractorRoleType) => contractorRoleType.is_active === false
+          )
         )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -112,7 +130,10 @@ export class ContractorRoleTypesComponent implements OnInit {
   createForm() {
     this.maintForm = this.fb.group({
       contractor_role_type: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -124,35 +145,17 @@ export class ContractorRoleTypesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      contractor_role_type: record.contractor_role_type,
-      is_active: record.is_active,
-    });
-    // this.contractorRoleTypeService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        contractor_role_type: record.contractor_role_type,
+        is_active: record.is_active,
+      });
 
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       contractor_role_type: response.contractor_role_type,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

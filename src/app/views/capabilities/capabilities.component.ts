@@ -23,6 +23,7 @@ export class CapabilitiesComponent implements OnInit {
   inactiveData$: Observable<Capability[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/capability-list/';
   scope = 'system_params';
 
   no_access: boolean = true;
@@ -35,7 +36,6 @@ export class CapabilitiesComponent implements OnInit {
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/capability-list/';
   totalRecords: number;
   next: string;
   previous: string;

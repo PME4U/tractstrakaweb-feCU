@@ -26,6 +26,7 @@ export class ContractStatusComponent implements OnInit {
   inactiveData$: Observable<ContractStatus[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/contract-status-list/';
   scope = 'system_params';
 
   no_access: boolean = true;
@@ -38,7 +39,6 @@ export class ContractStatusComponent implements OnInit {
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/contract-status-list/';
   // totalRecords: number;
   // next: string;
   // previous: string;

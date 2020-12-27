@@ -26,6 +26,7 @@ export class BusinessUnitLevelsComponent implements OnInit {
   inactiveData$: Observable<BusinessUnitLevel[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/business-unit-level-list/';
   scope = 'system_params';
 
   no_access: boolean = true;
@@ -38,7 +39,6 @@ export class BusinessUnitLevelsComponent implements OnInit {
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/business-unit-level-list/';
 
   activeOnly: string = 'All';
 

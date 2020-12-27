@@ -20,6 +20,7 @@ export class ComplexitiesComponent implements OnInit {
   tableData$: Observable<Complexity[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/complexity-classification-list/';
   scope = 'system_params';
 
   no_access: boolean = true;
@@ -32,7 +33,6 @@ export class ComplexitiesComponent implements OnInit {
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/complexity-classification-list/';
   totalRecords: number;
   next: string;
   previous: string;
