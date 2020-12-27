@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ComplexityService } from '../../services/complexity.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { Complexity, sortAlpha } from '../../models/complexity.model';
 
 @Component({
@@ -16,7 +18,16 @@ import { Complexity, sortAlpha } from '../../models/complexity.model';
 })
 export class ComplexitiesComponent implements OnInit {
   tableData$: Observable<Complexity[]>;
+
   maintForm: FormGroup;
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
@@ -44,31 +55,42 @@ export class ComplexitiesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private complexityService: ComplexityService
-  ) {
+    private complexityService: ComplexityService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const complexity$ = this.complexityService
-      .getAll(apiUrl)
-      .pipe(map((complexity) => complexity.sort(sortAlpha)));
+      const complexity$ = this.complexityService
+        .getAll(apiUrl)
+        .pipe(map((complexity) => complexity.sort(sortAlpha)));
 
-    this.isFetching = false;
-    this.tableData$ = complexity$;
+      this.isFetching = false;
+      this.tableData$ = complexity$;
+    }
   }
 
   createForm() {
     this.maintForm = this.fb.group({
       complexity_classification: ['', [Validators.required]],
       complexity_description: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -80,37 +102,17 @@ export class ComplexitiesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    this.id = record.id;
-    // this.isFetching = true;
-    this.maintForm.patchValue({
-      complexity_classification: record.complexity_classification,
-      complexity_description: record.complexity_description,
-      is_active: record.is_active,
-    });
-    // this.complexityService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       complexity_classification: response.complexity_classification,
-    //       complexity_description: response.complexity_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      this.id = record.id;
+      // this.isFetching = true;
+      this.maintForm.patchValue({
+        complexity_classification: record.complexity_classification,
+        complexity_description: record.complexity_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
