@@ -7,13 +7,14 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
+import { BusinessUnitService } from '../../services/business-unit.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
+import { BusinessUnit, sortAlphaBU } from '../../models/business-unit.model';
 import {
   BusinessUnitLevel,
   sortAlpha,
 } from '../../models/business-unit-level.model';
-
-import { BusinessUnitService } from '../../services/business-unit.service';
-import { BusinessUnit, sortAlphaBU } from '../../models/business-unit.model';
 
 @Component({
   selector: 'app-business-unit',
@@ -27,6 +28,15 @@ export class BusinessUnitsComponent implements OnInit {
   inactiveData$: Observable<BusinessUnit[]>;
 
   maintForm: FormGroup;
+
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
 
   id = null;
@@ -53,42 +63,50 @@ export class BusinessUnitsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private businessUnitService: BusinessUnitService,
-    private businessUnitLevelService: BusinessUnitLevelService
-  ) {
-    this.createForm();
-  }
+    private businessUnitLevelService: BusinessUnitLevelService,
+    private userAccessService: UserAccessService
+  ) {}
 
   ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
     this.getTableData(this.baseUrl);
+    this.createForm();
   }
 
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    const businessUnits$ = this.businessUnitService
-      .getAll(apiUrl)
-      .pipe(map((businessUnit) => businessUnit.sort(sortAlphaBU)));
+    if (!this.no_access) {
+      const businessUnits$ = this.businessUnitService
+        .getAll(apiUrl)
+        .pipe(map((businessUnit) => businessUnit.sort(sortAlphaBU)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = businessUnits$;
-    this.activeData$ = businessUnits$.pipe(
-      map((business_units) =>
-        business_units.filter(
-          (business_unit) => business_unit.is_active === true
+      this.allData$ = businessUnits$;
+      this.activeData$ = businessUnits$.pipe(
+        map((business_units) =>
+          business_units.filter(
+            (business_unit) => business_unit.is_active === true
+          )
         )
-      )
-    );
-    this.inactiveData$ = businessUnits$.pipe(
-      map((business_units) =>
-        business_units.filter(
-          (business_unit) => business_unit.is_active === false
+      );
+      this.inactiveData$ = businessUnits$.pipe(
+        map((business_units) =>
+          business_units.filter(
+            (business_unit) => business_unit.is_active === false
+          )
         )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -128,10 +146,16 @@ export class BusinessUnitsComponent implements OnInit {
   createForm() {
     this.maintForm = this.fb.group({
       business_unit_name: ['', [Validators.required]],
-      business_unit_level: ['', [Validators.required]],
-      parent_business_unit: ['', []],
+      business_unit_level: [
+        { value: '', disabled: !this.modify },
+        [Validators.required],
+      ],
+      parent_business_unit: [{ value: '', disabled: !this.modify }, []],
       business_unit_description: ['', []],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -145,41 +169,20 @@ export class BusinessUnitsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.getBusinessUnitLevels();
-    this.getParentBusinessUnits();
-    this.id = record.id;
-    this.maintForm.patchValue({
-      business_unit_name: record.business_unit_name,
-      business_unit_level: record.business_unit_level?.id,
-      parent_business_unit: record.parent_business_unit?.id,
-      business_unit_description: record.business_unit_description,
-      is_active: record.is_active,
-    });
-    this.maintModal.show();
-    // this.businessUnitService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-    //     this.maintForm.patchValue({
-    //       business_unit_name: response.business_unit_name,
-    //       business_unit_level: response.business_unit_level?.id,
-    //       parent_business_unit: response.parent_business_unit?.id,
-    //       business_unit_description: response.business_unit_description,
-    //       is_active: response.is_active,
-    //     });
-    // console.log(response);
-    // console.log(this.tableData);
-    // console.log('Total records:' + this.totalRecords);
-    // console.log(this.next);
-    // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
+    if (!this.no_access) {
+      this.editing = true;
+      this.getBusinessUnitLevels();
+      this.getParentBusinessUnits();
+      this.id = record.id;
+      this.maintForm.patchValue({
+        business_unit_name: record.business_unit_name,
+        business_unit_level: record.business_unit_level?.id,
+        parent_business_unit: record.parent_business_unit?.id,
+        business_unit_description: record.business_unit_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

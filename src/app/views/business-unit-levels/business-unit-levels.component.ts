@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
+import { UserAccessService } from '../../services/user-admin.service';
 import {
   BusinessUnitLevel,
   sortAlpha,
 } from '../../models/business-unit-level.model';
-import { UserAccessService } from '../../services/user-admin.service';
 
 @Component({
   selector: 'app-business-unit-levels',
@@ -32,6 +32,7 @@ export class BusinessUnitLevelsComponent implements OnInit {
   modify: boolean = false;
   create: boolean = false;
   delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
@@ -145,7 +146,10 @@ export class BusinessUnitLevelsComponent implements OnInit {
     // console.log('Cerate Rights: ' + this.create);
     this.maintForm = this.fb.group({
       business_unit_level: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -157,8 +161,8 @@ export class BusinessUnitLevelsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
     if (!this.no_access) {
+      this.editing = true;
       this.id = record.id;
       this.maintForm.patchValue({
         business_unit_level: record.business_unit_level,

@@ -4,7 +4,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Business Units
-          <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+          <i
+            class="icon-plus add-record pull-right"
+            (click)="addRecord()"
+            *ngIf="this.create"
+          ></i>
         </div>
         <div class="card-body">
           <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
@@ -57,6 +61,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Edit Record"
+                      *ngIf="this.read_only"
                     ></i>
                     <i
                       class="cil-delete delete-record"
@@ -64,6 +69,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Delete Record"
+                      *ngIf="this.delete"
                     ></i>
                   </td>
                 </tr>
@@ -111,26 +117,25 @@
           novalidate
           autocomplete="off"
         >
-        <div class="form-group">
-          <div>
-            <label for="business_unit_name" class="col-form-label"
-              >Business Unit Name:</label
-            >
+          <div class="form-group">
+            <div>
+              <label for="business_unit_name" class="col-form-label"
+                >Business Unit Name:</label
+              >
+            </div>
+            <div>
+              <small class="text-muted">Identify the business unit name.</small>
+            </div>
+            <div>
+              <input
+                type="text"
+                class="form-control"
+                id="business_unit_name"
+                formControlName="business_unit_name"
+                [readonly]="!this.modify"
+              />
+            </div>
           </div>
-          <div>
-            <small class="text-muted"
-              >Identify the business unit name.</small
-            >
-          </div>
-          <div>
-            <input
-              type="text"
-              class="form-control"
-              id="business_unit_name"
-              formControlName="business_unit_name"
-            />
-          </div>
-        </div>  
 
           <div class="form-group row">
             <label class="col-md-4 col-form-label" for="business_unit_level"
@@ -142,7 +147,8 @@
                 name="business_unit_level"
                 class="form-control form-control-sm"
                 formControlName="business_unit_level"
-              > 
+                [disabled]="!this.modify"
+              >
                 <option [ngValue]="null">Choose a level</option>
                 <option
                   *ngFor="let level of businessUnitLevels$ | async"
@@ -164,6 +170,7 @@
                 name="parent_business_unit"
                 class="form-control form-control-sm"
                 formControlName="parent_business_unit"
+                [disabled]="!this.modify"
               >
                 <option [ngValue]="null">Choose a parent</option>
                 <option
@@ -192,6 +199,7 @@
                 class="form-control"
                 id="business_unit_description"
                 formControlName="business_unit_description"
+                [readonly]="!this.modify"
               ></textarea>
             </div>
           </div>
@@ -229,7 +237,12 @@
         >
           Close
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveRecord()">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveRecord()"
+          [disabled]="!this.modify"
+        >
           Save
         </button>
       </div>
@@ -260,7 +273,9 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete the {{ recordTitle }} Business Unit?</p>
+        <p>
+          Are you sure you want to delete the {{ recordTitle }} Business Unit?
+        </p>
       </div>
       <div class="modal-footer">
         <button
