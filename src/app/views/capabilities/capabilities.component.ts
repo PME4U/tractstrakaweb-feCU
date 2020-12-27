@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CapabilityService } from '../../services/capability.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { Capability, sortAlpha } from '../../models/capability.model';
 
 @Component({
@@ -21,6 +23,14 @@ export class CapabilitiesComponent implements OnInit {
   inactiveData$: Observable<Capability[]>;
 
   maintForm: FormGroup;
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
@@ -47,38 +57,46 @@ export class CapabilitiesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private capabilityService: CapabilityService
-  ) {
+    private capabilityService: CapabilityService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const capabilities$ = this.capabilityService
-      .getAll(apiUrl)
-      .pipe(map((capability) => capability.sort(sortAlpha)));
+      const capabilities$ = this.capabilityService
+        .getAll(apiUrl)
+        .pipe(map((capability) => capability.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = capalities$;
+      this.isFetching = false;
+      // this.tableData$ = capalities$;
 
-    this.allData$ = capabilities$;
-    this.activeData$ = capabilities$.pipe(
-      map((capabilities) =>
-        capabilities.filter((capability) => capability.is_active === true)
-      )
-    );
-    this.inactiveData$ = capabilities$.pipe(
-      map((capabilities) =>
-        capabilities.filter((capability) => capability.is_active === false)
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      this.allData$ = capabilities$;
+      this.activeData$ = capabilities$.pipe(
+        map((capabilities) =>
+          capabilities.filter((capability) => capability.is_active === true)
+        )
+      );
+      this.inactiveData$ = capabilities$.pipe(
+        map((capabilities) =>
+          capabilities.filter((capability) => capability.is_active === false)
+        )
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -113,7 +131,10 @@ export class CapabilitiesComponent implements OnInit {
     this.maintForm = this.fb.group({
       capability: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -125,37 +146,17 @@ export class CapabilitiesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      capability: record.capability,
-      description: record.description,
-      is_active: record.is_active,
-    });
-    // this.capabilityService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       capability: response.capability,
-    //       description: response.description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        capability: record.capability,
+        description: record.description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
 import { UserAccessService } from '../../services/user-admin.service';
+
 import {
   BusinessUnitLevel,
   sortAlpha,
@@ -76,10 +77,9 @@ export class BusinessUnitLevelsComponent implements OnInit {
   }
 
   getTableData(apiUrl: string) {
-    this.isFetching = true;
-
     // console.log('Get Table Rights: ' + this.no_access);
     if (!this.no_access) {
+      this.isFetching = true;
       const team$ = this.businessUnitLevelService
         .getAll(apiUrl)
         .pipe(map((businessUnitLevel) => businessUnitLevel.sort(sortAlpha)));
