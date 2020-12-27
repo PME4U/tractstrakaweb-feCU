@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ContractTypeService } from '../../services/contract-type.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { ContractType, sortAlpha } from '../../models/contract-type.model';
 
 @Component({
@@ -16,7 +18,16 @@ import { ContractType, sortAlpha } from '../../models/contract-type.model';
 })
 export class ContractTypesComponent implements OnInit {
   tableData$: Observable<ContractType[]>;
+
   maintForm: FormGroup;
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
@@ -32,31 +43,42 @@ export class ContractTypesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private contractTypeService: ContractTypeService
-  ) {
+    private contractTypeService: ContractTypeService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const contractType$ = this.contractTypeService
-      .getAll(apiUrl)
-      .pipe(map((contractType) => contractType.sort(sortAlpha)));
+      const contractType$ = this.contractTypeService
+        .getAll(apiUrl)
+        .pipe(map((contractType) => contractType.sort(sortAlpha)));
 
-    this.isFetching = false;
-    this.tableData$ = contractType$;
+      this.isFetching = false;
+      this.tableData$ = contractType$;
+    }
   }
 
   createForm() {
     this.maintForm = this.fb.group({
       contract_type: ['', [Validators.required]],
       type_description: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -68,37 +90,17 @@ export class ContractTypesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      contract_type: record.contract_type,
-      type_description: record.type_description,
-      is_active: record.is_active,
-    });
-    // this.contractTypeService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       contract_type: response.contract_type,
-    //       type_description: response.type_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        contract_type: record.contract_type,
+        type_description: record.type_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

@@ -4,7 +4,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Contract Types
-          <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+          <i
+            class="icon-plus add-record pull-right"
+            (click)="addRecord()"
+            *ngIf="this.create"
+          ></i>
         </div>
         <div class="card-body">
           <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
@@ -53,6 +57,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Edit Record"
+                      *ngIf="this.read_only"
                     ></i>
                     <i
                       class="cil-delete delete-record"
@@ -60,6 +65,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Delete Record"
+                      *ngIf="this.delete"
                     ></i>
                   </td>
                 </tr>
@@ -125,6 +131,7 @@
                 class="form-control"
                 id="contract_type"
                 formControlName="contract_type"
+                [readonly]="!this.modify"
               />
             </div>
           </div>
@@ -145,6 +152,7 @@
                 class="form-control"
                 id="type_description"
                 formControlName="type_description"
+                [readonly]="!this.modify"
               ></textarea>
             </div>
           </div>
@@ -182,7 +190,12 @@
         >
           Close
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveRecord()">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveRecord()"
+          [disabled]="!this.modify"
+        >
           Save
         </button>
       </div>
