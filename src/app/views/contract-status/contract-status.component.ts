@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ContractStatusService } from '../../services/contract-status.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import {
   ContractStatus,
   sortStatusBySeqNo,
@@ -24,6 +26,14 @@ export class ContractStatusComponent implements OnInit {
   inactiveData$: Observable<ContractStatus[]>;
 
   maintForm: FormGroup;
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
@@ -50,42 +60,50 @@ export class ContractStatusComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private contractStatusService: ContractStatusService
-  ) {
+    private contractStatusService: ContractStatusService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const contractStatus$ = this.contractStatusService
-      .getAll(apiUrl)
-      .pipe(map((contractStatus) => contractStatus.sort(sortStatusBySeqNo)));
+      const contractStatus$ = this.contractStatusService
+        .getAll(apiUrl)
+        .pipe(map((contractStatus) => contractStatus.sort(sortStatusBySeqNo)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = contractStatus$;
-    this.activeData$ = contractStatus$.pipe(
-      map((contractStatuses) =>
-        contractStatuses.filter(
-          (contractStatus) => contractStatus.is_active === true
+      this.allData$ = contractStatus$;
+      this.activeData$ = contractStatus$.pipe(
+        map((contractStatuses) =>
+          contractStatuses.filter(
+            (contractStatus) => contractStatus.is_active === true
+          )
         )
-      )
-    );
-    this.inactiveData$ = contractStatus$.pipe(
-      map((contractStatuses) =>
-        contractStatuses.filter(
-          (contractStatus) => contractStatus.is_active === false
+      );
+      this.inactiveData$ = contractStatus$.pipe(
+        map((contractStatuses) =>
+          contractStatuses.filter(
+            (contractStatus) => contractStatus.is_active === false
+          )
         )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -130,9 +148,18 @@ export class ContractStatusComponent implements OnInit {
         '',
         [Validators.required, Validators.pattern('^[0-9]*$')],
       ],
-      in_progress: [false, [Validators.required]],
-      is_current: [false, [Validators.required]],
-      is_active: [true, [Validators.required]],
+      in_progress: [
+        { value: false, disabled: !this.modify },
+        [Validators.required],
+      ],
+      is_current: [
+        { value: false, disabled: !this.modify },
+        [Validators.required],
+      ],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -146,45 +173,20 @@ export class ContractStatusComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    this.id = record.id;
-    // this.isFetching = true;
-    this.maintForm.patchValue({
-      contract_status: record.contract_status,
-      status_description: record.status_description,
-      status_sequence: record.status_sequence,
-      in_progress: record.in_progress,
-      is_current: record.is_current,
-      is_active: record.is_active,
-    });
-    // this.contractStatusService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isCurrent = response.is_current;
-    //     this.inProgress = response.in_progress;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       contract_status: response.contract_status,
-    //       status_description: response.status_description,
-    //       status_sequence: response.status_sequence,
-    //       in_progress: response.in_progress,
-    //       is_current: response.is_current,
-    //       is_active: response.is_active,
-    //     });
-    // console.log(response);
-    // console.log(this.tableData);
-    // console.log('Total records:' + this.totalRecords);
-    // console.log(this.next);
-    // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      this.id = record.id;
+      // this.isFetching = true;
+      this.maintForm.patchValue({
+        contract_status: record.contract_status,
+        status_description: record.status_description,
+        status_sequence: record.status_sequence,
+        in_progress: record.in_progress,
+        is_current: record.is_current,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
