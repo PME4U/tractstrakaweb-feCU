@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProcessStatusService } from '../../services/process-status.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import {
   ProcessStatus,
   sortStatusBySeqNo,
@@ -19,12 +21,21 @@ import {
 })
 export class ProcessStatusesComponent implements OnInit {
   tableData$: Observable<ProcessStatus[]>;
+
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/process-status-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/process-status-list/';
   totalRecords: number;
   isActive: boolean;
   inProgress: boolean;
@@ -35,51 +46,48 @@ export class ProcessStatusesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private processStatusService: ProcessStatusService
-  ) {
+    private processStatusService: ProcessStatusService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    // const processStatus$ = this.processStatusService.getAll(apiUrl)
-    const processStatus$ = this.processStatusService
-      .getAll(apiUrl)
-      .pipe(map((processStatus) => processStatus.sort(sortStatusBySeqNo)));
+      // const processStatus$ = this.processStatusService.getAll(apiUrl)
+      const processStatus$ = this.processStatusService
+        .getAll(apiUrl)
+        .pipe(map((processStatus) => processStatus.sort(sortStatusBySeqNo)));
 
-    this.isFetching = false;
-    this.tableData$ = processStatus$;
+      this.isFetching = false;
+      this.tableData$ = processStatus$;
+    }
   }
-
-  //   this.processStatusService.getAll(apiUrl).subscribe(
-  //     (response: ProcessStatusModel[]) => {
-  //       this.isFetching = false;
-  //       this.tableData = response;
-
-  //       // console.log(response);
-  //       // console.log(this.tableData);
-  //       // console.log('Total records:' + this.totalRecords);
-  //       // console.log(this.next);
-  //       // console.log(this.previous);
-  //     },
-  //     (error) => {
-  //       alert(error.message);
-  //     }
-  //   );
-  // }
 
   createForm() {
     this.maintForm = this.fb.group({
       process_status: ['', [Validators.required]],
       status_description: ['', [Validators.required]],
       process_sequence: ['', [Validators.required]],
-      in_progress: [false, [Validators.required]],
-      is_active: [true, [Validators.required]],
+      in_progress: [
+        { value: false, disabled: !this.modify },
+        [Validators.required],
+      ],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -92,42 +100,19 @@ export class ProcessStatusesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    this.id = record.id;
-    // this.isFetching = true;
-    this.maintForm.patchValue({
-      process_status: record.process_status,
-      status_description: record.status_description,
-      process_sequence: record.process_sequence,
-      in_progress: record.in_progress,
-      is_active: record.is_active,
-    });
-    // this.processStatusService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.inProgress = response.in_progress;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       process_status: response.process_status,
-    //       status_description: response.status_description,
-    //       process_sequence: response.process_sequence,
-    //       in_progress: response.in_progress,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      this.id = record.id;
+      // this.isFetching = true;
+      this.maintForm.patchValue({
+        process_status: record.process_status,
+        status_description: record.status_description,
+        process_sequence: record.process_sequence,
+        in_progress: record.in_progress,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
