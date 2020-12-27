@@ -93,32 +93,40 @@ export class ProcessStatusesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.processStatusService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.id = record.id;
+    // this.isFetching = true;
+    this.maintForm.patchValue({
+      process_status: record.process_status,
+      status_description: record.status_description,
+      process_sequence: record.process_sequence,
+      in_progress: record.in_progress,
+      is_active: record.is_active,
+    });
+    // this.processStatusService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.inProgress = response.in_progress;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.inProgress = response.in_progress;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          process_status: response.process_status,
-          status_description: response.status_description,
-          process_sequence: response.process_sequence,
-          in_progress: response.in_progress,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       process_status: response.process_status,
+    //       status_description: response.status_description,
+    //       process_sequence: response.process_sequence,
+    //       in_progress: response.in_progress,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

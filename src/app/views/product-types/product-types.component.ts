@@ -136,31 +136,38 @@ export class ProductTypesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
+    // this.isFetching = true;
     this.getProductGroups();
-    this.productTypeService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      product_group: record.product_group.id,
+      product_type: record.product_type,
+      product_type_description: record.product_type_description,
+      is_active: record.is_active,
+    });
+    // this.productTypeService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
-        console.log(response.product_group);
-        this.maintForm.patchValue({
-          product_group: response.product_group.id,
-          product_type: response.product_type,
-          product_type_description: response.product_type_description,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+    //     console.log(response.product_group);
+    //     this.maintForm.patchValue({
+    //       product_group: response.product_group.id,
+    //       product_type: response.product_type,
+    //       product_type_description: response.product_type_description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

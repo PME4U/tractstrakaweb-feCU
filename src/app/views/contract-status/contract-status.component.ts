@@ -147,34 +147,43 @@ export class ContractStatusComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.contractStatusService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.id = record.id;
+    // this.isFetching = true;
+    this.maintForm.patchValue({
+      contract_status: record.contract_status,
+      status_description: record.status_description,
+      status_sequence: record.status_sequence,
+      in_progress: record.in_progress,
+      is_current: record.is_current,
+      is_active: record.is_active,
+    });
+    // this.contractStatusService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isCurrent = response.is_current;
-        this.inProgress = response.in_progress;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.isCurrent = response.is_current;
+    //     this.inProgress = response.in_progress;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          contract_status: response.contract_status,
-          status_description: response.status_description,
-          status_sequence: response.status_sequence,
-          in_progress: response.in_progress,
-          is_current: response.is_current,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       contract_status: response.contract_status,
+    //       status_description: response.status_description,
+    //       status_sequence: response.status_sequence,
+    //       in_progress: response.in_progress,
+    //       is_current: response.is_current,
+    //       is_active: response.is_active,
+    //     });
+    // console.log(response);
+    // console.log(this.tableData);
+    // console.log('Total records:' + this.totalRecords);
+    // console.log(this.next);
+    // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

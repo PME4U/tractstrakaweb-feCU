@@ -125,30 +125,38 @@ export class TaxCodesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.taxCodeService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.isFetching = true;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      tax_code: record.tax_code,
+      tax_code_description: record.tax_code_description,
+      tax_percentage: record.tax_percentage,
+      is_active: record.is_active,
+    });
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    // this.taxCodeService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.maintForm.patchValue({
-          tax_code: response.tax_code,
-          tax_code_description: response.tax_code_description,
-          tax_percentage: response.tax_percentage,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+
+    //     this.maintForm.patchValue({
+    //       tax_code: response.tax_code,
+    //       tax_code_description: response.tax_code_description,
+    //       tax_percentage: response.tax_percentage,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

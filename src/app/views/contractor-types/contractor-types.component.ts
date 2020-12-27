@@ -69,29 +69,35 @@ export class ContractorTypesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.contractorTypeService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.id = record.id;
+    // this.isFetching = true;
+    this.maintForm.patchValue({
+      contractor_type: record.contractor_type,
+      contractor_type_description: record.contractor_type_description,
+      is_active: record.is_active,
+    });
+    // this.contractorTypeService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          contractor_type: response.contractor_type,
-          contractor_type_description: response.contractor_type_description,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       contractor_type: response.contractor_type,
+    //       contractor_type_description: response.contractor_type_description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

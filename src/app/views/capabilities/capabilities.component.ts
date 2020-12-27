@@ -126,29 +126,35 @@ export class CapabilitiesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.capabilityService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.isFetching = true;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      capability: record.capability,
+      description: record.description,
+      is_active: record.is_active,
+    });
+    // this.capabilityService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          capability: response.capability,
-          description: response.description,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       capability: response.capability,
+    //       description: response.description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

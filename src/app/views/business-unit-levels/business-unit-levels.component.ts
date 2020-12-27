@@ -11,6 +11,7 @@ import {
   BusinessUnitLevel,
   sortAlpha,
 } from '../../models/business-unit-level.model';
+import { UserAccessService } from '../../services/user-admin.service';
 
 @Component({
   selector: 'app-business-unit-levels',
@@ -24,6 +25,13 @@ export class BusinessUnitLevelsComponent implements OnInit {
   inactiveData$: Observable<BusinessUnitLevel[]>;
 
   maintForm: FormGroup;
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
   recordTitle: string;
   id = null;
   editing: boolean;
@@ -45,42 +53,57 @@ export class BusinessUnitLevelsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private businessUnitLevelService: BusinessUnitLevelService
-  ) {
-    this.createForm();
-  }
+    private businessUnitLevelService: BusinessUnitLevelService,
+    private userAccessService: UserAccessService
+  ) {}
 
   ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
     this.getTableData(this.baseUrl);
+    this.createForm();
+
+    // console.log('no_access rights:' + this.no_access);
+    // console.log('read_only rights:' + this.read_only);
+    // console.log('modify rights:' + this.modify);
+    // console.log('create rights:' + this.create);
+    // console.log('isDelete rights:' + this.delete);
   }
 
   getTableData(apiUrl: string) {
     this.isFetching = true;
 
-    const team$ = this.businessUnitLevelService
-      .getAll(apiUrl)
-      .pipe(map((businessUnitLevel) => businessUnitLevel.sort(sortAlpha)));
+    // console.log('Get Table Rights: ' + this.no_access);
+    if (!this.no_access) {
+      const team$ = this.businessUnitLevelService
+        .getAll(apiUrl)
+        .pipe(map((businessUnitLevel) => businessUnitLevel.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = team$;
-    this.activeData$ = team$.pipe(
-      map((businessUnitLevels) =>
-        businessUnitLevels.filter(
-          (businessUnitLevel) => businessUnitLevel.is_active === true
+      this.allData$ = team$;
+      this.activeData$ = team$.pipe(
+        map((businessUnitLevels) =>
+          businessUnitLevels.filter(
+            (businessUnitLevel) => businessUnitLevel.is_active === true
+          )
         )
-      )
-    );
-    this.inactiveData$ = team$.pipe(
-      map((businessUnitLevels) =>
-        businessUnitLevels.filter(
-          (businessUnitLevel) => businessUnitLevel.is_active === false
+      );
+      this.inactiveData$ = team$.pipe(
+        map((businessUnitLevels) =>
+          businessUnitLevels.filter(
+            (businessUnitLevel) => businessUnitLevel.is_active === false
+          )
         )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -118,6 +141,8 @@ export class BusinessUnitLevelsComponent implements OnInit {
   }
 
   createForm() {
+    // this.read_only = this.userAccessService.isReadOnly(this.rights);
+    // console.log('Cerate Rights: ' + this.create);
     this.maintForm = this.fb.group({
       business_unit_level: ['', [Validators.required]],
       is_active: [true, [Validators.required]],
@@ -133,29 +158,16 @@ export class BusinessUnitLevelsComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.businessUnitLevelService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
-
-        this.id = response.id;
-        this.isActive = response.is_active;
-
-        this.maintForm.patchValue({
-          business_unit_level: response.business_unit_level,
-          is_active: response.is_active,
-        });
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.id = record.id;
+      this.maintForm.patchValue({
+        business_unit_level: record.business_unit_level,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    } else {
+      window.alert('You do not have access to this function');
+    }
   }
 
   confirmDelete(record) {

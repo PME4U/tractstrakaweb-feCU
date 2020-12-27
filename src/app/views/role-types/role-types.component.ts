@@ -79,31 +79,40 @@ export class RoleTypesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.roleTypeService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.isFetching = true;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      role_in_process: record.role_in_process,
+      used_in_forward_plans: record.used_in_forward_plans,
+      used_in_invitation_processes: record.used_in_invitation_processes,
+      used_in_contracts: record.used_in_contracts,
+      is_active: record.is_active,
+    });
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    // this.roleTypeService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.maintForm.patchValue({
-          role_in_process: response.role_in_process,
-          used_in_forward_plans: response.used_in_forward_plans,
-          used_in_invitation_processes: response.used_in_invitation_processes,
-          used_in_contracts: response.used_in_contracts,
-          is_active: response.is_active,
-        });
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+
+    //     this.maintForm.patchValue({
+    //       role_in_process: response.role_in_process,
+    //       used_in_forward_plans: response.used_in_forward_plans,
+    //       used_in_invitation_processes: response.used_in_invitation_processes,
+    //       used_in_contracts: response.used_in_contracts,
+    //       is_active: response.is_active,
+    //     });
+    //     console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

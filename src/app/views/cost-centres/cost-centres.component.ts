@@ -91,30 +91,37 @@ export class CostCentresComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.costCentreService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.id = record.id;
+    // this.isFetching = true;
+    this.maintForm.patchValue({
+      cost_centre_id: record.cost_centre_id,
+      cost_centre_name: record.cost_centre_name,
+      business_unit: record.business_unit,
+      is_active: record.is_active,
+    });
+    // this.costCentreService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          cost_centre_id: response.cost_centre_id,
-          cost_centre_name: response.cost_centre_name,
-          business_unit: response.business_unit,
-          is_active: response.is_active,
-        });
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       cost_centre_id: response.cost_centre_id,
+    //       cost_centre_name: response.cost_centre_name,
+    //       business_unit: response.business_unit,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

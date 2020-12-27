@@ -91,30 +91,37 @@ export class PrequalificationsComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.prequalificationService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.isFetching = true;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      prequalification: record.prequalification,
+      prequalification_code: record.prequalification_code,
+      prequalification_description: record.prequalification_description,
+      is_active: record.is_active,
+    });
+    // this.prequalificationService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          prequalification: response.prequalification,
-          prequalification_code: response.prequalification_code,
-          prequalification_description: response.prequalification_description,
-          is_active: response.is_active,
-        });
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       prequalification: response.prequalification,
+    //       prequalification_code: response.prequalification_code,
+    //       prequalification_description: response.prequalification_description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

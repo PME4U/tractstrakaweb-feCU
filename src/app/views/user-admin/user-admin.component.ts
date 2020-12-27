@@ -107,45 +107,63 @@ export class UserAdminComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.isFetching = true;
+    // this.isFetching = true;
     this.editing = true;
     this.getPeople();
     this.getTeams();
+    this.id = record.id;
+    this.maintForm.patchValue({
+      email: record.email,
+      person: record.person?.id,
+      team: record?.team?.id,
+      is_active: record.is_active,
+      is_verified: record.is_verified,
+      user_type: record.user_type,
+      companies: record.companies,
+      forward_plans: record.forward_plans,
+      processes: record.processes,
+      contracts: record.contracts,
+      purchase_orders: record.purchase_orders,
+      tasks: record.tasks,
+      people: record.people,
+      system_params: record.system_params,
+      user_admin: record.user_admin,
+    });
     this.maintForm.get('email').disable();
-    this.userAccessService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.userAccessService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
 
-        this.maintForm.patchValue({
-          email: response.email,
-          person: response.person?.id,
-          team: response?.team?.id,
-          is_active: response.is_active,
-          is_verified: response.is_verified,
-          user_type: response.user_type,
-          companies: response.companies,
-          forward_plans: response.forward_plans,
-          processes: response.processes,
-          contracts: response.contracts,
-          purchase_orders: response.purchase_orders,
-          tasks: response.tasks,
-          people: response.people,
-          system_params: response.system_params,
-          user_admin: response.user_admin,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       email: response.email,
+    //       person: response.person?.id,
+    //       team: response?.team?.id,
+    //       is_active: response.is_active,
+    //       is_verified: response.is_verified,
+    //       user_type: response.user_type,
+    //       companies: response.companies,
+    //       forward_plans: response.forward_plans,
+    //       processes: response.processes,
+    //       contracts: response.contracts,
+    //       purchase_orders: response.purchase_orders,
+    //       tasks: response.tasks,
+    //       people: response.people,
+    //       system_params: response.system_params,
+    //       user_admin: response.user_admin,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

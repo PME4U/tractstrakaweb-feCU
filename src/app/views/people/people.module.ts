@@ -7,9 +7,10 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { PeopleComponent } from './people.component';
 import { PeopleRoutingModule } from './people-routing.module';
+import { PersonMaintFormComponent } from './person-maint-form/person-maint-form.component';
 
 @NgModule({
-  declarations: [PeopleComponent],
+  declarations: [PeopleComponent, PersonMaintFormComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

@@ -52,14 +52,14 @@ export class AuthContextService {
   }
 
   setUser(result) {
-    this.cookieService.set('ttw-token', result.tokens.access);
-    this.cookieService.set('ttw-refresh', result.tokens.refresh);
+    // this.cookieService.set('ttw-token', result.tokens.access);
+    // this.cookieService.set('ttw-refresh', result.tokens.refresh);
     localStorage.setItem('currentUser', JSON.stringify(result));
   }
 
   clearUser() {
     localStorage.clear();
-    this.cookieService.delete('ttw-token');
-    this.cookieService.delete('ttw-refresh');
+    // this.cookieService.delete('ttw-token');
+    // this.cookieService.delete('ttw-refresh');
   }
 }

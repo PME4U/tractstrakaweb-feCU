@@ -146,31 +146,38 @@ export class ProcurementMethodsComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
+    // this.isFetching = true;
     this.getProcurementStrategy();
-    this.procurementMethodService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      procurement_strategy: record.procurement_strategy.id,
+      procurement_method: record.procurement_method,
+      method_description: record.method_description,
+      is_active: record.is_active,
+    });
+    // this.procurementMethodService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
-        console.log(response.procurement_method);
-        this.maintForm.patchValue({
-          procurement_strategy: response.procurement_strategy.id,
-          procurement_method: response.procurement_method,
-          method_description: response.method_description,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+    //     // console.log(response.procurement_method);
+    //     this.maintForm.patchValue({
+    //       procurement_strategy: response.procurement_strategy.id,
+    //       procurement_method: response.procurement_method,
+    //       method_description: response.method_description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

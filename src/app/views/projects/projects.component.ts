@@ -68,26 +68,34 @@ export class ProjectsComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.projectService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.isFetching = true;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      project_title: record.project_title,
+      project_description: record.project_description,
+      project_status: record.project_status,
+      project_website: record.project_website,
+      project_notes: record.project_notes,
+    });
+    // this.projectService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
+    //     this.id = response.id;
 
-        this.maintForm.patchValue({
-          project_title: response.project_title,
-          project_description: response.project_description,
-          project_status: response.project_status,
-          project_website: response.project_website,
-          project_notes: response.project_notes,
-        });
-        // console.log(response);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.maintForm.patchValue({
+    //       project_title: response.project_title,
+    //       project_description: response.project_description,
+    //       project_status: response.project_status,
+    //       project_website: response.project_website,
+    //       project_notes: response.project_notes,
+    //     });
+    //     // console.log(response);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

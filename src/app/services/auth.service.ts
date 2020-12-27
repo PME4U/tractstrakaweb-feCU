@@ -77,6 +77,29 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
+  // refreshToken() {
+  //   const refreshToken = {
+  //     refresh: this.authContextService.getRefreshToken(),
+  //   };
+  //   const body = JSON.stringify(refreshToken);
+  //   // const accessToken = this.httpClient.post(
+  //   //   'api/account/token-refresh/',
+  //   //   body,
+  //   //   {
+  //   //     headers: this.headers,
+  //   //   }
+  //   // );
+  //   return this.httpClient
+  //     .post('api/account/token-refresh/', '', { headers: this.headers })
+  //     .pipe(catchError(this.handleError));
+  //   // if (accessToken) {
+  //   //   console.log('Token: ' + JSON.stringify(accessToken));
+  //   //   return accessToken;
+  //   // } else {
+  //   //   this.logout();
+  //   // }
+  // }
+
   requestPasswordReset(authData) {
     const body = JSON.stringify(authData);
     // return this.httpClient.post(`${this.baseUrl}login/`, body, {
@@ -97,17 +120,6 @@ export class AuthService {
         headers: this.headers,
       })
       .pipe(catchError(this.handleError));
-  }
-
-  handleError(err) {
-    if (err instanceof HttpErrorResponse) {
-      // Server side error
-      // console.log('Server side ' + JSON.parse(err));
-    } else {
-      // Client side error
-      console.log('Client side ' + err.error.error);
-    }
-    return throwError(err);
   }
 
   logout() {
@@ -143,5 +155,20 @@ export class AuthService {
         }
       )
       .pipe(catchError(this.handleError));
+  }
+
+  handleError(err) {
+    // if (err.status === 401) {
+    //   this.logout();
+    // }
+
+    if (err instanceof HttpErrorResponse) {
+      // Server side error
+      // console.log('Server side ' + JSON.parse(err));
+    } else {
+      // Client side error
+      console.log('Client side ' + err.error.error);
+    }
+    return throwError(err);
   }
 }

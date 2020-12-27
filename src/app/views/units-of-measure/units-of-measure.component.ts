@@ -74,29 +74,36 @@ export class UnitsOfMeasureComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
-    this.unitsOfMeasureService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    // this.isFetching = true;
+    this.id = record.id;
+    this.maintForm.patchValue({
+      unit_of_measure: record.unit_of_measure,
+      uom_description: record.uom_description,
+      is_active: record.is_active,
+    });
 
-        this.id = response.id;
-        this.isActive = response.is_active;
+    // this.unitsOfMeasureService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.maintForm.patchValue({
-          unit_of_measure: response.unit_of_measure,
-          uom_description: response.uom_description,
-          is_active: response.is_active,
-        });
-        console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+
+    //     this.maintForm.patchValue({
+    //       unit_of_measure: response.unit_of_measure,
+    //       uom_description: response.uom_description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

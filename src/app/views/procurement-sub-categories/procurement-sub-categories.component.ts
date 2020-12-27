@@ -151,32 +151,40 @@ export class ProcurementSubCategoriesComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
+    // this.isFetching = true;
+    this.id = record.id;
     this.getProcurementCategory();
-    this.procurementSubCategoryService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
+    this.maintForm.patchValue({
+      procurement_sub_category: record.procurement_sub_category,
+      procurement_category: record.procurement_category.id,
+      procurement_sub_category_description:
+        record.procurement_sub_category_description,
+      is_active: record.is_active,
+    });
+    // this.procurementSubCategoryService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
 
-        this.id = response.id;
-        this.isActive = response.is_active;
-        // console.log(JSON.stringify(response));
-        this.maintForm.patchValue({
-          procurement_sub_category: response.procurement_sub_category,
-          procurement_category: response.procurement_category.id,
-          procurement_sub_category_description:
-            response.procurement_sub_category_description,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+    //     // console.log(JSON.stringify(response));
+    //     this.maintForm.patchValue({
+    //       procurement_sub_category: response.procurement_sub_category,
+    //       procurement_category: response.procurement_category.id,
+    //       procurement_sub_category_description:
+    //         response.procurement_sub_category_description,
+    //       is_active: response.is_active,
+    //     });
+    //     // console.log(response);
+    //     // console.log(this.tableData);
+    //     // console.log('Total records:' + this.totalRecords);
+    //     // console.log(this.next);
+    //     // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
     this.maintModal.show();
   }
 

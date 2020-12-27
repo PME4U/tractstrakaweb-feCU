@@ -146,32 +146,40 @@ export class BusinessUnitsComponent implements OnInit {
 
   editRecord(record) {
     this.editing = true;
-    this.isFetching = true;
+    // this.isFetching = true;
     this.getBusinessUnitLevels();
     this.getParentBusinessUnits();
-    this.businessUnitService.getOne(record.id).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.id = response.id;
-        this.isActive = response.is_active;
-        this.maintForm.patchValue({
-          business_unit_name: response.business_unit_name,
-          business_unit_level: response.business_unit_level?.id,
-          parent_business_unit: response.parent_business_unit?.id,
-          business_unit_description: response.business_unit_description,
-          is_active: response.is_active,
-        });
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+    this.id = record.id;
+    this.maintForm.patchValue({
+      business_unit_name: record.business_unit_name,
+      business_unit_level: record.business_unit_level?.id,
+      parent_business_unit: record.parent_business_unit?.id,
+      business_unit_description: record.business_unit_description,
+      is_active: record.is_active,
+    });
     this.maintModal.show();
+    // this.businessUnitService.getOne(record.id).subscribe(
+    //   (response) => {
+    //     this.isFetching = false;
+    //     this.id = response.id;
+    //     this.isActive = response.is_active;
+    //     this.maintForm.patchValue({
+    //       business_unit_name: response.business_unit_name,
+    //       business_unit_level: response.business_unit_level?.id,
+    //       parent_business_unit: response.parent_business_unit?.id,
+    //       business_unit_description: response.business_unit_description,
+    //       is_active: response.is_active,
+    //     });
+    // console.log(response);
+    // console.log(this.tableData);
+    // console.log('Total records:' + this.totalRecords);
+    // console.log(this.next);
+    // console.log(this.previous);
+    //   },
+    //   (error) => {
+    //     alert(error.message);
+    //   }
+    // );
   }
 
   confirmDelete(record) {

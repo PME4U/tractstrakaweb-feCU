@@ -4,7 +4,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Business Unit Levels
-          <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+          <i
+            class="icon-plus add-record pull-right"
+            (click)="addRecord()"
+            *ngIf="this.create"
+          ></i>
         </div>
         <div class="card-body">
           <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
@@ -53,6 +57,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Edit Record"
+                      *ngIf="this.read_only"
                     ></i>
                     <i
                       class="cil-delete delete-record"
@@ -60,6 +65,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Delete Record"
+                      *ngIf="this.delete"
                     ></i>
                   </td>
                 </tr>
@@ -87,7 +93,9 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="maintModalLabel">Business Unit Level Maintenance</h5>
+        <h5 class="modal-title" id="maintModalLabel">
+          Business Unit Level Maintenance
+        </h5>
         <button
           type="button"
           class="close"
@@ -107,11 +115,14 @@
         >
           <div class="form-group">
             <div>
-              <label for="business_unit_level" class="col-form-label">Business Unit Level:</label>
+              <label for="business_unit_level" class="col-form-label"
+                >Business Unit Level:</label
+              >
             </div>
             <div>
               <small class="text-muted"
-                >Identify the Business Unit Level, these are used to identify and group business units by their hierarchical level.</small
+                >Identify the Business Unit Level, these are used to identify
+                and group business units by their hierarchical level.</small
               >
             </div>
             <div>
@@ -120,6 +131,7 @@
                 class="form-control"
                 id="business_unit_level"
                 formControlName="business_unit_level"
+                [readonly]="!this.modify"
               />
             </div>
           </div>
@@ -130,9 +142,9 @@
             </div>
             <div class="col-sm-12">
               <small class="text-muted"
-                >Business Unit Levels should not be deleted if there are records associated
-                with them, but setting it to inactive will stop it from
-                being added to new records</small
+                >Business Unit Levels should not be deleted if there are records
+                associated with them, but setting it to inactive will stop it
+                from being added to new records</small
               >
             </div>
             <div class="col-sm-12">
@@ -141,6 +153,7 @@
                   type="checkbox"
                   class="switch-input form-control"
                   formControlName="is_active"
+                  [disabled]="this.read_only"
                 />
                 <span class="switch-slider"></span>
               </label>
@@ -157,7 +170,12 @@
         >
           Close
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveRecord()">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveRecord()"
+          [disabled]="!this.modify"
+        >
           Save
         </button>
       </div>
@@ -188,7 +206,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete the {{ recordTitle }} Business Unit Level?</p>
+        <p>
+          Are you sure you want to delete the {{ recordTitle }} Business Unit
+          Level?
+        </p>
       </div>
       <div class="modal-footer">
         <button

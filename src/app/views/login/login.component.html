@@ -24,6 +24,7 @@
                 >
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
+
                   <div class="input-group mb-3">
                     <div class="input-group-prepend">
                       <span class="input-group-text"
@@ -38,14 +39,19 @@
                       formControlName="email"
                       email
                       required
+                      [ngClass]="{
+                        'is-invalid': email.dirty && email.invalid,
+                        'is-valid': email.dirty && !email.invalid
+                      }"
                     />
                   </div>
-                  <div
+                  <!-- <div
                     *ngIf="email.invalid && (email.dirty || email.touched)"
                     class="login-error-message"
                   >
                     Please enter a valid email
-                  </div>
+                  </div> -->
+
                   <div class="input-group mb-4">
                     <div class="input-group-prepend">
                       <span class="input-group-text"
@@ -59,16 +65,20 @@
                       placeholder="Password"
                       formControlName="password"
                       required
+                      [ngClass]="{
+                        'is-invalid': password.dirty && password.invalid,
+                        'is-valid': password.dirty && !password.invalid
+                      }"
                     />
                   </div>
-                  <div
+                  <!-- <div
                     *ngIf="
                       password.invalid && (password.dirty || password.touched)
                     "
                     class="login-error-message"
                   >
                     Please enter a password
-                  </div>
+                  </div> -->
                   <div class="row">
                     <div class="col-12">
                       <button
@@ -84,13 +94,15 @@
                       provided.
                     </div>
                   </div>
+
                   <div class="row">
                     <div class="col-12">
                       <!-- <div class="col-6 text-right"> -->
-                      <button 
-                        type="button" 
+                      <button
+                        type="button"
                         class="btn btn-link px-0"
-                        routerLink="/reset-password-email">
+                        routerLink="/reset-password-email"
+                      >
                         Forgot password?
                       </button>
                     </div>
@@ -100,7 +112,7 @@
             </div>
             <div
               class="card text-white bg-primary py-5 d-md-down-none"
-              style="width: 44%;"
+              style="width: 44%"
             >
               <div class="card-body text-center">
                 <div>

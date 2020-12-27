@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import { User } from '../models/user.model';
 
@@ -50,8 +50,8 @@ export class UserAccessService {
   //   });
   // }
 
-  getOne(id: Number): Observable<any> {
-    console.log('URL:' + id);
+  getOne(id: Number): Observable<User> {
+    // console.log('URL:' + id);
     return this.http.get<any>('api/account/account-access-list/' + id, {
       headers: this.headers,
     });
@@ -59,7 +59,7 @@ export class UserAccessService {
 
   create(data) {
     const body = JSON.stringify(data);
-    console.log(body);
+    // console.log(body);
     return this.http.post('api/account/account-access-list/', body, {
       headers: this.headers,
     });
@@ -78,5 +78,143 @@ export class UserAccessService {
     return this.http.delete(url, {
       headers: this.headers,
     });
+  }
+
+  getCurrentUser() {
+    let currentUser: User;
+    // let response: User;
+    let id: number;
+
+    if (localStorage.getItem('currentUser') !== null) {
+      currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      // console.log(
+      //   'Returned Token: ' + JSON.stringify(currentUser.tokens.refresh)
+      // );
+
+      id = Number(currentUser.id);
+
+      return JSON.stringify(this.getOne(id).subscribe());
+    }
+  }
+
+  getRights(scope) {
+    let currentUser: User;
+    // let response: User;
+    // let id: number;
+
+    if (localStorage.getItem('currentUser') !== null) {
+      currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      // console.log(
+      //   'Returned Token: ' + JSON.stringify(currentUser.tokens.refresh)
+      // );
+
+      // id = Number(currentUser.id);
+
+      // this.getOne(id).subscribe((response) => {
+      // console.log('Response: ' + JSON.stringify(response));
+
+      switch (scope) {
+        case 'companies': {
+          return currentUser.companies;
+          break;
+        }
+        case 'contracts': {
+          return currentUser.contracts;
+          break;
+        }
+        case 'forward_plans': {
+          return currentUser.forward_plans;
+          break;
+        }
+        case 'people': {
+          return currentUser.people;
+          break;
+        }
+        case 'processes': {
+          return currentUser.processes;
+          break;
+        }
+        case 'purchase_orders': {
+          return currentUser.purchase_orders;
+          break;
+        }
+        case 'system_params': {
+          // console.log(
+          //   'Returned Rights:' + JSON.stringify(currentUser.system_params)
+          // );
+          return currentUser.system_params;
+          break;
+        }
+        case 'user_admin': {
+          return currentUser.user_admin;
+          break;
+        }
+        default: {
+          return 'No Access';
+          break;
+        }
+      }
+      // });
+    }
+  }
+  isNoAccess(scope) {
+    let rights: any;
+
+    rights = this.getRights(scope);
+    // console.log('isNoAccess rights:' + rights);
+    if (rights === 'No Access') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  isReadOnly(scope) {
+    let rights: any;
+
+    rights = this.getRights(scope);
+    // console.log('isReadOnly rights:' + rights);
+    if (
+      rights === 'Read Only' ||
+      rights === 'Modify' ||
+      rights === 'Create' ||
+      rights === 'Delete'
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  isModify(scope) {
+    let rights: any;
+
+    rights = this.getRights(scope);
+    // console.log('isCreate rights:' + rights);
+    if (rights === 'Modify' || rights === 'Create' || rights === 'Delete') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  isCreate(scope) {
+    let rights: any;
+
+    rights = this.getRights(scope);
+    // console.log('isCreate rights:' + rights);
+    if (rights === 'Create' || rights === 'Delete') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  isDelete(scope) {
+    let rights: any;
+
+    rights = this.getRights(scope);
+    // console.log('isDelete rights:' + rights);
+    if (rights === 'Delete') {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
