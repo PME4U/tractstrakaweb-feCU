@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { CostCentreService } from '../../services/cost-centre.service';
+import { UserAccessService } from '../../services/user-admin.service';
 
 @Component({
   selector: 'app-cost-centres',
@@ -13,11 +14,19 @@ import { CostCentreService } from '../../services/cost-centre.service';
 export class CostCentresComponent implements OnInit {
   tableData: any = [];
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/cost-centre-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/cost-centre-list/';
   totalRecords: number;
   next: string;
   previous: string;
@@ -40,7 +49,8 @@ export class CostCentresComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private costCentreService: CostCentreService
+    private costCentreService: CostCentreService,
+    private userAccessService: UserAccessService
   ) {
     this.tableData = new Array<any>();
     this.createForm();
@@ -52,25 +62,26 @@ export class CostCentresComponent implements OnInit {
 
   getTableData(apiUrl: string) {
     // let splitUrl: any = [];
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    this.isFetching = true;
+      this.costCentreService.getAll(apiUrl).subscribe(
+        (response) => {
+          this.isFetching = false;
+          this.tableData = response;
+          this.totalRecords = response.count;
 
-    this.costCentreService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
-
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+          // console.log(response);
+          // console.log(this.tableData);
+          // console.log('Total records:' + this.totalRecords);
+          // console.log(this.next);
+          // console.log(this.previous);
+        },
+        (error) => {
+          alert(error.message);
+        }
+      );
+    }
   }
 
   createForm() {
@@ -78,7 +89,10 @@ export class CostCentresComponent implements OnInit {
       cost_centre_id: ['', [Validators.required]],
       cost_centre_name: ['', [Validators.required]],
       business_unit: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -90,39 +104,18 @@ export class CostCentresComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    this.id = record.id;
-    // this.isFetching = true;
-    this.maintForm.patchValue({
-      cost_centre_id: record.cost_centre_id,
-      cost_centre_name: record.cost_centre_name,
-      business_unit: record.business_unit,
-      is_active: record.is_active,
-    });
-    // this.costCentreService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       cost_centre_id: response.cost_centre_id,
-    //       cost_centre_name: response.cost_centre_name,
-    //       business_unit: response.business_unit,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      this.id = record.id;
+      // this.isFetching = true;
+      this.maintForm.patchValue({
+        cost_centre_id: record.cost_centre_id,
+        cost_centre_name: record.cost_centre_name,
+        business_unit: record.business_unit,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

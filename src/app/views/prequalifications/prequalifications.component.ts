@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { PrequalificationService } from '../../services/prequalification.service';
+import { UserAccessService } from '../../services/user-admin.service';
 
 @Component({
   selector: 'app-prequalifications',
@@ -13,11 +14,19 @@ import { PrequalificationService } from '../../services/prequalification.service
 export class PrequalificationsComponent implements OnInit {
   tableData: any = [];
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/prequalification-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/prequalification-list/';
   totalRecords: number;
   next: string;
   previous: string;
@@ -40,37 +49,45 @@ export class PrequalificationsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private prequalificationService: PrequalificationService
+    private prequalificationService: PrequalificationService,
+    private userAccessService: UserAccessService
   ) {
-    this.tableData = new Array<any>();
-    this.createForm();
+    // this.tableData = new Array<any>();
   }
 
   ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
     this.getTableData(this.baseUrl);
+    this.createForm();
   }
 
   getTableData(apiUrl: string) {
     // let splitUrl: any = [];
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    this.isFetching = true;
+      this.prequalificationService.getAll(apiUrl).subscribe(
+        (response) => {
+          this.isFetching = false;
+          this.tableData = response;
+          this.totalRecords = response.count;
 
-    this.prequalificationService.getAll(apiUrl).subscribe(
-      (response) => {
-        this.isFetching = false;
-        this.tableData = response;
-        this.totalRecords = response.count;
-
-        // console.log(response);
-        // console.log(this.tableData);
-        // console.log('Total records:' + this.totalRecords);
-        // console.log(this.next);
-        // console.log(this.previous);
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
+          // console.log(response);
+          // console.log(this.tableData);
+          // console.log('Total records:' + this.totalRecords);
+          // console.log(this.next);
+          // console.log(this.previous);
+        },
+        (error) => {
+          alert(error.message);
+        }
+      );
+    }
   }
 
   createForm() {
@@ -78,7 +95,10 @@ export class PrequalificationsComponent implements OnInit {
       prequalification: ['', [Validators.required]],
       prequalification_code: ['', [Validators.required]],
       prequalification_description: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -90,39 +110,18 @@ export class PrequalificationsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      prequalification: record.prequalification,
-      prequalification_code: record.prequalification_code,
-      prequalification_description: record.prequalification_description,
-      is_active: record.is_active,
-    });
-    // this.prequalificationService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       prequalification: response.prequalification,
-    //       prequalification_code: response.prequalification_code,
-    //       prequalification_description: response.prequalification_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        prequalification: record.prequalification,
+        prequalification_code: record.prequalification_code,
+        prequalification_description: record.prequalification_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
