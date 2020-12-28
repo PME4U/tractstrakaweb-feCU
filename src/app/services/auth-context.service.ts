@@ -51,6 +51,27 @@ export class AuthContextService {
     // this.cookieService.set('ttw-token', token.access);
   }
 
+  updateAccessRights(user) {
+    // Get the existing data
+    // const existing: User = JSON.parse(user);
+    const existing: User = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Add new data to localStorage Array
+    existing.companies = user.companies;
+    existing.forward_plans = user.forward_plans;
+    existing.processes = user.processes;
+    existing.contracts = user.contracts;
+    existing.purchase_orders = user.purchase_orders;
+    existing.tasks = user.tasks;
+    existing.people = user.people;
+    existing.system_params = user.system_params;
+    existing.user_admin = user.user_admin;
+
+    // Save back to localStorage
+    localStorage.setItem('currentUser', JSON.stringify(existing));
+    // this.cookieService.set('ttw-token', token.access);
+  }
+
   setUser(result) {
     // this.cookieService.set('ttw-token', result.tokens.access);
     // this.cookieService.set('ttw-refresh', result.tokens.refresh);

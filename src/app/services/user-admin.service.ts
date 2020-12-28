@@ -8,6 +8,8 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { AuthContextService } from './auth-context.service';
+
 import { User } from '../models/user.model';
 
 export interface TableData extends Array<User> {}
@@ -20,7 +22,10 @@ export class UserAccessService {
     'Content-Type': 'application/json',
   });
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authContextService: AuthContextService
+  ) {}
 
   getAll(apiUrl: string) {
     return this.http.get<TableData>(apiUrl).pipe(
@@ -100,18 +105,25 @@ export class UserAccessService {
   getRights(scope) {
     let currentUser: User;
     // let response: User;
-    // let id: number;
+    let id: number;
 
     if (localStorage.getItem('currentUser') !== null) {
       currentUser = JSON.parse(localStorage.getItem('currentUser'));
       // console.log(
       //   'Returned Token: ' + JSON.stringify(currentUser.tokens.refresh)
       // );
+      // Refresh access rights
+      id = Number(currentUser.id);
 
-      // id = Number(currentUser.id);
-
-      // this.getOne(id).subscribe((response) => {
-      // console.log('Response: ' + JSON.stringify(response));
+      // this.getOne(id).pipe(
+      //   map((response) => {
+      //     this.authContextService.updateAccessRights(response);
+      //   })
+      // );
+      // ******************************************************************************************************
+      this.getOne(id).subscribe((response) => {
+        this.authContextService.updateAccessRights(response);
+      });
 
       switch (scope) {
         case 'companies': {
