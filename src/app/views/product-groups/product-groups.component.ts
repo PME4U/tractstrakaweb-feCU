@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProductGroupService } from '../../services/product-group.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { ProductGroup, sortAlphaPG } from '../../models/product-group.model';
 
 @Component({
@@ -21,11 +23,19 @@ export class ProductGroupsComponent implements OnInit {
   inactiveData$: Observable<ProductGroup[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/product-group-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/product-group-list/';
 
   activeOnly: string = 'All';
 
@@ -42,42 +52,50 @@ export class ProductGroupsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private productGroupService: ProductGroupService
-  ) {
+    private productGroupService: ProductGroupService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const team$ = this.productGroupService
-      .getAll(apiUrl)
-      .pipe(map((team) => team.sort(sortAlphaPG)));
+      const team$ = this.productGroupService
+        .getAll(apiUrl)
+        .pipe(map((team) => team.sort(sortAlphaPG)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = team$;
-    this.activeData$ = team$.pipe(
-      map((product_groups) =>
-        product_groups.filter(
-          (product_group) => product_group.is_active === true
+      this.allData$ = team$;
+      this.activeData$ = team$.pipe(
+        map((product_groups) =>
+          product_groups.filter(
+            (product_group) => product_group.is_active === true
+          )
         )
-      )
-    );
-    this.inactiveData$ = team$.pipe(
-      map((product_groups) =>
-        product_groups.filter(
-          (product_group) => product_group.is_active === false
+      );
+      this.inactiveData$ = team$.pipe(
+        map((product_groups) =>
+          product_groups.filter(
+            (product_group) => product_group.is_active === false
+          )
         )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -118,7 +136,10 @@ export class ProductGroupsComponent implements OnInit {
     this.maintForm = this.fb.group({
       product_group: ['', [Validators.required]],
       product_group_description: ['', []],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -130,37 +151,17 @@ export class ProductGroupsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      product_group: record.product_group,
-      product_group_description: record.product_group_description,
-      is_active: record.is_active,
-    });
-    // this.productGroupService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       product_group: response.product_group,
-    //       product_group_description: response.product_group_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        product_group: record.product_group,
+        product_group_description: record.product_group_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

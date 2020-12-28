@@ -4,7 +4,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Procurement Sub-category
-          <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+          <i
+            class="icon-plus add-record pull-right"
+            (click)="addRecord()"
+            *ngIf="this.create"
+          ></i>
         </div>
         <div class="card-body">
           <!-- <div *ngIf="tableData.length < 1 && isFetching"> -->
@@ -55,6 +59,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Edit Record"
+                      *ngIf="this.read_only"
                     ></i>
                     <i
                       class="cil-delete delete-record"
@@ -62,6 +67,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Delete Record"
+                      *ngIf="this.delete"
                     ></i>
                   </td>
                 </tr>
@@ -127,6 +133,7 @@
                 class="form-control"
                 id="procurement_sub_category"
                 formControlName="procurement_sub_category"
+                [readonly]="!this.modify"
               />
             </div>
           </div>
@@ -141,6 +148,7 @@
                 name="procurement_category"
                 class="form-control form-control-sm"
                 formControlName="procurement_category"
+                [disabled]="!this.modify"
               >
                 <option
                   *ngFor="
@@ -173,6 +181,7 @@
                 class="form-control"
                 id="procurement_sub_category_description"
                 formControlName="procurement_sub_category_description"
+                [readonly]="!this.modify"
               ></textarea>
             </div>
           </div>
@@ -210,7 +219,12 @@
         >
           Close
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveRecord()">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveRecord()"
+          [disabled]="!this.modify"
+        >
           Save
         </button>
       </div>

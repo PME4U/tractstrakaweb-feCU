@@ -8,12 +8,12 @@ import { map } from 'rxjs/operators';
 
 import { ProcurementSubCategoryService } from '../../services/procurement-sub-category.service';
 import { ProcurementCategoryService } from '../../services/procurement-category.service';
+import { UserAccessService } from '../../services/user-admin.service';
 
 import {
   ProcurementSubCategory,
   sortAlphaSC,
 } from '../../models/procurement-sub-category.model';
-
 import {
   ProcurementCategory,
   sortAlpha,
@@ -31,12 +31,20 @@ export class ProcurementSubCategoriesComponent implements OnInit {
   inactiveData$: Observable<ProcurementSubCategory[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/procurement-sub-category-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
 
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/procurement-sub-category-list/';
 
   activeOnly: string = 'All';
 
@@ -56,46 +64,56 @@ export class ProcurementSubCategoriesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private procurementSubCategoryService: ProcurementSubCategoryService,
-    private procurementCategoryService: ProcurementCategoryService
-  ) {
+    private procurementCategoryService: ProcurementCategoryService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const procurementSubCategory$ = this.procurementSubCategoryService
-      .getAll(apiUrl)
-      .pipe(
-        map((procurementSubCategory) =>
-          procurementSubCategory.sort(sortAlphaSC)
+      const procurementSubCategory$ = this.procurementSubCategoryService
+        .getAll(apiUrl)
+        .pipe(
+          map((procurementSubCategory) =>
+            procurementSubCategory.sort(sortAlphaSC)
+          )
+        );
+
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
+
+      this.allData$ = procurementSubCategory$;
+      this.activeData$ = procurementSubCategory$.pipe(
+        map((procurementSubCategories) =>
+          procurementSubCategories.filter(
+            (procurementSubCategory) =>
+              procurementSubCategory.is_active === true
+          )
         )
       );
-
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
-
-    this.allData$ = procurementSubCategory$;
-    this.activeData$ = procurementSubCategory$.pipe(
-      map((procurementSubCategories) =>
-        procurementSubCategories.filter(
-          (procurementSubCategory) => procurementSubCategory.is_active === true
+      this.inactiveData$ = procurementSubCategory$.pipe(
+        map((procurementSubCategories) =>
+          procurementSubCategories.filter(
+            (procurementSubCategory) =>
+              procurementSubCategory.is_active === false
+          )
         )
-      )
-    );
-    this.inactiveData$ = procurementSubCategory$.pipe(
-      map((procurementSubCategories) =>
-        procurementSubCategories.filter(
-          (procurementSubCategory) => procurementSubCategory.is_active === false
-        )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -137,7 +155,10 @@ export class ProcurementSubCategoriesComponent implements OnInit {
       procurement_sub_category: ['', [Validators.required]],
       procurement_category: ['', [Validators.required]],
       procurement_sub_category_description: ['', []],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -150,42 +171,20 @@ export class ProcurementSubCategoriesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.getProcurementCategory();
-    this.maintForm.patchValue({
-      procurement_sub_category: record.procurement_sub_category,
-      procurement_category: record.procurement_category.id,
-      procurement_sub_category_description:
-        record.procurement_sub_category_description,
-      is_active: record.is_active,
-    });
-    // this.procurementSubCategoryService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-    //     // console.log(JSON.stringify(response));
-    //     this.maintForm.patchValue({
-    //       procurement_sub_category: response.procurement_sub_category,
-    //       procurement_category: response.procurement_category.id,
-    //       procurement_sub_category_description:
-    //         response.procurement_sub_category_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.getProcurementCategory();
+      this.maintForm.patchValue({
+        procurement_sub_category: record.procurement_sub_category,
+        procurement_category: record.procurement_category.id,
+        procurement_sub_category_description:
+          record.procurement_sub_category_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
