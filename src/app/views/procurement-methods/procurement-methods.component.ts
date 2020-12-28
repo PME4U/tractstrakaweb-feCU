@@ -7,12 +7,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProcurementStrategyService } from '../../services/procurement-strategy.service';
+import { UserAccessService } from '../../services/user-admin.service';
+import { ProcurementMethodService } from '../../services/procurement-method.service';
+
 import {
   ProcurementStrategy,
   sortAlphaPS,
 } from '../../models/procurement-strategy.model';
-
-import { ProcurementMethodService } from '../../services/procurement-method.service';
 import {
   ProcurementMethod,
   sortAlpha,
@@ -30,12 +31,20 @@ export class ProcurementMethodsComponent implements OnInit {
   inactiveData$: Observable<ProcurementMethod[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/procurement-method-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
 
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/procurement-method-list/';
 
   activeOnly: string = 'All';
 
@@ -55,42 +64,50 @@ export class ProcurementMethodsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private procurementMethodService: ProcurementMethodService,
-    private procurementStrategyService: ProcurementStrategyService
-  ) {
+    private procurementStrategyService: ProcurementStrategyService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const procurementMethod$ = this.procurementMethodService
-      .getAll(apiUrl)
-      .pipe(map((procurementMethod) => procurementMethod.sort(sortAlpha)));
+      const procurementMethod$ = this.procurementMethodService
+        .getAll(apiUrl)
+        .pipe(map((procurementMethod) => procurementMethod.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = procurementMethod$;
-    this.activeData$ = procurementMethod$.pipe(
-      map((procurementMethods) =>
-        procurementMethods.filter(
-          (procurementMethod) => procurementMethod.is_active === true
+      this.allData$ = procurementMethod$;
+      this.activeData$ = procurementMethod$.pipe(
+        map((procurementMethods) =>
+          procurementMethods.filter(
+            (procurementMethod) => procurementMethod.is_active === true
+          )
         )
-      )
-    );
-    this.inactiveData$ = procurementMethod$.pipe(
-      map((procurementMethods) =>
-        procurementMethods.filter(
-          (procurementMethod) => procurementMethod.is_active === false
+      );
+      this.inactiveData$ = procurementMethod$.pipe(
+        map((procurementMethods) =>
+          procurementMethods.filter(
+            (procurementMethod) => procurementMethod.is_active === false
+          )
         )
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -132,7 +149,10 @@ export class ProcurementMethodsComponent implements OnInit {
       procurement_strategy: ['', [Validators.required]],
       procurement_method: ['', [Validators.required]],
       method_description: ['', []],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -145,40 +165,19 @@ export class ProcurementMethodsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.getProcurementStrategy();
-    this.id = record.id;
-    this.maintForm.patchValue({
-      procurement_strategy: record.procurement_strategy.id,
-      procurement_method: record.procurement_method,
-      method_description: record.method_description,
-      is_active: record.is_active,
-    });
-    // this.procurementMethodService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-    //     // console.log(response.procurement_method);
-    //     this.maintForm.patchValue({
-    //       procurement_strategy: response.procurement_strategy.id,
-    //       procurement_method: response.procurement_method,
-    //       method_description: response.method_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.getProcurementStrategy();
+      this.id = record.id;
+      this.maintForm.patchValue({
+        procurement_strategy: record.procurement_strategy.id,
+        procurement_method: record.procurement_method,
+        method_description: record.method_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
