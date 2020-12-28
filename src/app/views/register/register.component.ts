@@ -4,6 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
+import { UserAccessService } from '../../services/user-admin.service';
 
 interface TokenObj {
   token: string;
@@ -54,9 +55,11 @@ export class RegisterComponent implements OnInit {
   saveForm() {
     this.authService.registerUser(this.authForm.value).subscribe(
       (result: TokenObj) => {
-        window.alert('Registration successful, please verfiy your email address.');
+        window.alert(
+          'Registration successful, please verfiy your email address.'
+        );
         if (result.token) {
-        // this.cookieService.set('ttw-token', result.token);
+          // this.cookieService.set('ttw-token', result.token);
         }
         // this.router.navigate(['/dashboard']);
       },

@@ -27,12 +27,20 @@ export class UserAdminComponent implements OnInit {
 
   error: any;
   maintForm: FormGroup;
+  baseUrl: string = 'api/account/account-access-list/';
+  scope = 'user_admin';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
 
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/account/account-access-list/';
   totalRecords: number;
   isActive: boolean;
   searchField: string;
@@ -56,25 +64,33 @@ export class UserAdminComponent implements OnInit {
     private personService: PersonService
   ) {
     this.data = new Array<any>();
-    this.createForm();
   }
 
   ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
     this.getTableData(this.baseUrl);
+    this.createForm();
   }
 
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    this.userAccessService.getAll(apiUrl).subscribe(
-      (data: TableData) => {
-        this.isFetching = false;
-        setTimeout(() => {
-          this.data = [...data];
-        }, 1000);
-      }, // success path
-      (error) => (this.error = error) // error path
-    );
+      this.userAccessService.getAll(apiUrl).subscribe(
+        (data: TableData) => {
+          this.isFetching = false;
+          setTimeout(() => {
+            this.data = [...data];
+          }, 1000);
+        }, // success path
+        (error) => (this.error = error) // error path
+      );
+    }
   }
 
   createForm() {
@@ -82,18 +98,54 @@ export class UserAdminComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       person: ['', []],
       team: ['', [Validators.required, Validators.min(1)]],
-      is_active: [true, [Validators.required]],
-      is_verified: [true, [Validators.required]],
-      user_type: ['No Access', [Validators.required]],
-      companies: ['No Access', [Validators.required]],
-      forward_plans: ['No Access', [Validators.required]],
-      processes: ['No Access', [Validators.required]],
-      contracts: ['No Access', [Validators.required]],
-      purchase_orders: ['No Access', [Validators.required]],
-      tasks: ['No Access', [Validators.required]],
-      people: ['No Access', [Validators.required]],
-      system_params: ['No Access', [Validators.required]],
-      user_admin: ['No Access', [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
+      is_verified: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
+      user_type: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      companies: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      forward_plans: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      processes: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      contracts: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      purchase_orders: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      tasks: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      people: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      system_params: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
+      user_admin: [
+        { value: 'No Access', disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -108,63 +160,31 @@ export class UserAdminComponent implements OnInit {
 
   editRecord(record) {
     // this.isFetching = true;
-    this.editing = true;
-    this.getPeople();
-    this.getTeams();
-    this.id = record.id;
-    this.maintForm.patchValue({
-      email: record.email,
-      person: record.person?.id,
-      team: record?.team?.id,
-      is_active: record.is_active,
-      is_verified: record.is_verified,
-      user_type: record.user_type,
-      companies: record.companies,
-      forward_plans: record.forward_plans,
-      processes: record.processes,
-      contracts: record.contracts,
-      purchase_orders: record.purchase_orders,
-      tasks: record.tasks,
-      people: record.people,
-      system_params: record.system_params,
-      user_admin: record.user_admin,
-    });
-    this.maintForm.get('email').disable();
-    // this.userAccessService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       email: response.email,
-    //       person: response.person?.id,
-    //       team: response?.team?.id,
-    //       is_active: response.is_active,
-    //       is_verified: response.is_verified,
-    //       user_type: response.user_type,
-    //       companies: response.companies,
-    //       forward_plans: response.forward_plans,
-    //       processes: response.processes,
-    //       contracts: response.contracts,
-    //       purchase_orders: response.purchase_orders,
-    //       tasks: response.tasks,
-    //       people: response.people,
-    //       system_params: response.system_params,
-    //       user_admin: response.user_admin,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      this.getPeople();
+      this.getTeams();
+      this.id = record.id;
+      this.maintForm.patchValue({
+        email: record.email,
+        person: record.person?.id,
+        team: record?.team?.id,
+        is_active: record.is_active,
+        is_verified: record.is_verified,
+        user_type: record.user_type,
+        companies: record.companies,
+        forward_plans: record.forward_plans,
+        processes: record.processes,
+        contracts: record.contracts,
+        purchase_orders: record.purchase_orders,
+        tasks: record.tasks,
+        people: record.people,
+        system_params: record.system_params,
+        user_admin: record.user_admin,
+      });
+      this.maintForm.get('email').disable();
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

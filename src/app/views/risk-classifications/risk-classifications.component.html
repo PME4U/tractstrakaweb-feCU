@@ -4,7 +4,11 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Risk Classification
-          <i class="icon-plus add-record pull-right" (click)="addRecord()"></i>
+          <i
+            class="icon-plus add-record pull-right"
+            (click)="addRecord()"
+            *ngIf="this.create"
+          ></i>
         </div>
         <div class="card-body">
           <div *ngIf="isFetching">
@@ -24,10 +28,7 @@
             </div>
           </div>
           <div class="table-responsive">
-            <table
-              *ngIf="!isFetching"
-              class="table table-sm table-hover"
-            >
+            <table *ngIf="!isFetching" class="table table-sm table-hover">
               <thead>
                 <tr>
                   <th>Risk Classification</th>
@@ -53,6 +54,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Edit Record"
+                      *ngIf="this.read_only"
                     ></i>
                     <i
                       class="cil-delete delete-record"
@@ -60,6 +62,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="Delete Record"
+                      *ngIf="this.delete"
                     ></i>
                   </td>
                 </tr>
@@ -141,6 +144,7 @@
                 class="form-control"
                 id="risk_classification"
                 formControlName="risk_classification"
+                [readonly]="!this.modify"
               />
             </div>
           </div>
@@ -162,6 +166,7 @@
                 class="form-control"
                 id="risk_description"
                 formControlName="risk_description"
+                [readonly]="!this.modify"
               ></textarea>
             </div>
           </div>
@@ -199,7 +204,12 @@
         >
           Close
         </button>
-        <button type="button" class="btn btn-primary" (click)="saveRecord()">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveRecord()"
+          [disabled]="!this.modify"
+        >
           Save
         </button>
       </div>

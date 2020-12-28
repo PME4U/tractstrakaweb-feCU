@@ -3,10 +3,12 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { UnitsOfMeasureService } from '../../services/units-of-measure.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { UnitsOfMeasure, sortAlpha } from '../../models/uom.model';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-capabilities',
@@ -16,11 +18,19 @@ import { map } from 'rxjs/operators';
 export class UnitsOfMeasureComponent implements OnInit {
   tableData$: Observable<UnitsOfMeasure[]>;
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/unit-of-measure-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/unit-of-measure-list/';
   totalRecords: number;
 
   isCurrent: boolean;
@@ -36,32 +46,43 @@ export class UnitsOfMeasureComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private unitsOfMeasureService: UnitsOfMeasureService
-  ) {
+    private unitsOfMeasureService: UnitsOfMeasureService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    // const processStatus$ = this.processStatusService.getAll(apiUrl)
-    const unitsOfMeasure$ = this.unitsOfMeasureService
-      .getAll(apiUrl)
-      .pipe(map((unitsOfMeasure) => unitsOfMeasure.sort(sortAlpha)));
+      // const processStatus$ = this.processStatusService.getAll(apiUrl)
+      const unitsOfMeasure$ = this.unitsOfMeasureService
+        .getAll(apiUrl)
+        .pipe(map((unitsOfMeasure) => unitsOfMeasure.sort(sortAlpha)));
 
-    this.isFetching = false;
-    this.tableData$ = unitsOfMeasure$;
+      this.isFetching = false;
+      this.tableData$ = unitsOfMeasure$;
+    }
   }
 
   createForm() {
     this.maintForm = this.fb.group({
       unit_of_measure: ['', [Validators.required]],
       uom_description: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -73,38 +94,17 @@ export class UnitsOfMeasureComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      unit_of_measure: record.unit_of_measure,
-      uom_description: record.uom_description,
-      is_active: record.is_active,
-    });
-
-    // this.unitsOfMeasureService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       unit_of_measure: response.unit_of_measure,
-    //       uom_description: response.uom_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        unit_of_measure: record.unit_of_measure,
+        uom_description: record.uom_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

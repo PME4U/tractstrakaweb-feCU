@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { RoleTypeService } from '../../services/role-type.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { RoleType, sortAlpha } from '../../models/role-type.model';
 
 @Component({
@@ -16,11 +18,19 @@ import { RoleType, sortAlpha } from '../../models/role-type.model';
 export class RoleTypesComponent implements OnInit {
   tableData$: Observable<RoleType[]>;
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/role-type-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/role-type-list/';
   totalRecords: number;
 
   isCurrent: boolean;
@@ -36,34 +46,54 @@ export class RoleTypesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private roleTypeService: RoleTypeService
-  ) {
+    private roleTypeService: RoleTypeService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    // const processStatus$ = this.processStatusService.getAll(apiUrl)
-    const roleType$ = this.roleTypeService
-      .getAll(apiUrl)
-      .pipe(map((roleType) => roleType.sort(sortAlpha)));
+      // const processStatus$ = this.processStatusService.getAll(apiUrl)
+      const roleType$ = this.roleTypeService
+        .getAll(apiUrl)
+        .pipe(map((roleType) => roleType.sort(sortAlpha)));
 
-    this.isFetching = false;
-    this.tableData$ = roleType$;
+      this.isFetching = false;
+      this.tableData$ = roleType$;
+    }
   }
 
   createForm() {
     this.maintForm = this.fb.group({
       role_in_process: ['', [Validators.required]],
-      used_in_forward_plans: [false, [Validators.required]],
-      used_in_invitation_processes: [false, [Validators.required]],
-      used_in_contracts: [false, [Validators.required]],
-      is_active: [true, [Validators.required]],
+      used_in_forward_plans: [
+        { value: false, disabled: !this.modify },
+        [Validators.required],
+      ],
+      used_in_invitation_processes: [
+        { value: false, disabled: !this.modify },
+        [Validators.required],
+      ],
+      used_in_contracts: [
+        { value: false, disabled: !this.modify },
+        [Validators.required],
+      ],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -78,42 +108,19 @@ export class RoleTypesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      role_in_process: record.role_in_process,
-      used_in_forward_plans: record.used_in_forward_plans,
-      used_in_invitation_processes: record.used_in_invitation_processes,
-      used_in_contracts: record.used_in_contracts,
-      is_active: record.is_active,
-    });
-
-    // this.roleTypeService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       role_in_process: response.role_in_process,
-    //       used_in_forward_plans: response.used_in_forward_plans,
-    //       used_in_invitation_processes: response.used_in_invitation_processes,
-    //       used_in_contracts: response.used_in_contracts,
-    //       is_active: response.is_active,
-    //     });
-    //     console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        role_in_process: record.role_in_process,
+        used_in_forward_plans: record.used_in_forward_plans,
+        used_in_invitation_processes: record.used_in_invitation_processes,
+        used_in_contracts: record.used_in_contracts,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

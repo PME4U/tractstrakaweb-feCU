@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { TeamService } from '../../services/team.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { Team, sortAlpha } from '../../models/team.model';
 
 @Component({
@@ -21,11 +23,19 @@ export class TeamsComponent implements OnInit {
   inactiveData$: Observable<Team[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/team-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/team-list/';
 
   activeOnly: string = 'All';
 
@@ -40,33 +50,44 @@ export class TeamsComponent implements OnInit {
   public deleteModal: ModalDirective;
   // confirmDialogService: any;
 
-  constructor(private fb: FormBuilder, private teamService: TeamService) {
+  constructor(
+    private fb: FormBuilder,
+    private teamService: TeamService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const team$ = this.teamService
-      .getAll(apiUrl)
-      .pipe(map((team) => team.sort(sortAlpha)));
+      const team$ = this.teamService
+        .getAll(apiUrl)
+        .pipe(map((team) => team.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = team$;
-    this.activeData$ = team$.pipe(
-      map((teams) => teams.filter((team) => team.is_active === true))
-    );
-    this.inactiveData$ = team$.pipe(
-      map((teams) => teams.filter((team) => team.is_active === false))
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      this.allData$ = team$;
+      this.activeData$ = team$.pipe(
+        map((teams) => teams.filter((team) => team.is_active === true))
+      );
+      this.inactiveData$ = team$.pipe(
+        map((teams) => teams.filter((team) => team.is_active === false))
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -107,7 +128,10 @@ export class TeamsComponent implements OnInit {
     this.maintForm = this.fb.group({
       team: ['', [Validators.required]],
       description: ['', []],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -119,38 +143,17 @@ export class TeamsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      team: record.team,
-      description: record.description,
-      is_active: record.is_active,
-    });
-
-    // this.teamService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       team: response.team,
-    //       description: response.description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        team: record.team,
+        description: record.description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

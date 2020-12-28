@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { TaxCodeService } from '../../services/tax-code.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { TaxCode, sortAlpha } from '../../models/tax-code.model';
 
 @Component({
@@ -21,11 +23,19 @@ export class TaxCodesComponent implements OnInit {
   inactiveData$: Observable<TaxCode[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/tax-code-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/tax-code-list/';
 
   activeOnly: string = 'All';
 
@@ -40,37 +50,48 @@ export class TaxCodesComponent implements OnInit {
   public deleteModal: ModalDirective;
   // confirmDialogService: any;
 
-  constructor(private fb: FormBuilder, private taxCodeService: TaxCodeService) {
+  constructor(
+    private fb: FormBuilder,
+    private taxCodeService: TaxCodeService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const team$ = this.taxCodeService
-      .getAll(apiUrl)
-      .pipe(map((taxCode) => taxCode.sort(sortAlpha)));
+      const team$ = this.taxCodeService
+        .getAll(apiUrl)
+        .pipe(map((taxCode) => taxCode.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = team$;
-    this.activeData$ = team$.pipe(
-      map((taxCodes) =>
-        taxCodes.filter((taxCode) => taxCode.is_active === true)
-      )
-    );
-    this.inactiveData$ = team$.pipe(
-      map((taxCodes) =>
-        taxCodes.filter((taxCode) => taxCode.is_active === false)
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      this.allData$ = team$;
+      this.activeData$ = team$.pipe(
+        map((taxCodes) =>
+          taxCodes.filter((taxCode) => taxCode.is_active === true)
+        )
+      );
+      this.inactiveData$ = team$.pipe(
+        map((taxCodes) =>
+          taxCodes.filter((taxCode) => taxCode.is_active === false)
+        )
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -112,7 +133,10 @@ export class TaxCodesComponent implements OnInit {
       tax_code: ['', [Validators.required]],
       tax_code_description: ['', []],
       tax_percentage: ['', [Validators.required]],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -124,40 +148,18 @@ export class TaxCodesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      tax_code: record.tax_code,
-      tax_code_description: record.tax_code_description,
-      tax_percentage: record.tax_percentage,
-      is_active: record.is_active,
-    });
-
-    // this.taxCodeService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-
-    //     this.maintForm.patchValue({
-    //       tax_code: response.tax_code,
-    //       tax_code_description: response.tax_code_description,
-    //       tax_percentage: response.tax_percentage,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        tax_code: record.tax_code,
+        tax_code_description: record.tax_code_description,
+        tax_percentage: record.tax_percentage,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {
