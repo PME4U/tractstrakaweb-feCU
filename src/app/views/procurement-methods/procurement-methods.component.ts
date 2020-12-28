@@ -146,7 +146,10 @@ export class ProcurementMethodsComponent implements OnInit {
 
   createForm() {
     this.maintForm = this.fb.group({
-      procurement_strategy: ['', [Validators.required]],
+      procurement_strategy: [
+        { value: '', disabled: !this.modify },
+        [Validators.required],
+      ],
       procurement_method: ['', [Validators.required]],
       method_description: ['', []],
       is_active: [

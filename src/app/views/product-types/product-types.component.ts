@@ -7,9 +7,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProductTypeService } from '../../services/product-type.service';
-import { ProductType, sortAlpha } from '../../models/product-type.model';
-
 import { ProductGroupService } from '../../services/product-group.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
+import { ProductType, sortAlpha } from '../../models/product-type.model';
 import { ProductGroup, sortAlphaPG } from '../../models/product-group.model';
 
 @Component({
@@ -24,12 +25,20 @@ export class ProductTypesComponent implements OnInit {
   inactiveData$: Observable<ProductType[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/product-type-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
 
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/product-type-list/';
 
   activeOnly: string = 'All';
 
@@ -49,38 +58,50 @@ export class ProductTypesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private productTypeService: ProductTypeService,
-    private productGroupService: ProductGroupService
-  ) {
+    private productGroupService: ProductGroupService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const productType$ = this.productTypeService
-      .getAll(apiUrl)
-      .pipe(map((productType) => productType.sort(sortAlpha)));
+      const productType$ = this.productTypeService
+        .getAll(apiUrl)
+        .pipe(map((productType) => productType.sort(sortAlpha)));
 
-    this.isFetching = false;
-    // this.tableData$ = contractStatus$;
+      this.isFetching = false;
+      // this.tableData$ = contractStatus$;
 
-    this.allData$ = productType$;
-    this.activeData$ = productType$.pipe(
-      map((product_types) =>
-        product_types.filter((product_type) => product_type.is_active === true)
-      )
-    );
-    this.inactiveData$ = productType$.pipe(
-      map((product_types) =>
-        product_types.filter((product_type) => product_type.is_active === false)
-      )
-    );
-    // this.tableData$ = this.allData$;
-    this.filterOnActive();
+      this.allData$ = productType$;
+      this.activeData$ = productType$.pipe(
+        map((product_types) =>
+          product_types.filter(
+            (product_type) => product_type.is_active === true
+          )
+        )
+      );
+      this.inactiveData$ = productType$.pipe(
+        map((product_types) =>
+          product_types.filter(
+            (product_type) => product_type.is_active === false
+          )
+        )
+      );
+      // this.tableData$ = this.allData$;
+      this.filterOnActive();
+    }
   }
 
   activeFilterToggle() {
@@ -119,10 +140,16 @@ export class ProductTypesComponent implements OnInit {
 
   createForm() {
     this.maintForm = this.fb.group({
-      product_group: ['', [Validators.required]],
+      product_group: [
+        { value: '', disabled: !this.modify },
+        [Validators.required],
+      ],
       product_type: ['', [Validators.required]],
       product_type_description: ['', []],
-      is_active: [true, [Validators.required]],
+      is_active: [
+        { value: true, disabled: !this.modify },
+        [Validators.required],
+      ],
     });
   }
 
@@ -135,40 +162,19 @@ export class ProductTypesComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.getProductGroups();
-    this.id = record.id;
-    this.maintForm.patchValue({
-      product_group: record.product_group.id,
-      product_type: record.product_type,
-      product_type_description: record.product_type_description,
-      is_active: record.is_active,
-    });
-    // this.productTypeService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-    //     this.isActive = response.is_active;
-    //     console.log(response.product_group);
-    //     this.maintForm.patchValue({
-    //       product_group: response.product_group.id,
-    //       product_type: response.product_type,
-    //       product_type_description: response.product_type_description,
-    //       is_active: response.is_active,
-    //     });
-    //     // console.log(response);
-    //     // console.log(this.tableData);
-    //     // console.log('Total records:' + this.totalRecords);
-    //     // console.log(this.next);
-    //     // console.log(this.previous);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.getProductGroups();
+      this.id = record.id;
+      this.maintForm.patchValue({
+        product_group: record.product_group.id,
+        product_type: record.product_type,
+        product_type_description: record.product_type_description,
+        is_active: record.is_active,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

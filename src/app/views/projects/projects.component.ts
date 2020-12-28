@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProjectService } from '../../services/project.service';
+import { UserAccessService } from '../../services/user-admin.service';
+
 import { Project, sortAlpha } from '../../models/project.model';
 
 @Component({
@@ -19,41 +21,63 @@ export class ProjectsComponent implements OnInit {
   allData$: Observable<Project[]>;
 
   maintForm: FormGroup;
+  baseUrl: string = 'api/system-parameter/project-list/';
+  scope = 'system_params';
+
+  no_access: boolean = true;
+  read_only: boolean = false;
+  modify: boolean = false;
+  create: boolean = false;
+  delete: boolean = false;
+
   recordTitle: string;
   id = null;
   editing: boolean;
   isFetching: boolean = false;
-  baseUrl: string = 'api/system-parameter/project-list/';
 
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;
   @ViewChild('deleteModal', { static: false })
   public deleteModal: ModalDirective;
   // confirmDialogService: any;
 
-  constructor(private fb: FormBuilder, private projectService: ProjectService) {
+  constructor(
+    private fb: FormBuilder,
+    private projectService: ProjectService,
+    private userAccessService: UserAccessService
+  ) {}
+
+  ngOnInit(): void {
+    this.no_access = this.userAccessService.isNoAccess(this.scope);
+    this.read_only = this.userAccessService.isReadOnly(this.scope);
+    this.modify = this.userAccessService.isModify(this.scope);
+    this.create = this.userAccessService.isCreate(this.scope);
+    this.delete = this.userAccessService.isDelete(this.scope);
+
+    this.getTableData(this.baseUrl);
     this.createForm();
   }
 
-  ngOnInit(): void {
-    this.getTableData(this.baseUrl);
-  }
-
   getTableData(apiUrl: string) {
-    this.isFetching = true;
+    if (!this.no_access) {
+      this.isFetching = true;
 
-    const project$ = this.projectService
-      .getAll(apiUrl)
-      .pipe(map((project) => project.sort(sortAlpha)));
+      const project$ = this.projectService
+        .getAll(apiUrl)
+        .pipe(map((project) => project.sort(sortAlpha)));
 
-    this.isFetching = false;
-    this.tableData$ = project$;
+      this.isFetching = false;
+      this.tableData$ = project$;
+    }
   }
 
   createForm() {
     this.maintForm = this.fb.group({
       project_title: ['', [Validators.required]],
       project_description: ['', []],
-      project_status: ['', [Validators.required]],
+      project_status: [
+        { value: '', disabled: !this.modify },
+        [Validators.required],
+      ],
       project_website: ['', []],
       project_notes: ['', []],
     });
@@ -67,36 +91,19 @@ export class ProjectsComponent implements OnInit {
   }
 
   editRecord(record) {
-    this.editing = true;
-    // this.isFetching = true;
-    this.id = record.id;
-    this.maintForm.patchValue({
-      project_title: record.project_title,
-      project_description: record.project_description,
-      project_status: record.project_status,
-      project_website: record.project_website,
-      project_notes: record.project_notes,
-    });
-    // this.projectService.getOne(record.id).subscribe(
-    //   (response) => {
-    //     this.isFetching = false;
-
-    //     this.id = response.id;
-
-    //     this.maintForm.patchValue({
-    //       project_title: response.project_title,
-    //       project_description: response.project_description,
-    //       project_status: response.project_status,
-    //       project_website: response.project_website,
-    //       project_notes: response.project_notes,
-    //     });
-    //     // console.log(response);
-    //   },
-    //   (error) => {
-    //     alert(error.message);
-    //   }
-    // );
-    this.maintModal.show();
+    if (!this.no_access) {
+      this.editing = true;
+      // this.isFetching = true;
+      this.id = record.id;
+      this.maintForm.patchValue({
+        project_title: record.project_title,
+        project_description: record.project_description,
+        project_status: record.project_status,
+        project_website: record.project_website,
+        project_notes: record.project_notes,
+      });
+      this.maintModal.show();
+    }
   }
 
   confirmDelete(record) {

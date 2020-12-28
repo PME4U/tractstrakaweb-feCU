@@ -153,7 +153,10 @@ export class ProcurementSubCategoriesComponent implements OnInit {
   createForm() {
     this.maintForm = this.fb.group({
       procurement_sub_category: ['', [Validators.required]],
-      procurement_category: ['', [Validators.required]],
+      procurement_category: [
+        { value: '', disabled: !this.modify },
+        [Validators.required],
+      ],
       procurement_sub_category_description: ['', []],
       is_active: [
         { value: true, disabled: !this.modify },
