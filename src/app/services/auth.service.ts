@@ -77,6 +77,14 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
+  isLoggedIn() {
+    const ttwToken = this.authContextService.getAccessToken();
+    if (ttwToken) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   // refreshToken() {
   //   const refreshToken = {
   //     refresh: this.authContextService.getRefreshToken(),

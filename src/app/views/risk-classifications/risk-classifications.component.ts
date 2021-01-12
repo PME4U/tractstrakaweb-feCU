@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import { map } from 'rxjs/operators';
 
 import { RiskClassificationService } from '../../services/risk-classification.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import {
   RiskClassification,

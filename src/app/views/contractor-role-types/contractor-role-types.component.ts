@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ContractorRoleTypeService } from '../../services/contractor-role-type.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import {
   ContractorRoleType,

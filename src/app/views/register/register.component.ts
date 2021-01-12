@@ -4,7 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 interface TokenObj {
   token: string;

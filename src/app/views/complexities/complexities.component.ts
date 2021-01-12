@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ComplexityService } from '../../services/complexity.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import { Complexity, sortAlpha } from '../../models/complexity.model';
 

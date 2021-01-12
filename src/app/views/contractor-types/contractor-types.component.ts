@@ -6,7 +6,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
 import { ContractorTypeService } from '../../services/contractor-type.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import { ContractorType, sortAlpha } from '../../models/contractor-type.model';
 import { map } from 'rxjs/operators';

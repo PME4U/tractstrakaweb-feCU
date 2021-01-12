@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { UnitsOfMeasureService } from '../../services/units-of-measure.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import { UnitsOfMeasure, sortAlpha } from '../../models/uom.model';
 

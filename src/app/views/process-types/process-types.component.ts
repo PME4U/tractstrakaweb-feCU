@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProcessTypeService } from '../../services/process-type.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import { ProcessType, sortAlpha } from '../../models/process-type.model';
 

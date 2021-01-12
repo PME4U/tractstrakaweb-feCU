@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProcurementStrategyService } from '../../services/procurement-strategy.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 import { ProcurementMethodService } from '../../services/procurement-method.service';
 
 import {

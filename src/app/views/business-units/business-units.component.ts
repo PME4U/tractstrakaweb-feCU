@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { BusinessUnitLevelService } from '../../services/business-unit-level.service';
 import { BusinessUnitService } from '../../services/business-unit.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import { BusinessUnit, sortAlphaBU } from '../../models/business-unit.model';
 import {

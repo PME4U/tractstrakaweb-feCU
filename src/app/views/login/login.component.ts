@@ -25,10 +25,13 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ttwToken = this.authContextService.getAccessToken();
-    if (ttwToken) {
+    // const ttwToken = this.authContextService.getAccessToken();
+    if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
     }
+    // if (ttwToken) {
+    //   this.router.navigate(['/dashboard']);
+    // }
     this.authForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [

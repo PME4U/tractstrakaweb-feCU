@@ -23,8 +23,8 @@ export class DefaultLayoutComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ttwToken = this.authContextService.getAccessToken();
-    if (!ttwToken) {
+    // const ttwToken = this.authContextService.getAccessToken();
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/']);
     }
   }

@@ -20,6 +20,7 @@ import { Person } from '../../../models/person.model';
 })
 export class PersonMaintFormComponent implements OnInit {
   maintForm: FormGroup;
+  isEditing: boolean = false;
   id = null;
 
   @Output() personCreated = new EventEmitter<Person>();
@@ -43,24 +44,39 @@ export class PersonMaintFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.createForm();
-    // this.maintModal.show();
+    this.createForm();
+    this.maintModal.show();
   }
 
-  // createForm() {
-  //   // const today = new Date();
-  //   this.maintForm = this.fb.group({
-  //     first_name: ['', [Validators.required]],
-  //     middle_initial: ['', []],
-  //     last_name: ['', [Validators.required]],
-  //     profile_pic: [null, []],
-  //     about_me: ['', []],
-  //     // create_date: [today, []],
-  //   });
-  // }
+  createForm() {
+    // const today = new Date();
+    this.maintForm = this.fb.group({
+      first_name: ['', [Validators.required]],
+      middle_initial: ['', []],
+      last_name: ['', [Validators.required]],
+      profile_pic: [null, []],
+      about_me: ['', []],
+      // create_date: [today, []],
+    });
+  }
+
+  open(row) {
+    this.maintModal.show();
+    if (row) {
+      this.isEditing = true;
+      this.id = row.id;
+      this.maintForm.patchValue({
+        first_name: row.first_name,
+        middle_initial: row.middle_initial,
+        last_name: row.last_name,
+        profile_pic: row.profile_pic,
+        about_me: row.about_me,
+      });
+    }
+  }
 
   saveRecord() {
-    if (this.id) {
+    if (this.isEditing) {
       this.personService
         .update(this.id, this.maintForm.value)
         .subscribe((result: Person) => {

@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { ProcurementSubCategoryService } from '../../services/procurement-sub-category.service';
 import { ProcurementCategoryService } from '../../services/procurement-category.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import {
   ProcurementSubCategory,

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import {
   UserAccessService,
   TableData,
-} from '../../services/user-admin.service';
+} from '../../services/user-access.service';
 import { TeamService } from '../../services/team.service';
 import { PersonService } from '../../services/person.service';
 

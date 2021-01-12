@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { ProductTypeService } from '../../services/product-type.service';
 import { ProductGroupService } from '../../services/product-group.service';
-import { UserAccessService } from '../../services/user-admin.service';
+import { UserAccessService } from '../../services/user-access.service';
 
 import { ProductType, sortAlpha } from '../../models/product-type.model';
 import { ProductGroup, sortAlphaPG } from '../../models/product-group.model';
