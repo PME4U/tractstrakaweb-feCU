@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 import { ContractStatus } from '../models/contract-status.model';
 
 @Injectable({
@@ -16,17 +18,20 @@ export class ContractStatusService {
   constructor(private http: HttpClient) {}
 
   getAll(apiUrl: string): Observable<ContractStatus[]> {
-    return this.http.get<ContractStatus[]>(apiUrl, {
-      headers: this.headers,
+    return this.http.get<ContractStatus[]>(`${environment.apiUrl}/` + apiUrl, {
+      // headers: this.headers,
+      withCredentials: true,
     });
   }
 
   getOne(id: Number): Observable<ContractStatus> {
     // console.log('URL:' + apiUrl + id);
     return this.http.get<ContractStatus>(
-      'api/system-parameter/contract-status-detail/' + id + '/',
+      `${environment.apiUrl}/api/system-parameter/contract-status-detail/` +
+        id +
+        '/',
       {
-        headers: this.headers,
+        withCredentials: true,
       }
     );
   }

@@ -10,17 +10,18 @@ import { DataFilterPipe } from './datafilterpipe';
 
 import { UserAdminComponent } from './user-admin.component';
 import { UserAdminRoutingModule } from './user-admin-routing.module';
+import { PersonMaintFormComponent } from '../people/person-maint-form/person-maint-form.component';
 
 @NgModule({
   declarations: [UserAdminComponent, DataFilterPipe],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     UserAdminRoutingModule,
     FormsModule,
     DataTableModule,
     ButtonsModule,
     ModalModule.forChild(),
+    PersonMaintFormComponent,
   ],
 })
 export class UserAdminModule {}

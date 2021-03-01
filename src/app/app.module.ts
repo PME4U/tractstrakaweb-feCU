@@ -56,6 +56,7 @@ import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
 import { ResetPasswordEmailComponent } from './views/reset-password-email/reset-password-email.component';
 import { ResetPasswordComponent } from './views/reset-password/reset-password.component';
+import { PersonMaintFormComponent } from './views/people/person-maint-form/person-maint-form.component';
 
 // Import Services
 import { JsonAppConfigService } from '../config/json-app-config.service';
@@ -104,6 +105,7 @@ export function initializerFn(jsonAppConfigService: JsonAppConfigService) {
     RegisterComponent,
     ResetPasswordEmailComponent,
     ResetPasswordComponent,
+    PersonMaintFormComponent,
   ],
   entryComponents: [
     // ErrorDialogComponent,

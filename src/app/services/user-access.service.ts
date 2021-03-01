@@ -8,7 +8,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { AuthContextService } from './auth-context.service';
+import { StorageService } from './storage.service';
 
 import { User } from '../models/user.model';
 
@@ -24,7 +24,7 @@ export class UserAccessService {
 
   constructor(
     private http: HttpClient,
-    private authContextService: AuthContextService
+    private storageService: StorageService
   ) {}
 
   getAll(apiUrl: string) {
@@ -122,7 +122,7 @@ export class UserAccessService {
       // );
       // ******************************************************************************************************
       this.getOne(id).subscribe((response) => {
-        this.authContextService.updateAccessRights(response);
+        this.storageService.updateAccessRights(response);
       });
 
       switch (scope) {

@@ -23,19 +23,19 @@ export class PersonMaintFormComponent implements OnInit {
   isEditing: boolean = false;
   id = null;
 
-  @Output() personCreated = new EventEmitter<Person>();
-  @Output() personUpdated = new EventEmitter<Person>();
+  // @Output() personCreated = new EventEmitter<Person>();
+  // @Output() personUpdated = new EventEmitter<Person>();
 
-  @Input() set person(val: Person) {
-    this.id = val.id;
-    this.fb.group({
-      first_name: [val.first_name, [Validators.required]],
-      middle_initial: [val.middle_initial, []],
-      last_name: [val.last_name, [Validators.required]],
-      profile_pic: [val.profile_pic, []],
-      about_me: [val.about_me, []],
-    });
-  }
+  // @Input() set person(val: Person) {
+  //   this.id = val.id;
+  //   this.fb.group({
+  //     first_name: [val.first_name, [Validators.required]],
+  //     middle_initial: [val.middle_initial, []],
+  //     last_name: [val.last_name, [Validators.required]],
+  //     profile_pic: [val.profile_pic, []],
+  //     about_me: [val.about_me, []],
+  //   });
+  // }
 
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;
 
@@ -81,13 +81,13 @@ export class PersonMaintFormComponent implements OnInit {
         .update(this.id, this.maintForm.value)
         .subscribe((result: Person) => {
           // this.getTableData(this.baseUrl);
-          this.personUpdated.emit(result);
+          // this.personUpdated.emit(result);
         });
     } else {
       this.personService
         .create(this.maintForm.value)
         .subscribe((result: Person) => {
-          this.personCreated.emit(result);
+          // this.personCreated.emit(result);
           // this.getTableData(this.baseUrl);
         });
     }

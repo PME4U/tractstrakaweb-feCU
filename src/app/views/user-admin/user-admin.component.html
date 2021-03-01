@@ -315,10 +315,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of mf.data">
-            <td>{{ item.person?.full_name }}</td>
-            <td class="clickable" (click)="editRecord(item)">
-              {{ item.email }}
+            <td class="clickable" (click)="viewPerson(item)">
+              {{ item.person?.full_name }}
             </td>
+            <td>{{ item.email }}</td>
             <td class="text-center">
               <span *ngIf="item.is_active" class="cil-check table-check"></span>
             </td>
@@ -744,6 +744,16 @@
     </div>
   </div>
 
+  <!-- Person modal -->
+  <!-- <div>
+    <app-person-maint-form
+      [person]="this.editPerson"
+      (personCreated)="personCreated($event)"
+      (personUpdated)="personUpdated($event)"
+    ></app-person-maint-form>
+  </div> -->
+
+  <!-- Delete form -->
   <div
     bsModal
     #deleteModal="bs-modal"

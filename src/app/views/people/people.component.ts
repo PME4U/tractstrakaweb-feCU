@@ -13,8 +13,9 @@ import { Observable } from 'rxjs';
 
 import { PersonService } from '../../services/person.service';
 import { Person, sortAlphaFN } from '../../models/person.model';
+import { PersonMaintFormService } from './person-maint-form/person-maint-form.service';
 
-import { PersonMaintFormComponent } from './person-maint-form/person-maint-form.component';
+// import { PersonMaintFormComponent } from './person-maint-form/person-maint-form.component';
 
 @Component({
   selector: 'app-people',
@@ -22,10 +23,8 @@ import { PersonMaintFormComponent } from './person-maint-form/person-maint-form.
   styleUrls: ['./people.component.css'],
 })
 export class PeopleComponent implements OnInit {
-  @Input() person: Person;
-
-  @Output() editPerson = new EventEmitter<Person>();
-  @Output() createNewPerson = new EventEmitter<Person>();
+  // @Output() editPerson = new EventEmitter<Person>();
+  // @Output() createNewPerson = new EventEmitter<Person>();
 
   tableData$: Observable<Person[]>;
   allData$: Observable<Person[]>;
@@ -41,14 +40,20 @@ export class PeopleComponent implements OnInit {
 
   baseUrl: string = 'api/people/people-list/';
 
-  @ViewChild(PersonMaintFormComponent) maintModal: PersonMaintFormComponent;
+  // @ViewChild(PersonMaintFormComponent)
+  // public maintModal: PersonMaintFormComponent;
   @ViewChild('deleteModal', { static: false })
   public deleteModal: ModalDirective;
-  // confirmDialogService: any;
 
-  constructor(private personService: PersonService) {}
+  constructor(
+    private personService: PersonService,
+    private personMaintService: PersonMaintFormService
+  ) {
+    // console.log('Constructor');
+  }
 
   ngOnInit(): void {
+    // console.log('On Init');
     this.getTableData();
   }
 
@@ -64,8 +69,10 @@ export class PeopleComponent implements OnInit {
     });
 
     // const person$ = this.personService
-    //   .getAll(apiUrl)
+    //   .getAll(this.baseUrl)
     //   .pipe(map((person) => person.result.sort(sortAlphaFN)));
+
+    // this.tableData$ = person$;
 
     this.isFetching = false;
     // this.tableData$ = person$;
@@ -73,11 +80,12 @@ export class PeopleComponent implements OnInit {
 
   addRecord() {
     const row = null;
-    this.maintModal.open(row);
+    this.personMaintService.open(row);
   }
 
   editRecord(row) {
-    this.maintModal.open(row);
+    console.log('Triggered Edit');
+    this.personMaintService.open(row);
   }
 
   personCreated(person: Person) {

@@ -8,7 +8,7 @@ import { User } from '../models/user.model';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthContextService {
+export class StorageService {
   public user: Observable<User>;
 
   constructor(private cookieService: CookieService) {}

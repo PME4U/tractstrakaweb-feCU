@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 
 import { AuthService } from '../../services/auth.service';
-import { AuthContextService } from '../../services/auth-context.service';
+import { StorageService } from '../../services/storage.service';
 import { User } from '../../models/user.model';
 
 @Component({
@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private authContextService: AuthContextService,
+    private storageService: StorageService,
     private cookieService: CookieService,
     private router: Router
   ) {}
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
   saveForm() {
     this.authService.loginUser(this.authForm.value).subscribe(
       (result: User) => {
-        this.authContextService.setUser(result);
+        this.storageService.setUser(result);
         this.router.navigate(['/dashboard']);
       },
       (error) => {

@@ -3,8 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import {
   UserAccessService,
@@ -16,6 +16,9 @@ import { PersonService } from '../../services/person.service';
 import { User } from '../../models/user.model';
 import { Team, sortAlpha } from '../../models/team.model';
 import { Person } from '../../models/person.model';
+
+import { PersonMaintFormComponent } from '../people/person-maint-form/person-maint-form.component';
+import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-contract-type',
@@ -47,6 +50,7 @@ export class UserAdminComponent implements OnInit {
 
   public teams$: Observable<Team[]>;
   public people$: Observable<Person[]>;
+  public person$: Observable<Person[]>;
 
   public disableSearch = true;
   public searchMessage = 'Select field to search';
@@ -55,6 +59,8 @@ export class UserAdminComponent implements OnInit {
 
   @ViewChild('maintModal', { static: false }) public maintModal: ModalDirective;
   @ViewChild('deleteModal', { static: false })
+  @ViewChild(PersonMaintFormComponent)
+  personModal: PersonMaintFormComponent;
   public deleteModal: ModalDirective;
 
   constructor(
@@ -231,6 +237,11 @@ export class UserAdminComponent implements OnInit {
       .pipe(map((people) => people.results));
   }
 
+  getPerson(id) {
+    // return this.personService.getOne(id).pipe(map((person) => person));
+    // .pipe(map((person) => person.results));
+  }
+
   closeModal() {
     this.maintForm.reset();
     this.maintModal.hide();
@@ -245,5 +256,23 @@ export class UserAdminComponent implements OnInit {
       this.searchMessage = 'Select field to search';
       this.disableSearch = true;
     }
+  }
+
+  viewPerson(row) {
+    this.personService.getOne(row.person.id).subscribe(
+      (result: Person) => {
+        console.log(JSON.stringify(result));
+        // this.personModal.open(result.id);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    // const person: Person = this.personService.getOne(row.person).subscribe();
+
+    // console.log(JSON.stringify(person));
+
+    // this.personModal.open(person.id);
+    // console.log(JSON.stringify(this.people$));
   }
 }

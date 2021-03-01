@@ -10,14 +10,14 @@ import { PeopleRoutingModule } from './people-routing.module';
 import { PersonMaintFormComponent } from './person-maint-form/person-maint-form.component';
 
 @NgModule({
-  declarations: [PeopleComponent, PersonMaintFormComponent],
+  declarations: [PeopleComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     PeopleRoutingModule,
     FormsModule,
     ButtonsModule,
     ModalModule.forChild(),
   ],
+  exports: [],
 })
 export class PeopleModule {}
